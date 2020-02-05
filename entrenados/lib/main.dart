@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
       title: 'Entrenados',
       theme: ThemeData(
         fontFamily: 'Open Sans',
-        primarySwatch: Colors.teal
+        primarySwatch: Colors.teal,
       ),
       home: Inicio(),
     );

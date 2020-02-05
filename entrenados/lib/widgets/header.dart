@@ -4,7 +4,7 @@ AppBar header(context, { bool isAppTitle = false, String titleText, removeBackBu
   return AppBar(
     automaticallyImplyLeading: removeBackButton ? false : true ,
     title: Text(
-      isAppTitle ? 'FlutterShare' : titleText,
+      isAppTitle ? 'Entrenados' : titleText,
       style: TextStyle(
         color: Colors.white,
         fontFamily: isAppTitle ? "Signatra" : "default",
