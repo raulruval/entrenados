@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:entrenados/pages/actividad.dart';
-import 'package:entrenados/pages/tablon.dart';
 import 'package:entrenados/models/usuario.dart';
 import 'package:entrenados/pages/crear_cuenta_google.dart';
 
@@ -172,7 +171,7 @@ class _InicioState extends State<Inicio> {
                   onPressed: logoutGoogle,
                 ),
                 Actividad(),
-                Compartir(),
+                Compartir(currentUser: currentUser),
                 Buscar(),
                 Perfil(),
               ],

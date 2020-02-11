@@ -34,6 +34,7 @@ dependencies:
   timeago: 2.0.17
   cached_network_image:
   flutter_svg:
+  flutter_duration_picker: ^1.0.4
 
 dev_dependencies:
   flutter_test:
@@ -61,3 +62,5 @@ flutter:
     - assets/img/Google.png
     - assets/img/GoogleIcon.png
     - assets/img/run.png
+    - assets/img/compartir.svg
+    - assets/img/share.jpg
