@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:entrenados/models/usuario.dart';
+import 'package:entrenados/pages/musclesinvolved.dart';
+import 'package:entrenados/widgets/header.dart';
 import 'package:entrenados/widgets/progreso.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,14 +19,16 @@ class Compartir extends StatefulWidget {
 
 class _CompartirState extends State<Compartir> {
   TextEditingController captionController = TextEditingController();
-
   TextEditingController nombreController = TextEditingController();
   TextEditingController duracionController = TextEditingController();
 
-  Duration resultingDuration = new Duration(hours:0, minutes:30, seconds:0);
+  Duration resultingDuration = new Duration(hours: 0, minutes: 30, seconds: 0);
   File file;
   bool isUploading = false;
   String postId = Uuid().v4();
+
+
+ 
 
   handleGaleria() async {
     Navigator.pop(context);
@@ -118,36 +122,9 @@ class _CompartirState extends State<Compartir> {
     });
   }
 
+
   buildFormularioCompartir() {
-    return Scaffold(
-      appBar: AppBar(
-          backgroundColor: Colors.teal,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            color: Colors.white,
-            onPressed: clearImage,
-          ),
-          title: Text(
-            "Compartir Post",
-            style: TextStyle(color: Colors.white),
-          ),
-          actions: [
-            FlatButton(
-              onPressed: isUploading
-                  ? null
-                  : () => print("subiendo"), //handleSubmit(),
-              child: Text(
-                "Publicar",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20.0,
-                ),
-              ),
-            ),
-          ]),
-      body: ListView(
-        children: <Widget>[
+    var children2 = <Widget>[
           isUploading ? linearProgress() : Text(""),
           Container(
             height: 120.0,
@@ -212,13 +189,13 @@ class _CompartirState extends State<Compartir> {
               child: InkWell(
                 child: Text("Duración"),
                 onTap: () async {
-                   resultingDuration = await showDurationPicker(
+                  resultingDuration = await showDurationPicker(
                     context: context,
                     initialTime: new Duration(minutes: 30),
                   );
                   Scaffold.of(context).showSnackBar(new SnackBar(
-                      content: new Text("Duración escogida: $resultingDuration")));
-
+                      content:
+                          new Text("Duración escogida: $resultingDuration")));
                 },
               ),
             ),
@@ -264,11 +241,9 @@ class _CompartirState extends State<Compartir> {
             ),
             title: Container(
               width: 250.0,
-              child: TextField(
-                // controller: locationController,
-                decoration: InputDecoration(
-                    hintText: "Músculos principales involucrados",
-                    border: InputBorder.none),
+              child: InkWell(
+                child: Text("Músculos principales involucrados"),
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => Musclesinvolved() )),
               ),
             ),
           ),
@@ -324,7 +299,36 @@ class _CompartirState extends State<Compartir> {
               ),
             ),
           )
-        ],
+        ];
+    return Scaffold(
+      appBar: AppBar(
+          backgroundColor: Colors.teal,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            color: Colors.white,
+            onPressed: clearImage,
+          ),
+          title: Text(
+            "Compartir Post",
+            style: TextStyle(color: Colors.white),
+          ),
+          actions: [
+            FlatButton(
+              onPressed: isUploading
+                  ? null
+                  : () => print("subiendo"), //handleSubmit(),
+              child: Text(
+                "Publicar",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20.0,
+                ),
+              ),
+            ),
+          ]),
+      body: ListView(
+        children: children2,
       ),
     );
   }
@@ -334,3 +338,5 @@ class _CompartirState extends State<Compartir> {
     return file == null ? buildCompartir() : buildFormularioCompartir();
   }
 }
+
+

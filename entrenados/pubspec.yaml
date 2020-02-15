@@ -36,6 +36,7 @@ dependencies:
   flutter_svg:
   flutter_duration_picker: ^1.0.4
 
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -64,3 +65,7 @@ flutter:
     - assets/img/run.png
     - assets/img/compartir.svg
     - assets/img/share.jpg
+    - assets/img/abs.jpg
+    - assets/img/espalda.jpg
+    - assets/img/leg.jpg
+    - assets/img/arm.jpg
