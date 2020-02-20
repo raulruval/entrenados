@@ -1,28 +1,39 @@
+import 'package:entrenados/models/item.dart';
 import 'package:flutter/material.dart';
 import 'package:entrenados/widgets/griditem.dart';
 
 class Musclesinvolved extends StatefulWidget {
+  final List<Item> selectedMuscles;
+
+  Musclesinvolved(this.selectedMuscles);
+
   @override
   _MusclesinvolvedState createState() => _MusclesinvolvedState();
 }
 
 class _MusclesinvolvedState extends State<Musclesinvolved> {
-  List<ItemMuscles> itemMusclesList;
-  List<ItemMuscles> selectedMuscles;
-
+  static List<Item> itemMusclesList = List();
   @override
   void initState() {
-    loadListMuscles();
     super.initState();
+    print("Musculos involucrados guardados en equipamiento");
+    print(widget.selectedMuscles);
+    if (widget.selectedMuscles.length < 1) {
+      loadListMuscles();
+    }
   }
 
   loadListMuscles() {
     itemMusclesList = List();
-    selectedMuscles = List();
-    itemMusclesList.add(ItemMuscles("assets/img/arm.jpg", "Brazos", 1));
-    itemMusclesList.add(ItemMuscles("assets/img/leg.jpg", "Piernas", 2));
-    itemMusclesList.add(ItemMuscles("assets/img/espalda.jpg", "Espalda", 3));
-    itemMusclesList.add(ItemMuscles("assets/img/abs.jpg", "Abdominales", 4));
+    itemMusclesList.add(Item("assets/img/arm.jpg", "Bíceps", 1, false));
+    itemMusclesList.add(Item("assets/img/leg.jpg", "Gemelos", 2, false));
+    itemMusclesList.add(Item("assets/img/espalda.jpg", "Espalda", 3, false));
+    itemMusclesList.add(Item("assets/img/abs.jpg", "Abdominales", 4, false));
+    itemMusclesList.add(Item("assets/img/triceps.jpg", "Tríceps", 5, false));
+    itemMusclesList.add(Item("assets/img/shoulder.jpg", "Hombros", 6, false));
+    itemMusclesList
+        .add(Item("assets/img/quadriceps.jpg", "Cuádriceps", 7, false));
+    itemMusclesList.add(Item("assets/img/forearm.jpg", "Antebrazo", 8, false));
   }
 
   @override
@@ -32,52 +43,61 @@ class _MusclesinvolvedState extends State<Musclesinvolved> {
       body: GridView.builder(
           itemCount: itemMusclesList.length,
           padding: const EdgeInsets.all(30),
-          
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             childAspectRatio: 1,
             crossAxisSpacing: 1,
-            mainAxisSpacing: 25,
-            
+            mainAxisSpacing: 20,
           ),
-          
-
           itemBuilder: (context, index) {
             return GridItem(
-                
-                item: itemMusclesList[index],
-                 
-                isSelected: (bool value) {
-                  setState(() {
-                    if (value) {
-                      selectedMuscles.add(itemMusclesList[index]);
+              item: itemMusclesList[index],
+              isSelected: (value) {
+                setState(() {
+                  if (value) {
+                    print("En el bucle");
+                    if (widget.selectedMuscles.length > 1) {
+                      for (var i = 0; i < widget.selectedMuscles.length; i++) {
+                        if (itemMusclesList[index].value ==
+                            widget.selectedMuscles[i].value) {
+                        } else {
+                          itemMusclesList[index].value = true;
+                          widget.selectedMuscles.add(itemMusclesList[index]);
+                          print("hola");
+                        }
+                      }
                     } else {
-                      selectedMuscles.remove(itemMusclesList[index]);
+                      itemMusclesList[index].value = true;
+                      widget.selectedMuscles.add(itemMusclesList[index]);
                     }
-                  });
-                  print("$index : $value");
-                },
-                key: Key(itemMusclesList[index].musclenumber.toString()));
+                    for (var i = 0; i < widget.selectedMuscles.length; i++)
+                      widget.selectedMuscles[i].value = true;
+                  } else {
+                    itemMusclesList[index].value = false;
+                    widget.selectedMuscles.remove(itemMusclesList[index]);
+                  }
+                });
+                print("$index : $value");
+              },
+              key: Key(
+                itemMusclesList[index].index.toString(),
+              ),
+            );
           }),
     );
   }
 
   getAppBar() {
     return AppBar(
-      title: Text(selectedMuscles.length < 1
+      title: Text(widget.selectedMuscles.length < 1
           ? "Selecciona los elementos"
-          : "${selectedMuscles.length} elementos seleccionados"),
+          : "${widget.selectedMuscles.length} elementos seleccionados"),
       actions: <Widget>[
-        selectedMuscles.length < 1
+        widget.selectedMuscles.length < 1
             ? Container()
             : InkWell(
                 onTap: () {
-                  setState(() {
-                    for (int i = 0; i < selectedMuscles.length; i++) {
-                      itemMusclesList.remove(selectedMuscles[i]);
-                    }
-                    selectedMuscles = List();
-                  });
+                  Navigator.pop(context, widget.selectedMuscles);
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -86,12 +106,4 @@ class _MusclesinvolvedState extends State<Musclesinvolved> {
       ],
     );
   }
-}
-
-class ItemMuscles {
-  String imgURL;
-  String muscleName;
-  int musclenumber;
-
-  ItemMuscles(this.imgURL, this.muscleName, this.musclenumber);
 }
