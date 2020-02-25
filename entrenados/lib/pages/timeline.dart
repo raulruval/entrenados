@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 
  final userRef = Firestore.instance.collection('users');
 
-class Tablon extends StatefulWidget {
+class Timeline extends StatefulWidget {
   @override
-  _TablonState createState() => _TablonState();
+  _TimelineState createState() => _TimelineState();
 }
 
-class _TablonState extends State<Tablon> {
+class _TimelineState extends State<Timeline> {
   @override
   void initState() { 
    

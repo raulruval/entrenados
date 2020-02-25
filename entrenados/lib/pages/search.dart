@@ -1,17 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:entrenados/models/usuario.dart';
-import 'package:entrenados/pages/inicio.dart';
-import 'package:entrenados/widgets/progreso.dart';
+import 'package:entrenados/models/user.dart';
+import 'package:entrenados/pages/home.dart';
+import 'package:entrenados/widgets/progress.dart';
 
 
-class Buscar extends StatefulWidget {
+class Search extends StatefulWidget {
   @override
   _SearchState createState() => _SearchState();
 }
 
-class _SearchState extends State<Buscar> with AutomaticKeepAliveClientMixin {
+class _SearchState extends State<Search> with AutomaticKeepAliveClientMixin {
   TextEditingController searchController = TextEditingController();
   Future<QuerySnapshot> buscarResultadosFuturos;
 
@@ -87,7 +87,7 @@ class _SearchState extends State<Buscar> with AutomaticKeepAliveClientMixin {
         } else {
           List<ResultadoUsuarios> searchResults = [];
           snapshot.data.documents.forEach((doc) {
-            Usuario user = Usuario.fromDocument(doc);
+            User user = User.fromDocument(doc);
             ResultadoUsuarios searchResult = ResultadoUsuarios(user);
             searchResults.add(searchResult);
           });
@@ -128,7 +128,7 @@ class _SearchState extends State<Buscar> with AutomaticKeepAliveClientMixin {
 }
 
 class ResultadoUsuarios extends StatelessWidget {
-  final Usuario user;
+  final User user;
   ResultadoUsuarios(this.user);
   @override
   Widget build(BuildContext context) {

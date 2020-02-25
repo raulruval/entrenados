@@ -1,15 +1,15 @@
 import 'dart:async';
 
-import 'package:entrenados/models/usuario.dart';
+import 'package:entrenados/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:entrenados/widgets/header.dart';
 
-class CrearCuenta extends StatefulWidget {
+class CreateAccount extends StatefulWidget {
   @override
   _CreateAccountState createState() => _CreateAccountState();
 }
 
-class _CreateAccountState extends State<CrearCuenta> {
+class _CreateAccountState extends State<CreateAccount> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   String _id;
@@ -23,7 +23,7 @@ class _CreateAccountState extends State<CrearCuenta> {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
       _id = "0";
-      Usuario user = new Usuario(
+      User user = new User(
           id: _id,
           username: _username,
           photoUrl: _photoURL,

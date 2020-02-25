@@ -1,4 +1,4 @@
-import 'package:entrenados/pages/inicio.dart';
+import 'package:entrenados/pages/home.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Open Sans',
         primarySwatch: Colors.teal,
       ),
-      home: Inicio(),
+      home: Home(),
     );
   }
 }

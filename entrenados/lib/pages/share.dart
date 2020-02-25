@@ -1,28 +1,28 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:entrenados/models/item.dart';
-import 'package:entrenados/models/usuario.dart';
+import 'package:entrenados/models/user.dart';
 import 'package:entrenados/pages/equipment.dart';
 import 'package:entrenados/pages/musclesinvolved.dart';
-import 'package:entrenados/widgets/progreso.dart';
+import 'package:entrenados/widgets/progress.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:entrenados/pages/inicio.dart';
+import 'package:entrenados/pages/home.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter_duration_picker/flutter_duration_picker.dart';
 import 'package:image/image.dart' as Im;
 
-class Compartir extends StatefulWidget {
-  final Usuario currentUser;
+class Share extends StatefulWidget {
+  final User currentUser;
 
-  Compartir({this.currentUser});
+  Share({this.currentUser});
   @override
-  _CompartirState createState() => _CompartirState();
+  _ShareState createState() => _ShareState();
 }
 
-class _CompartirState extends State<Compartir> {
+class _ShareState extends State<Share> {
   TextEditingController captionController = TextEditingController();
   TextEditingController notesController = TextEditingController();
   TextEditingController duracionController = TextEditingController();
