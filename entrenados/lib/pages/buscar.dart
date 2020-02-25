@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:entrenados/models/usuario.dart';
 import 'package:entrenados/pages/inicio.dart';
 import 'package:entrenados/widgets/progreso.dart';
-import 'package:entrenados/widgets/headerBusqueda.dart';
+
 
 class Buscar extends StatefulWidget {
   @override

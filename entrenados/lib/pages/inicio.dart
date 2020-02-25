@@ -4,17 +4,19 @@ import 'package:entrenados/pages/compartir.dart';
 import 'package:entrenados/pages/crear_cuenta.dart';
 import 'package:entrenados/pages/perfil.dart';
 import 'package:entrenados/utils/constants.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:entrenados/pages/actividad.dart';
-import 'package:entrenados/pages/tablon.dart';
 import 'package:entrenados/models/usuario.dart';
 import 'package:entrenados/pages/crear_cuenta_google.dart';
 
 final GoogleSignIn googleSignIn = GoogleSignIn();
+final StorageReference storageRef = FirebaseStorage.instance.ref();
 final usersRef = Firestore.instance.collection("users");
+final postsRef = Firestore.instance.collection("posts");
 final DateTime timestamp = DateTime.now();
 Usuario currentUser;
 String email;
@@ -172,7 +174,7 @@ class _InicioState extends State<Inicio> {
                   onPressed: logoutGoogle,
                 ),
                 Actividad(),
-                Compartir(),
+                Compartir(currentUser: currentUser),
                 Buscar(),
                 Perfil(),
               ],
