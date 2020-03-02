@@ -14,14 +14,40 @@ class MyPage extends StatefulWidget {
   _MyPageState createState() => _MyPageState();
 }
 
-class _MyPageState extends State<MyPage> {
-  @override
+class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
+  AnimationController _breathingController;
+  var _breathe = 0.0;
+  int timesBreathe = 0;
+
   @override
   void initState() {
     super.initState();
+    _breathingController = AnimationController(
+        vsync: this, duration: Duration(milliseconds: 1000));
+    _breathingController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _breathingController.reverse();
+      } else if (status == AnimationStatus.dismissed && timesBreathe < 5) {
+        _breathingController.forward();
+        timesBreathe++;
+      }
+    });
+    _breathingController.addListener(() {
+      setState(() {
+        _breathe = _breathingController.value;
+      });
+    });
+    _breathingController.forward();
+  }
+
+  @override
+  void dispose() {
+    _breathingController.dispose();
+    super.dispose();
   }
 
   Widget build(BuildContext context) {
+    final size = 35 - 7 * _breathe;
     return FutureBuilder(
         future: usersRef.document(widget.profileId).get(),
         builder: (context, snapshot) {
@@ -53,7 +79,7 @@ class _MyPageState extends State<MyPage> {
                               icon: Icon(Icons.notifications),
                               color: Colors.grey.shade500,
                               iconSize: 35.0,
-                              onPressed: ()  {
+                              onPressed: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -63,25 +89,37 @@ class _MyPageState extends State<MyPage> {
                               },
                             ),
                             Padding(padding: EdgeInsets.only(right: 10.0)),
-                            InkWell(
-                              child: Hero(
-                                tag: "fotoPerfil",
-                                child: CircleAvatar(
-                                  radius: 30.0,
-                                  backgroundImage:
-                                      CachedNetworkImageProvider(user.photoUrl),
-                                ),
-                              ),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => new Profile(
-                                        profileId: widget.profileId),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                InkWell(
+                                  child: Hero(
+                                    transitionOnUserGestures: true,
+                                    tag: "fotoPerfil",
+                                    child: CircleAvatar(
+                                      radius: 40.0,
+                                      backgroundColor: Colors.transparent,
+                                      child: CircleAvatar(
+                                        radius: size,
+                                        backgroundImage:
+                                            CachedNetworkImageProvider(
+                                                user.photoUrl),
+                                      ),
+                                    ),
                                   ),
-                                );
-                              },
-                            ),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => new Profile(
+                                            profileId: widget.profileId),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            )
                           ],
                         ),
                       )
@@ -99,7 +137,8 @@ class _MyPageState extends State<MyPage> {
                     child: Row(
                       children: <Widget>[
                         IconButton(
-                          icon: Icon(Icons.navigation, color: Colors.blue),
+                          icon: Icon(Icons.favorite,
+                              color: Theme.of(context).primaryColor),
                           iconSize: 50.0,
                           onPressed: () {},
                         ),
@@ -126,10 +165,9 @@ class _MyPageState extends State<MyPage> {
                             ],
                           ),
                         ),
-                        SizedBox(width: 50.0),
                         IconButton(
-                          icon:
-                              Icon(Icons.arrow_forward_ios, color: Colors.grey),
+                          icon: Icon(Icons.arrow_forward_ios,
+                              color: Theme.of(context).primaryColor),
                           iconSize: 30.0,
                           onPressed: () {},
                         )
@@ -152,7 +190,7 @@ class _MyPageState extends State<MyPage> {
                       Text(
                         'Ver todos',
                         style: TextStyle(
-                            color: Colors.blue,
+                            color: Theme.of(context).primaryColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 15.0,
                             fontFamily: 'Montserrat'),

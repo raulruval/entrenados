@@ -170,11 +170,9 @@ class _HomeState extends State<Home> {
     return Scaffold(
       body: PageView(
         children: <Widget>[
-          // Tablon(),
           Timeline(),
           Search(),
           Share(currentUser: currentUser),
-
           MyPage(profileId: currentUser?.id),
         ],
         controller: pageController,
@@ -184,7 +182,7 @@ class _HomeState extends State<Home> {
       bottomNavigationBar: CupertinoTabBar(
         currentIndex: pageIndex,
         onTap: onTap,
-        activeColor: Colors.teal[300],
+        activeColor: Theme.of(context).primaryColor,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home)),
           BottomNavigationBarItem(icon: Icon(Icons.search)),
