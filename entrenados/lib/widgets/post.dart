@@ -135,7 +135,7 @@ class PostState extends State<Post> {
           alignment: Alignment.center,
           children: <Widget>[
             ClipRRect(
-              child: cachedNetworkImage(mediaUrl, context,false),
+              child: cachedNetworkImage(mediaUrl, context, false),
               borderRadius: BorderRadius.circular(20.0),
             ),
             showHeart
@@ -234,7 +234,12 @@ class PostState extends State<Post> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        buildHeader(this.ownerId, this.currentUserId,true),
+        buildHeader(
+          this.ownerId,
+          this.currentUserId,
+          true,
+          null,
+        ),
         Divider(
           height: 0.8,
         ),

@@ -1,4 +1,5 @@
 import 'package:entrenados/widgets/profileHeader.dart';
+
 import 'package:flutter/material.dart';
 import 'package:entrenados/pages/post_screen.dart';
 import 'package:entrenados/widgets/custom_image.dart';
@@ -37,7 +38,10 @@ class PostTile extends StatelessWidget {
               Row(
                 children: <Widget>[
                   Flexible(
-                    child: buildHeader(post.ownerId, post.currentUserId, false),
+                    child: Container(
+                      child: buildHeader(
+                          post.ownerId, post.currentUserId, false, post.title),
+                    ),
                   )
                 ],
               ),
@@ -64,7 +68,83 @@ class PostTile extends StatelessWidget {
                     ],
                   ),
                   Column(
-                    children: <Widget>[],
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 8.0, right: 8.0),
+                            child: Icon(
+                              Icons.arrow_upward,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Text("Principiante"),
+                        ],
+                      ),
+                      Divider(
+                        height: 5.0,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 8.0, right: 8.0),
+                            child: Icon(
+                              Icons.fitness_center,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Text("Sin equipamiento"),
+                        ],
+                      ),
+                      Divider(
+                        height: 5.0,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 8.0, right: 8.0),
+                            child: Icon(
+                              Icons.rowing,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Text("Resistencia"),
+                        ],
+                      ),
+                      Divider(
+                        height: 5.0,
+                      ),
+                      Row(
+                        children: <Widget>[],
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 8.0, right: 8.0),
+                            child: Icon(
+                              Icons.favorite,
+                              color: Colors.red,
+                            ),
+                          ),
+                          Text("540"),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 8.0, right: 8.0),
+                            child: Icon(
+                              Icons.comment,
+                              color: Colors.blue,
+                            ),
+                          ),
+                          Text("540"),
+                        ],
+                      ),
+                    ],
                   )
                 ],
               ),

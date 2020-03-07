@@ -355,7 +355,7 @@ class _ShareState extends State<Share> {
       Divider(),
       ListTile(
         leading: Icon(
-          Icons.book,
+          Icons.rowing,
           color: Colors.teal,
           size: 35.0,
         ),
@@ -385,7 +385,7 @@ class _ShareState extends State<Share> {
       Divider(),
       ListTile(
         leading: Icon(
-          Icons.nature_people,
+          Icons.fitness_center,
           color: Colors.teal,
           size: 35.0,
         ),
