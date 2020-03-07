@@ -23,7 +23,7 @@ class Share extends StatefulWidget {
 }
 
 class _ShareState extends State<Share> {
-  TextEditingController captionController = TextEditingController();
+  TextEditingController titleController = TextEditingController();
   TextEditingController notesController = TextEditingController();
   TextEditingController duracionController = TextEditingController();
   List<Item> selectedMuscles = List();
@@ -220,7 +220,7 @@ class _ShareState extends State<Share> {
 
   createPostInFirestore(
       {String mediaUrl,
-      String caption,
+      String title,
       int duration,
       String currentDifficulty,
       String currentGroup,
@@ -236,7 +236,7 @@ class _ShareState extends State<Share> {
       "ownerId": widget.currentUser.id,
       "username": widget.currentUser.username,
       "mediaUrl": mediaUrl,
-      "caption": caption,
+      "title": title,
       "duration": duration,
       "currentDifficulty": currentDifficulty,
       "currentGroup": currentGroup,
@@ -256,14 +256,14 @@ class _ShareState extends State<Share> {
     String mediaUrl = await uploadImage(file);
     createPostInFirestore(
         mediaUrl: mediaUrl,
-        caption: captionController.text,
+        title: titleController.text,
         duration: resultingDuration.inMinutes,
         currentDifficulty: _currentDifficulty,
         currentGroup: _currentGroup,
         selectedMuscles: selectedMuscles,
         selectedEquipment: selectedEquipment,
         notes: notesController.text);
-    captionController.clear();
+    titleController.clear();
     notesController.clear();
     selectedEquipment.clear();
     selectedMuscles.clear();
@@ -307,7 +307,7 @@ class _ShareState extends State<Share> {
         title: Container(
           width: 250.0,
           child: TextField(
-            controller: captionController,
+            controller: titleController,
             decoration: InputDecoration(
                 hintText: "Titulo del entrenamiento", border: InputBorder.none),
           ),

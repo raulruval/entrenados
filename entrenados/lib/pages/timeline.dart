@@ -22,8 +22,8 @@ class _TimelineState extends State<Timeline> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: header(context, isAppTitle: true),
-      body: Text('Tablón'),
+      appBar: header(context, isAppTitle: true,removeBackButton: true),
+      body: Text(''),
     );
   }
 }

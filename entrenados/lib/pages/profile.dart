@@ -23,7 +23,6 @@ class _ProfileState extends State<Profile> {
   int postCount = 0;
   bool isLoading = false;
   List<Post> posts = [];
-  String postOrientation = "grid";
   int followerCount = 0;
   int followingCount = 0;
 
@@ -157,12 +156,6 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  setPostOrientation(String orientation) {
-    setState(() {
-      this.postOrientation = orientation;
-    });
-  }
-
   buildContentProfile() {
     return FutureBuilder(
         future: usersRef.document(widget.profileId).get(),
@@ -245,7 +238,10 @@ class _ProfileState extends State<Profile> {
                 child: Hero(
                   transitionOnUserGestures: true,
                   tag: 'card',
-                  child: buildCard(),
+                  child: Material(
+                    type: MaterialType.transparency,
+                    child: buildCard(),
+                  ),
                 ),
               ),
             ],
@@ -254,40 +250,43 @@ class _ProfileState extends State<Profile> {
   }
 
   buildCard() {
-    return Container(
-      width: double.infinity,
-      margin: EdgeInsets.only(top: 15.0, left: 6.0, right: 6.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(34.0),
-        ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 25.0,
-              left: 25.0,
-              right: 25.0,
-            ),
-            child: Text(
-              'Publicaciones ($postCount)',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 25,
-                fontFamily: 'Monserrat',
-              ),
+    return ListView(
+      children: <Widget>[
+        Container(
+          margin: EdgeInsets.only(top: 15.0, left: 6.0, right: 6.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(34.0),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.all(15.0),
-            child: buildProfilePost(),
-          )
-        ],
-      ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: 25.0,
+                  left: 25.0,
+                  right: 25.0,
+                ),
+                child: Text(
+                  'Publicaciones ($postCount)',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                    fontFamily: 'Monserrat',
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(15.0),
+                child: buildProfilePost(),
+              )
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -317,23 +316,18 @@ class _ProfileState extends State<Profile> {
           ],
         ),
       );
-    } else if (postOrientation == "grid") {
+    } else {
       List<GridTile> gridTiles = [];
       posts.forEach((post) {
         gridTiles.add(GridTile(child: PostTile(post)));
       });
       return GridView.count(
-        crossAxisCount: 3,
-        childAspectRatio: 1.0,
-        mainAxisSpacing: 1.5,
-        crossAxisSpacing: 1.5,
+        crossAxisCount: 1,
+        childAspectRatio: 1.5,
+        crossAxisSpacing: 5,
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
         children: gridTiles,
-      );
-    } else if (postOrientation == "list") {
-      return Column(
-        children: posts,
       );
     }
   }

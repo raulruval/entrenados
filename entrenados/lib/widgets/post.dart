@@ -1,19 +1,18 @@
 import 'package:animator/animator.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:entrenados/models/user.dart';
 import 'package:entrenados/pages/comments.dart';
 import 'package:entrenados/pages/home.dart';
 import 'package:entrenados/widgets/custom_image.dart';
-import 'package:entrenados/widgets/progress.dart';
+import 'package:entrenados/widgets/profileHeader.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Post extends StatefulWidget {
+  final String currentUserId;
   final String postId;
   final String ownerId;
   final String username;
-  final String caption;
+  final String title;
   final String difficulty;
   final String group;
   final String duration;
@@ -25,10 +24,11 @@ class Post extends StatefulWidget {
   final dynamic muscles;
 
   Post({
+    this.currentUserId,
     this.postId,
     this.ownerId,
     this.username,
-    this.caption,
+    this.title,
     this.difficulty,
     this.group,
     this.duration,
@@ -45,7 +45,7 @@ class Post extends StatefulWidget {
       postId: doc['postId'],
       ownerId: doc['ownerId'],
       username: doc['username'],
-      caption: doc['caption'],
+      title: doc['title'],
       difficulty: doc['difficulty'],
       group: doc[''],
       duration: doc[''],
@@ -72,11 +72,11 @@ class Post extends StatefulWidget {
   }
 
   @override
-  _PostState createState() => _PostState(
+  PostState createState() => PostState(
         postId: this.postId,
         ownerId: this.ownerId,
         username: this.username,
-        caption: this.caption,
+        title: this.title,
         difficulty: this.difficulty,
         group: this.group,
         duration: this.duration,
@@ -90,12 +90,12 @@ class Post extends StatefulWidget {
       );
 }
 
-class _PostState extends State<Post> {
+class PostState extends State<Post> {
   final String currentUserId = currentUser?.id;
   final String postId;
   final String ownerId;
   final String username;
-  final String caption;
+  final String title;
   final String difficulty;
   final String group;
   final String duration;
@@ -109,11 +109,11 @@ class _PostState extends State<Post> {
   bool isLiked = false;
   bool showHeart = false;
 
-  _PostState({
+  PostState({
     this.postId,
     this.ownerId,
     this.username,
-    this.caption,
+    this.title,
     this.difficulty,
     this.group,
     this.duration,
@@ -126,42 +126,6 @@ class _PostState extends State<Post> {
     this.likeCount,
   });
 
-  buildHeader() {
-    return FutureBuilder(
-      future: usersRef.document(ownerId).get(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return circularProgress();
-        }
-        User user = User.fromDocument(snapshot.data);
-        bool isPostOwner = currentUserId == ownerId;
-        return ListTile(
-          leading: CircleAvatar(
-            backgroundImage: CachedNetworkImageProvider(user.photoUrl),
-            backgroundColor: Colors.grey,
-          ),
-          title: GestureDetector(
-            onTap: () => print("mostrar perfil"),
-            child: Text(
-              user.username,
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          subtitle: Text("location"),
-          trailing: isPostOwner
-              ? IconButton(
-                  onPressed: () => print("deletePOst"),
-                  icon: Icon(Icons.more_vert),
-                )
-              : Text(''),
-        );
-      },
-    );
-  }
-
   buildPostImage() {
     return GestureDetector(
       onDoubleTap: () => print("Like post"),
@@ -170,7 +134,10 @@ class _PostState extends State<Post> {
         child: Stack(
           alignment: Alignment.center,
           children: <Widget>[
-            cachedNetworkImage(mediaUrl),
+            ClipRRect(
+              child: cachedNetworkImage(mediaUrl, context,false),
+              borderRadius: BorderRadius.circular(20.0),
+            ),
             showHeart
                 ? Animator(
                     duration: Duration(milliseconds: 300),
@@ -197,77 +164,65 @@ class _PostState extends State<Post> {
     return Column(
       children: <Widget>[
         Text(
-          "Prueba de texto",
+          "$title",
           style: TextStyle(fontSize: 30.0),
         ),
+        Text("$duration"),
+        Text("$difficulty"),
+        Text("$group"),
+        Text("$muscles"),
+        Text("$equipment"),
+        Text("$notes"),
       ],
     );
   }
 
   buildPostSocial() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
+        Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
+          GestureDetector(
+            onTap: () => print("liked post"),
+            child: Icon(
+              isLiked ? Icons.favorite : Icons.favorite_border,
+              size: 38.0,
+              color: Colors.pink,
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 20),
+            child: Text(
+              "$likeCount",
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 20.0,
+              ),
+            ),
+          ),
+        ]),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(
-                top: 40.0,
-                left: 20.0,
-              ),
-            ),
-            GestureDetector(
-              onTap: () => print("liked post"),
-              child: Icon(
-                isLiked ? Icons.favorite : Icons.favorite_border,
-                size: 28.0,
-                color: Colors.pink,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                right: 20.0,
-              ),
-            ),
             GestureDetector(
               onTap: () => print("mostrar comentarios"),
               child: Icon(
                 Icons.chat,
-                size: 28.0,
+                size: 38.0,
                 color: Colors.blue[900],
               ),
             ),
-          ],
-        ),
-        Row(
-          children: <Widget>[
             Container(
               margin: EdgeInsets.only(left: 20),
               child: Text(
-                "$likeCount likes",
+                "0",
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
+                  fontSize: 20.0,
                 ),
               ),
-            ),
-          ],
-        ),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              margin: EdgeInsets.only(left: 20),
-              child: Text(
-                "$username ",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            Expanded(
-              child: Text(""),
             ),
           ],
         ),
@@ -279,12 +234,18 @@ class _PostState extends State<Post> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        buildHeader(),
+        buildHeader(this.ownerId, this.currentUserId,true),
         Divider(
           height: 0.8,
         ),
-        buildPostImage(),
-        buildPostSocial(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            buildPostImage(),
+            buildPostSocial(),
+          ],
+        ),
         buildPostInfo(),
       ],
     );
