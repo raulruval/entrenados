@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:animator/animator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entrenados/pages/comments.dart';
@@ -106,7 +108,7 @@ class PostState extends State<Post> {
   int likeCount;
   Map equipment;
   Map muscles;
-  bool isLiked = false;
+  bool isLiked;
   bool showHeart = false;
 
   PostState({
@@ -126,9 +128,44 @@ class PostState extends State<Post> {
     this.likeCount,
   });
 
+  handleLikePost() {
+    bool _isLiked = (likes[currentUserId] == true);
+    if (_isLiked) {
+      postsRef
+          .document((ownerId))
+          .collection('userPosts')
+          .document(postId)
+          .updateData({'likes.$currentUserId': false});
+      // removeLikeFromActivityFeed();
+      setState(() {
+        likeCount -= 1;
+        isLiked = false;
+        likes[currentUserId] = false;
+      });
+    } else if (!_isLiked) {
+      postsRef
+          .document((ownerId))
+          .collection('userPosts')
+          .document(postId)
+          .updateData({'likes.$currentUserId': true});
+      // addLikeToActivityFeed();
+      setState(() {
+        likeCount += 1;
+        isLiked = true;
+        likes[currentUserId] = true;
+        showHeart = true;
+      });
+      Timer(Duration(milliseconds: 500), () {
+        setState(() {
+          showHeart = false;
+        });
+      });
+    }
+  }
+
   buildPostImage() {
     return GestureDetector(
-      onDoubleTap: () => print("Like post"),
+      onDoubleTap: handleLikePost,
       child: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Stack(
@@ -183,7 +220,7 @@ class PostState extends State<Post> {
       children: <Widget>[
         Row(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
           GestureDetector(
-            onTap: () => print("liked post"),
+            onTap: handleLikePost,
             child: Icon(
               isLiked ? Icons.favorite : Icons.favorite_border,
               size: 38.0,
@@ -206,7 +243,12 @@ class PostState extends State<Post> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             GestureDetector(
-              onTap: () => print("mostrar comentarios"),
+              onTap: () => showComments(
+                context,
+                postId: postId,
+                ownerId: ownerId,
+                mediaUrl: mediaUrl,
+              ),
               child: Icon(
                 Icons.chat,
                 size: 38.0,
@@ -232,6 +274,7 @@ class PostState extends State<Post> {
 
   @override
   Widget build(BuildContext context) {
+    isLiked = (likes[currentUserId] == true);
     return Column(
       children: <Widget>[
         buildHeader(

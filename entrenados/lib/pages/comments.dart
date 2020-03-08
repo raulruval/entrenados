@@ -1,8 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:entrenados/widgets/progress.dart';
 import 'package:flutter/material.dart';
 import 'package:entrenados/widgets/header.dart';
 import 'package:timeago/timeago.dart' as timeago;
+
+import 'home.dart';
 
 class Comments extends StatefulWidget {
   final String postId;
@@ -35,58 +38,62 @@ class CommentsState extends State<Comments> {
     this.postMediaUrl,
   });
 
-  get addComment => null;
+ 
 
   buildComments() {
-  //   return StreamBuilder(
-  //     stream: commentsRef
-  //         .document(postId)
-  //         .collection("comments")
-  //         .orderBy("timestamp", descending: false)
-  //         .snapshots(),
-  //     builder: ((context, snapshot) {
-  //       if (!snapshot.hasData) {
-  //         return circularProgress();
-  //       }
-  //       List<Comment> comments = [];
-  //       snapshot.data.documents.forEach((doc) {
-  //         comments.add(Comment.fromDocument(doc));
-  //       });
-  //       return ListView(
-  //         children: comments,
-  //       );
-  //     }),
-  //   );
-  // }
+      return StreamBuilder(
+        stream: commentsRef
+            .document(postId)
+            .collection("comments")
+            .orderBy("timestamp", descending: false)
+            .snapshots(),
+        builder: ((context, snapshot) {
+          if (!snapshot.hasData) {
+            return circularProgress();
+          }
+          List<Comment> comments = [];
+          snapshot.data.documents.forEach((doc) {
+            comments.add(Comment.fromDocument(doc));
+          });
+          return ListView(
+            children: comments,
+          );
+        }),
+      );
+    }
 
-  // addComment() {
-  //   commentsRef.document(postId).collection("comments").add({
-  //     "username": currentUser.username,
-  //     "comment": commentController.text,
-  //     "timestamp": timestamp,
-  //     "avatarUrl": currentUser.photoUrl,
-  //     "userId": currentUser.id,
-  //   });
-  //   bool isNotPostOwner = postOwnerId != currentUser.id;
-  //   if (isNotPostOwner) {
-  //     activityFeedRef.document(postOwnerId).collection('feedItems').add(({
-  //           "type": "comment",
-  //           "commentData": commentController.text,
-  //           "timestamp": timestamp,
-  //           "postId": postId,
-  //           "userId": currentUser.id,
-  //           "username": currentUser.username,
-  //           "userProfileImg": currentUser.photoUrl,
-  //           "mediaUrl": postMediaUrl,
-  //         }));
-  //   } 
-  //   commentController.clear();
+    addComment() {
+      commentsRef.document(postId).collection("comments").add({
+        "username": currentUser.username,
+        "comment": commentController.text,
+        "timestamp": timestamp,
+        "avatarUrl": currentUser.photoUrl,
+        "userId": currentUser.id,
+      });
+      // bool isNotPostOwner = postOwnerId != currentUser.id;
+      // if (isNotPostOwner) {
+      //   activityFeedRef.document(postOwnerId).collection('feedItems').add(({
+      //         "type": "comment",
+      //         "commentData": commentController.text,
+      //         "timestamp": timestamp,
+      //         "postId": postId,
+      //         "userId": currentUser.id,
+      //         "username": currentUser.username,
+      //         "userProfileImg": currentUser.photoUrl,
+      //         "mediaUrl": postMediaUrl,
+      //       }));
+      // }
+      commentController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: header(context, titleText: "Comentarios"),
+      appBar: header(
+        context,
+        titleText: "Comentarios",
+        isAppTitle: false,
+      ),
       body: Column(
         children: <Widget>[
           Expanded(
@@ -103,7 +110,7 @@ class CommentsState extends State<Comments> {
             trailing: OutlineButton(
               onPressed: addComment,
               borderSide: BorderSide.none,
-              child: Text("Post"),
+              child: Text("Añadir"),
             ),
           ),
         ],

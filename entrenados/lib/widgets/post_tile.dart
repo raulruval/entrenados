@@ -56,13 +56,28 @@ class PostTile extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(
                             top: 10.0, right: 10.0, bottom: 10.0, left: 15.0),
-                        child: ClipRRect(
-                          child: cachedNetworkImage(
-                            post.mediaUrl,
-                            context,
-                            true,
-                          ),
-                          borderRadius: BorderRadius.circular(20.0),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: <Widget>[
+                            ClipRRect(
+                              child: cachedNetworkImage(
+                                post.mediaUrl,
+                                context,
+                                true,
+                              ),
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            Text(
+                              "16",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromRGBO(255, 255, 255, 0.6),
+                                fontSize: 45.0,
+                                fontFamily: "Monserrat"
+                                
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
