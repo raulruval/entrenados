@@ -59,7 +59,7 @@ exports.onDeleteFollower = functions.firestore
 
     const querySnapshot = await timelinePostsRef.get();
     querySnapshot.forEach(doc => {
-      if (doc.exists) {
+       if (doc.exists) {
         doc.ref.delete();
       }
     });

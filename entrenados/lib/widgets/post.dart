@@ -316,6 +316,7 @@ class PostState extends State<Post> {
         buildHeader(
           this.ownerId,
           this.currentUserId,
+          this.postId,
           true,
           null,
         ),

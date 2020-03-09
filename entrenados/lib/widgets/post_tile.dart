@@ -40,7 +40,7 @@ class PostTile extends StatelessWidget {
                   Flexible(
                     child: Container(
                       child: buildHeader(
-                          post.ownerId, post.currentUserId, false, post.title),
+                          post.ownerId, post.currentUserId, post.postId, false, post.title),
                     ),
                   )
                 ],
@@ -68,7 +68,7 @@ class PostTile extends StatelessWidget {
                               borderRadius: BorderRadius.circular(20.0),
                             ),
                             Text(
-                              "16",
+                              "16'",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Color.fromRGBO(255, 255, 255, 0.6),

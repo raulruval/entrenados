@@ -22,7 +22,7 @@ class Share extends StatefulWidget {
   _ShareState createState() => _ShareState();
 }
 
-class _ShareState extends State<Share> {
+class _ShareState extends State<Share> with AutomaticKeepAliveClientMixin<Share>{
   TextEditingController titleController = TextEditingController();
   TextEditingController notesController = TextEditingController();
   TextEditingController duracionController = TextEditingController();
@@ -463,8 +463,11 @@ class _ShareState extends State<Share> {
     );
   }
 
+ bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return file == null && defaultImg == false
         ? buildCompartir()
         : buildFormularioCompartir();
