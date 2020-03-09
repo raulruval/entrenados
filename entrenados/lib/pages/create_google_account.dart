@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:entrenados/widgets/header.dart';
 
-class CrearCuentaGoogle extends StatefulWidget {
+class CreateGoogleAccount extends StatefulWidget {
   @override
-  _CreateAccountState createState() => _CreateAccountState();
+  _CreateGoogleAccountState createState() => _CreateGoogleAccountState();
 }
 
-class _CreateAccountState extends State<CrearCuentaGoogle> {
+class _CreateGoogleAccountState extends State<CreateGoogleAccount> {
   String username;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();

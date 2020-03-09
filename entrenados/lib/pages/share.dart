@@ -1,29 +1,29 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:entrenados/models/item.dart';
-import 'package:entrenados/models/usuario.dart';
+import 'package:entrenados/models/user.dart';
 import 'package:entrenados/pages/equipment.dart';
 import 'package:entrenados/pages/musclesinvolved.dart';
-import 'package:entrenados/widgets/progreso.dart';
+import 'package:entrenados/widgets/progress.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:entrenados/pages/inicio.dart';
+import 'package:entrenados/pages/home.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter_duration_picker/flutter_duration_picker.dart';
 import 'package:image/image.dart' as Im;
 
-class Compartir extends StatefulWidget {
-  final Usuario currentUser;
+class Share extends StatefulWidget {
+  final User currentUser;
 
-  Compartir({this.currentUser});
+  Share({this.currentUser});
   @override
-  _CompartirState createState() => _CompartirState();
+  _ShareState createState() => _ShareState();
 }
 
-class _CompartirState extends State<Compartir> {
-  TextEditingController captionController = TextEditingController();
+class _ShareState extends State<Share> {
+  TextEditingController titleController = TextEditingController();
   TextEditingController notesController = TextEditingController();
   TextEditingController duracionController = TextEditingController();
   List<Item> selectedMuscles = List();
@@ -220,7 +220,7 @@ class _CompartirState extends State<Compartir> {
 
   createPostInFirestore(
       {String mediaUrl,
-      String caption,
+      String title,
       int duration,
       String currentDifficulty,
       String currentGroup,
@@ -236,7 +236,7 @@ class _CompartirState extends State<Compartir> {
       "ownerId": widget.currentUser.id,
       "username": widget.currentUser.username,
       "mediaUrl": mediaUrl,
-      "caption": caption,
+      "title": title,
       "duration": duration,
       "currentDifficulty": currentDifficulty,
       "currentGroup": currentGroup,
@@ -256,14 +256,14 @@ class _CompartirState extends State<Compartir> {
     String mediaUrl = await uploadImage(file);
     createPostInFirestore(
         mediaUrl: mediaUrl,
-        caption: captionController.text,
+        title: titleController.text,
         duration: resultingDuration.inMinutes,
         currentDifficulty: _currentDifficulty,
         currentGroup: _currentGroup,
         selectedMuscles: selectedMuscles,
         selectedEquipment: selectedEquipment,
         notes: notesController.text);
-    captionController.clear();
+    titleController.clear();
     notesController.clear();
     selectedEquipment.clear();
     selectedMuscles.clear();
@@ -307,7 +307,7 @@ class _CompartirState extends State<Compartir> {
         title: Container(
           width: 250.0,
           child: TextField(
-            controller: captionController,
+            controller: titleController,
             decoration: InputDecoration(
                 hintText: "Titulo del entrenamiento", border: InputBorder.none),
           ),
@@ -355,7 +355,7 @@ class _CompartirState extends State<Compartir> {
       Divider(),
       ListTile(
         leading: Icon(
-          Icons.book,
+          Icons.rowing,
           color: Colors.teal,
           size: 35.0,
         ),
@@ -385,7 +385,7 @@ class _CompartirState extends State<Compartir> {
       Divider(),
       ListTile(
         leading: Icon(
-          Icons.nature_people,
+          Icons.fitness_center,
           color: Colors.teal,
           size: 35.0,
         ),

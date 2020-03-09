@@ -1,7 +1,15 @@
-import 'package:entrenados/pages/inicio.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:entrenados/pages/home.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+void main(){
+  Firestore.instance.settings(timestampsInSnapshotsEnabled: true).then( (_) {
+    print("Timestamps funcionando");
+  }, onError: (_) {
+    print("Timestamps no funcionan");
+  });
+  runApp(MyApp());
+} 
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -11,9 +19,11 @@ class MyApp extends StatelessWidget {
       title: 'Entrenados',
       theme: ThemeData(
         fontFamily: 'Open Sans',
-        primarySwatch: Colors.teal,
+        primarySwatch: Colors.teal
       ),
-      home: Inicio(),
+      home: Home(),
+      
+      
     );
   }
 }
@@ -21,6 +31,7 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
   final String title;
+  
 
   @override
   _MyHomePageState createState() => _MyHomePageState();

@@ -11,7 +11,7 @@ AppBar header(context, { bool isAppTitle = false, String titleText, removeBackBu
         fontSize: isAppTitle ? 50.0 : 22.0,
       ),
       overflow: TextOverflow.ellipsis,
-    ),
+    ) ?? 'Defecto',
     centerTitle: true,
     backgroundColor: Theme.of(context).accentColor,
   );
