@@ -45,8 +45,9 @@ class Post extends StatefulWidget {
   factory Post.fromDocument(DocumentSnapshot doc) {
     return Post(
       postId: doc['postId'],
-      ownerId: doc['ownerId'],
       username: doc['username'],
+      ownerId: doc['ownerId'],
+
       title: doc['title'],
       difficulty: doc['difficulty'],
       group: doc[''],
@@ -128,6 +129,41 @@ class PostState extends State<Post> {
     this.likeCount,
   });
 
+  addLikeToActivityFeed() {
+    bool isNotPostOwner = currentUserId != ownerId;
+    if (isNotPostOwner) {
+      activityFeedRef
+          .document(ownerId)
+          .collection("feedItems")
+          .document(postId)
+          .setData({
+        "type": "like",
+        "username": currentUser.username,
+        "userId": currentUser.id,
+        "userProfileImg": currentUser.photoUrl,
+        "postId": postId,
+        "mediaUrl": mediaUrl,
+        "timestamp": timestamp,
+      });
+    }
+  }
+
+  removeLikeFromActivityFeed() {
+    bool isNotPostOwner = currentUserId != ownerId;
+    if (isNotPostOwner) {
+      activityFeedRef
+          .document(ownerId)
+          .collection("feedItems")
+          .document(postId)
+          .get()
+          .then((doc) {
+        if (doc.exists) {
+          doc.reference.delete();
+        }
+      });
+    }
+  }
+
   handleLikePost() {
     bool _isLiked = (likes[currentUserId] == true);
     if (_isLiked) {
@@ -136,7 +172,7 @@ class PostState extends State<Post> {
           .collection('userPosts')
           .document(postId)
           .updateData({'likes.$currentUserId': false});
-      // removeLikeFromActivityFeed();
+      removeLikeFromActivityFeed();
       setState(() {
         likeCount -= 1;
         isLiked = false;
@@ -148,7 +184,7 @@ class PostState extends State<Post> {
           .collection('userPosts')
           .document(postId)
           .updateData({'likes.$currentUserId': true});
-      // addLikeToActivityFeed();
+      addLikeToActivityFeed();
       setState(() {
         likeCount += 1;
         isLiked = true;

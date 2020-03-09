@@ -30,6 +30,39 @@ class _ProfileState extends State<Profile> {
   void initState() {
     super.initState();
     getProfilePosts();
+    getFollowers();
+    getFollowing();
+    checkIfFollowing();
+
+  }
+    checkIfFollowing() async {
+    DocumentSnapshot doc = await followersRef
+        .document(widget.profileId)
+        .collection('userFollowers')
+        .document(currentUserId)
+        .get();
+    setState(() {
+      isFollowing = doc.exists;
+    });
+  }
+    getFollowers() async {
+    QuerySnapshot snapshot = await followersRef
+        .document(widget.profileId)
+        .collection('userFollowers')
+        .getDocuments();
+    setState(() {
+      followerCount = snapshot.documents.length;
+    });
+  }
+
+  getFollowing() async{
+    QuerySnapshot snapshot = await followingRef
+    .document(widget.profileId)
+    .collection('userFollowing')
+    .getDocuments();
+     setState(() {
+      followingCount= snapshot.documents.length;
+    });
   }
 
   getProfilePosts() async {
@@ -113,6 +146,71 @@ class _ProfileState extends State<Profile> {
             builder: (context) => EditProfile(currentUserId: currentUserId)));
   }
 
+    handleFollowing() {
+    setState(() {
+      isFollowing = false;
+    });
+    followersRef
+        .document(widget.profileId)
+        .collection('userFollowers')
+        .document(currentUserId)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+  
+    followingRef
+        .document(currentUserId)
+        .collection('userFollowing')
+        .document(widget.profileId)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+    activityFeedRef
+        .document(widget.profileId)
+        .collection('feedItems')
+        .document(currentUserId)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+  }
+
+  handleFollow() {
+    setState(() {
+      isFollowing = true;
+    });
+    followersRef
+        .document(widget.profileId)
+        .collection('userFollowers')
+        .document(currentUserId)
+        .setData({});
+    followingRef
+        .document(currentUserId)
+        .collection('userFollowing')
+        .document(widget.profileId)
+        .setData({});
+    activityFeedRef
+        .document(widget.profileId)
+        .collection('feedItems')
+        .document(currentUserId)
+        .setData({
+      "type": "follow",
+      "ownerId": widget.profileId,
+      "username": currentUser.username,
+      "userId": currentUserId,
+      "userProfileImg": currentUser.photoUrl,
+      "timestamp": timestamp,
+    });
+  }
+
   buildProfileButton() {
     bool isProfileOwner = currentUserId == widget.profileId;
     if (isProfileOwner) {
@@ -125,12 +223,12 @@ class _ProfileState extends State<Profile> {
     } else if (isFollowing) {
       return buildButton(
         text: "Siguiendo",
-        // function: handleFollowing,
+         function: handleFollowing,
       );
     } else if (!isFollowing) {
       return buildButton(
         text: "Seguir",
-        // function: handleFollow,
+         function: handleFollow,
       );
     }
   }
@@ -227,9 +325,9 @@ class _ProfileState extends State<Profile> {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.all(15.0),
-                    child: buildCountColumn("seguidores", 0),
+                    child: buildCountColumn("seguidores", followerCount),
                   ),
-                  buildCountColumn("seguidos", 0),
+                  buildCountColumn("seguidos", followingCount),
                   buildProfileButton()
                 ],
               ),
@@ -256,7 +354,7 @@ class _ProfileState extends State<Profile> {
           margin: EdgeInsets.only(top: 15.0, left: 6.0, right: 6.0),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.vertical(
+            borderRadius: BorderRadius.vertical( 
               top: Radius.circular(34.0),
             ),
           ),

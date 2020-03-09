@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:entrenados/pages/activity.dart';
 import 'package:flutter/material.dart';
 import 'package:entrenados/models/user.dart';
 import 'package:entrenados/pages/home.dart';
@@ -137,7 +138,7 @@ class ResultadoUsuarios extends StatelessWidget {
       child: Column(
         children: <Widget>[
           GestureDetector(
-            //    onTap: () => showProfile(context, profileId: user.id),
+               onTap: () => showProfile(context, profileId: user.id),
             child: ListTile(
               leading: CircleAvatar(
                 backgroundColor: Colors.grey,

@@ -3,12 +3,12 @@ import 'package:entrenados/pages/home.dart';
 import 'package:flutter/material.dart';
 
 void main(){
+   runApp(MyApp());
   Firestore.instance.settings(timestampsInSnapshotsEnabled: true).then( (_) {
     print("Timestamps funcionando");
   }, onError: (_) {
     print("Timestamps no funcionan");
   });
-  runApp(MyApp());
 } 
 
 class MyApp extends StatelessWidget {
