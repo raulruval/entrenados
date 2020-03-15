@@ -349,6 +349,7 @@ class _ProfileState extends State<Profile> {
 
   buildCard() {
     return ListView(
+      shrinkWrap: true,
       children: <Widget>[
         Container(
           margin: EdgeInsets.only(top: 15.0, left: 6.0, right: 6.0),
@@ -361,6 +362,7 @@ class _ProfileState extends State<Profile> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(
@@ -395,19 +397,20 @@ class _ProfileState extends State<Profile> {
       return Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             SvgPicture.asset(
-              'assets/images/no_content.svg',
+              'assets/img/empty.svg',
               height: 260.0,
             ),
             Padding(
-              padding: EdgeInsets.only(top: 20.0),
+              padding: EdgeInsets.only(top: 20.0,bottom: 60),
               child: Text(
-                "No existen publicaciones",
+                "No existen publicaciones", textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 40.0,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.bold
                 ),
               ),
             ),

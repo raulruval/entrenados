@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:animator/animator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:entrenados/models/item.dart';
 import 'package:entrenados/pages/comments.dart';
+import 'package:entrenados/pages/equipment.dart';
 import 'package:entrenados/pages/home.dart';
+import 'package:entrenados/pages/musclesinvolved.dart';
 import 'package:entrenados/widgets/custom_image.dart';
 import 'package:entrenados/widgets/profileHeader.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,13 +20,15 @@ class Post extends StatefulWidget {
   final String title;
   final String difficulty;
   final String group;
-  final String duration;
+  final int duration;
   final String description;
   final String mediaUrl;
   final String notes;
   final dynamic likes;
-  final dynamic equipment;
-  final dynamic muscles;
+  final String equipment;
+  final String muscles;
+  final List<Item> selectedEquipment;
+  final List<Item> selectedMuscles;
 
   Post({
     this.currentUserId,
@@ -40,6 +45,8 @@ class Post extends StatefulWidget {
     this.likes,
     this.equipment,
     this.muscles,
+    this.selectedMuscles,
+    this.selectedEquipment,
   });
 
   factory Post.fromDocument(DocumentSnapshot doc) {
@@ -47,11 +54,10 @@ class Post extends StatefulWidget {
       postId: doc['postId'],
       username: doc['username'],
       ownerId: doc['ownerId'],
-
       title: doc['title'],
-      difficulty: doc['difficulty'],
-      group: doc[''],
-      duration: doc[''],
+      difficulty: doc['currentDifficulty'],
+      group: doc['currentGroup'],
+      duration: doc['duration'],
       description: doc['description'],
       mediaUrl: doc['mediaUrl'],
       notes: doc['notes'],
@@ -74,6 +80,30 @@ class Post extends StatefulWidget {
     return count;
   }
 
+  getSelectedEquipment(String equipment) {
+    List<Item> list;
+    List<Item> actualEquipment = new List();
+    list = Equipment.getEquipment();
+    equipment.split("-").forEach((seq) => {
+          list.forEach((equip) => {
+                if (seq == equip.index.toString()) {actualEquipment.add(equip)}
+              })
+        });
+    return actualEquipment;
+  }
+
+  getSelectedMuscles(String muscles) {
+    List<Item> list;
+    List<Item> actualMuscles = new List();
+    list = Musclesinvolved.getMuscles();
+    muscles.split("-").forEach((seq) => {
+          list.forEach((mus) => {
+                if (seq == mus.index.toString()) {actualMuscles.add(mus)}
+              })
+        });
+    return actualMuscles;
+  }
+
   @override
   PostState createState() => PostState(
         postId: this.postId,
@@ -90,6 +120,8 @@ class Post extends StatefulWidget {
         likes: this.likes,
         muscles: this.muscles,
         equipment: this.equipment,
+        selectedEquipment: getSelectedEquipment(equipment),
+        selectedMuscles: getSelectedMuscles(muscles),
       );
 }
 
@@ -101,17 +133,18 @@ class PostState extends State<Post> {
   final String title;
   final String difficulty;
   final String group;
-  final String duration;
+  final int duration;
   final String description;
   final String mediaUrl;
   final String notes;
   Map likes;
   int likeCount;
-  Map equipment;
-  Map muscles;
+  String equipment;
+  String muscles;
   bool isLiked;
   bool showHeart = false;
-
+  List<Item> selectedEquipment;
+  List<Item> selectedMuscles;
   PostState({
     this.postId,
     this.ownerId,
@@ -127,6 +160,8 @@ class PostState extends State<Post> {
     this.equipment,
     this.muscles,
     this.likeCount,
+    this.selectedEquipment,
+    this.selectedMuscles,
   });
 
   addLikeToActivityFeed() {
@@ -243,8 +278,8 @@ class PostState extends State<Post> {
         Text("$duration"),
         Text("$difficulty"),
         Text("$group"),
-        Text("$muscles"),
-        Text("$equipment"),
+        for (var item in selectedMuscles) Text(item.name),
+        for (var item in selectedEquipment) Text(item.name),
         Text("$notes"),
       ],
     );

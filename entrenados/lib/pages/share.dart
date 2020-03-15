@@ -26,8 +26,10 @@ class _ShareState extends State<Share> with AutomaticKeepAliveClientMixin<Share>
   TextEditingController titleController = TextEditingController();
   TextEditingController notesController = TextEditingController();
   TextEditingController duracionController = TextEditingController();
-  List<Item> selectedMuscles = List();
-  List<Item> selectedEquipment = List();
+  List<Item> selectedMusclesList = List();
+  List<Item> selectedEquipmentList = List();
+  String selectedMuscles="";
+  String selectedEquipment="";
   List _difficulty = ["Principiante", "Intermedio", "Avanzado"];
   List _group = [
     "Resistencia",
@@ -179,24 +181,31 @@ class _ShareState extends State<Share> with AutomaticKeepAliveClientMixin<Share>
     });
   }
 
+buildItemSequence(List<Item> itemList){
+  String sequence = "";
+  itemList.forEach((item) => {
+    sequence += item.index.toString() + "-"
+  });
+  return sequence;
+}
   _getMusclesInvolved(context) async {
-    selectedMuscles = await Navigator.push(
+    selectedMusclesList = await Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => Musclesinvolved(selectedMuscles))) ??
-        selectedMuscles;
-    print("Musculos involucrados guardados en compartir");
-    print(selectedMuscles.toString());
+                builder: (context) => Musclesinvolved(selectedMusclesList))) ??
+        selectedMusclesList;
+
+    selectedMuscles = buildItemSequence(selectedMusclesList);
   }
 
   _getEquipment(context) async {
-    selectedEquipment = await Navigator.push(
+    selectedEquipmentList = await Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => Equipment(selectedEquipment))) ??
+                builder: (context) => Equipment(selectedEquipmentList))) ??
         selectedEquipment;
-    print("equipamiento guardados en compartir");
-    print(selectedEquipment.toString());
+
+    selectedEquipment = buildItemSequence(selectedEquipmentList);
   }
 
   compressImage() async {
@@ -224,8 +233,8 @@ class _ShareState extends State<Share> with AutomaticKeepAliveClientMixin<Share>
       int duration,
       String currentDifficulty,
       String currentGroup,
-      List<Item> selectedMuscles,
-      List<Item> selectedEquipment,
+      String selectedMuscles,
+      String selectedEquipment,
       String notes}) {
     postsRef
         .document(widget.currentUser.id)
@@ -240,8 +249,8 @@ class _ShareState extends State<Share> with AutomaticKeepAliveClientMixin<Share>
       "duration": duration,
       "currentDifficulty": currentDifficulty,
       "currentGroup": currentGroup,
-      "selectedMuscles": {},
-      "selectedEquipment": {},
+      "selectedMuscles": selectedMuscles,
+      "selectedEquipment": selectedEquipment,
       "notes": notes,
       "timestamp": timestamp,
       "likes": {},
@@ -265,8 +274,8 @@ class _ShareState extends State<Share> with AutomaticKeepAliveClientMixin<Share>
         notes: notesController.text);
     titleController.clear();
     notesController.clear();
-    selectedEquipment.clear();
-    selectedMuscles.clear();
+    selectedEquipment = "";
+    selectedMuscles = "";
     setState(() {
       file = null;
       defaultImg = false;
