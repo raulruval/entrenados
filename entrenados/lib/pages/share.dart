@@ -22,14 +22,16 @@ class Share extends StatefulWidget {
   _ShareState createState() => _ShareState();
 }
 
-class _ShareState extends State<Share> with AutomaticKeepAliveClientMixin<Share>{
+class _ShareState extends State<Share>
+    with AutomaticKeepAliveClientMixin<Share> {
   TextEditingController titleController = TextEditingController();
   TextEditingController notesController = TextEditingController();
   TextEditingController duracionController = TextEditingController();
   List<Item> selectedMusclesList = List();
   List<Item> selectedEquipmentList = List();
-  String selectedMuscles="";
-  String selectedEquipment="";
+  String selectedMuscles = "";
+  String selectedEquipment = "";
+  String mainResource = "";
   List _difficulty = ["Principiante", "Intermedio", "Avanzado"];
   List _group = [
     "Resistencia",
@@ -181,13 +183,12 @@ class _ShareState extends State<Share> with AutomaticKeepAliveClientMixin<Share>
     });
   }
 
-buildItemSequence(List<Item> itemList){
-  String sequence = "";
-  itemList.forEach((item) => {
-    sequence += item.index.toString() + "-"
-  });
-  return sequence;
-}
+  buildItemSequence(List<Item> itemList) {
+    String sequence = "";
+    itemList.forEach((item) => {sequence += item.index.toString() + "-"});
+    return sequence;
+  }
+
   _getMusclesInvolved(context) async {
     selectedMusclesList = await Navigator.push(
             context,
@@ -235,6 +236,7 @@ buildItemSequence(List<Item> itemList){
       String currentGroup,
       String selectedMuscles,
       String selectedEquipment,
+      String mainResource,
       String notes}) {
     postsRef
         .document(widget.currentUser.id)
@@ -251,6 +253,7 @@ buildItemSequence(List<Item> itemList){
       "currentGroup": currentGroup,
       "selectedMuscles": selectedMuscles,
       "selectedEquipment": selectedEquipment,
+      "mainResource": mainResource,
       "notes": notes,
       "timestamp": timestamp,
       "likes": {},
@@ -271,17 +274,32 @@ buildItemSequence(List<Item> itemList){
         currentGroup: _currentGroup,
         selectedMuscles: selectedMuscles,
         selectedEquipment: selectedEquipment,
+        mainResource: mainResource,
         notes: notesController.text);
     titleController.clear();
     notesController.clear();
     selectedEquipment = "";
     selectedMuscles = "";
+    mainResource = "";
     setState(() {
       file = null;
       defaultImg = false;
       isUploading = false;
       postId = Uuid().v4();
     });
+  }
+
+  uploadResource() {
+    print("Uploading test resource");
+    if (notesController.text == "video") {
+      mainResource = "video";
+    }else if (notesController.text == "pdf"){
+      mainResource = "pdf";
+    }else if (notesController.text == "link"){
+      mainResource = "link";
+    }else{
+      mainResource ="no";
+    }
   }
 
   buildFormularioCompartir() {
@@ -433,7 +451,7 @@ buildItemSequence(List<Item> itemList){
             borderRadius: BorderRadius.circular(30.0),
           ),
           color: Colors.teal,
-          onPressed: () => print("Escoge el recurso"),
+          onPressed: () => uploadResource(),
           icon: Icon(
             Icons.file_upload,
             color: Colors.white,
@@ -472,7 +490,7 @@ buildItemSequence(List<Item> itemList){
     );
   }
 
- bool get wantKeepAlive => true;
+  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {

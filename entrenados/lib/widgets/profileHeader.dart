@@ -17,9 +17,12 @@ Widget buildHeader(
       User user = User.fromDocument(snapshot.data);
       bool isPostOwner = currentUserId == ownerId;
       return ListTile(
-        leading: CircleAvatar(
-          backgroundImage: CachedNetworkImageProvider(user.photoUrl),
-          backgroundColor: Colors.grey,
+        leading: GestureDetector(
+          onTap: () => showProfile(context, profileId: ownerId),
+          child: CircleAvatar(
+            backgroundImage: CachedNetworkImageProvider(user.photoUrl),
+            backgroundColor: Colors.grey,
+          ),
         ),
         title: title == null
             ? GestureDetector(
@@ -122,16 +125,13 @@ deletePost(ownerId, postId) async {
     }
   });
 
-      // Eliminar los comentarios
+  // Eliminar los comentarios
 
-    QuerySnapshot commentsSnapshot = await commentsRef
-        .document(postId)
-        .collection('comments')
-        .getDocuments();
-    commentsSnapshot.documents.forEach((doc) {
-      if (doc.exists) {
-        doc.reference.delete();
-      }
-    });
-    
+  QuerySnapshot commentsSnapshot =
+      await commentsRef.document(postId).collection('comments').getDocuments();
+  commentsSnapshot.documents.forEach((doc) {
+    if (doc.exists) {
+      doc.reference.delete();
+    }
+  });
 }

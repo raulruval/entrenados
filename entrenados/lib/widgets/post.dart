@@ -29,6 +29,7 @@ class Post extends StatefulWidget {
   final String muscles;
   final List<Item> selectedEquipment;
   final List<Item> selectedMuscles;
+  final String mainResource;
 
   Post({
     this.currentUserId,
@@ -47,6 +48,7 @@ class Post extends StatefulWidget {
     this.muscles,
     this.selectedMuscles,
     this.selectedEquipment,
+    this.mainResource
   });
 
   factory Post.fromDocument(DocumentSnapshot doc) {
@@ -64,6 +66,7 @@ class Post extends StatefulWidget {
       likes: doc['likes'],
       equipment: doc['selectedEquipment'],
       muscles: doc['selectedMuscles'],
+      mainResource: doc['mainResource'],
     );
   }
 
@@ -122,6 +125,7 @@ class Post extends StatefulWidget {
         equipment: this.equipment,
         selectedEquipment: getSelectedEquipment(equipment),
         selectedMuscles: getSelectedMuscles(muscles),
+        mainResource: this.mainResource,
       );
 }
 
@@ -145,6 +149,8 @@ class PostState extends State<Post> {
   bool showHeart = false;
   List<Item> selectedEquipment;
   List<Item> selectedMuscles;
+  String mainResource;
+
   PostState({
     this.postId,
     this.ownerId,
@@ -162,6 +168,7 @@ class PostState extends State<Post> {
     this.likeCount,
     this.selectedEquipment,
     this.selectedMuscles,
+    this.mainResource,
   });
 
   addLikeToActivityFeed() {
