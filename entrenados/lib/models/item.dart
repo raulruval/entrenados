@@ -5,4 +5,5 @@ class Item {
   bool isSelected;
 
   Item(this.imgURL, this.name, this.index, this.isSelected);
-}
+  
+  }
