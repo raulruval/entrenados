@@ -545,23 +545,33 @@ class PostState extends State<Post> {
     isLiked = (likes[currentUserId] == true);
     return Column(
       children: <Widget>[
-        buildHeader(
-          this.ownerId,
-          this.currentUserId,
-          this.postId,
-          true,
-          null,
+        Expanded(
+          child: ListView(
+            children: <Widget>[
+              buildHeader(
+                this.ownerId,
+                this.currentUserId,
+                this.postId,
+                true,
+                null,
+              ),
+              Divider(
+                height: 0.8,
+              ),
+              Row(
+                children: <Widget>[
+                  buildPostImage(),
+                  buildPostSocial(),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  buildPostInfo(),
+                ],
+              )
+            ],
+          ),
         ),
-        Divider(
-          height: 0.8,
-        ),
-        Row(
-          children: <Widget>[
-            buildPostImage(),
-            buildPostSocial(),
-          ],
-        ),
-        buildPostInfo(),
       ],
     );
   }

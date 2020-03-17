@@ -104,9 +104,8 @@ class _HomeState extends State<Home> {
   }
 
   handleSignIn(String email, String pwd) {
-    bool encontrado =  buscarUsuarioEnFirestore(email, pwd);
+    bool encontrado = buscarUsuarioEnFirestore(email, pwd);
     if (encontrado) {
-      
       setState(() {
         isAuth = true;
       });
