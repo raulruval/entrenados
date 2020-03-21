@@ -3,34 +3,39 @@ import 'package:flutter/material.dart';
 import 'package:entrenados/widgets/griditem.dart';
 
 class Equipment extends StatefulWidget {
-  final List<Item> selectedEquipment;
+  final List<Item> selectedEquipmentList;
 
-  Equipment(this.selectedEquipment);
+  Equipment(this.selectedEquipmentList);
 
   @override
   _EquipmentState createState() => _EquipmentState();
+
+    static List<Item> getEquipment(){
+    List<Item> itemEquipmentList = List();
+    itemEquipmentList.add(Item("assets/img/ball.jpg", "Balón", 1, false));
+    itemEquipmentList.add(Item("assets/img/bank.jpg", "Banco", 2, false));
+    itemEquipmentList
+        .add(Item("assets/img/dumbell.jpg", "Mancuernas", 3, false));
+    itemEquipmentList.add(Item("assets/img/rope.jpg", "Comba", 4, false));
+    itemEquipmentList
+        .add(Item("assets/img/sack.jpg", "Saco de boxeo", 5, false));
+    itemEquipmentList
+        .add(Item("assets/img/yoga.jpg", "Estera", 6, false));
+    return itemEquipmentList;
+  }
 }
 
 class _EquipmentState extends State<Equipment> {
   static List<Item> itemEquipmentList = List();
+
   @override
   void initState() {
     super.initState();
     print("Equipamiento guardado en equipamiento");
-    print(widget.selectedEquipment);
-    if (widget.selectedEquipment.length < 1) {
-      loadListEquipment();
+    print(widget.selectedEquipmentList);
+    if (widget.selectedEquipmentList.length < 1) {
+      itemEquipmentList = Equipment.getEquipment();
     }
-  }
-
-  loadListEquipment() {
-    itemEquipmentList = List();
-    itemEquipmentList.add(Item("assets/img/ball.jpg", "Balón", 1, false));
-    itemEquipmentList.add(Item("assets/img/bank.jpg", "Banco", 2, false));
-    itemEquipmentList.add(Item("assets/img/dumbell.jpg", "Mancuernas", 3, false));
-    itemEquipmentList.add(Item("assets/img/rope.jpg", "Comba", 4, false));
-    itemEquipmentList.add(Item("assets/img/sack.jpg", "Saco de boxeo", 5, false));
-    itemEquipmentList.add(Item("assets/img/yoga.jpg", "Estera", 6, false));
   }
 
   @override
@@ -49,35 +54,38 @@ class _EquipmentState extends State<Equipment> {
           itemBuilder: (context, index) {
             return GridItem(
               item: itemEquipmentList[index],
-              isSelected: (value) {
+              isSelected: (isSelected) {
                 setState(() {
-                  if (value) {
-                    print("En el bucle");
-                    if (widget.selectedEquipment.length > 1) {
+                  if (isSelected) {
+                    if (widget.selectedEquipmentList.length > 1) {
                       for (var i = 0;
-                          i < widget.selectedEquipment.length;
+                          i < widget.selectedEquipmentList.length;
                           i++) {
-                        if (itemEquipmentList[index].value ==
-                            widget.selectedEquipment[i].value) {
+                        if (itemEquipmentList[index].isSelected ==
+                            widget.selectedEquipmentList[i].isSelected) {
                         } else {
-                          itemEquipmentList[index].value = true;
-                          widget.selectedEquipment
+                          itemEquipmentList[index].isSelected = true;
+                          widget.selectedEquipmentList
                               .add(itemEquipmentList[index]);
-                          print("hola");
                         }
                       }
                     } else {
-                      itemEquipmentList[index].value = true;
-                      widget.selectedEquipment.add(itemEquipmentList[index]);
+                      itemEquipmentList[index].isSelected = true;
+
+                      widget.selectedEquipmentList
+                          .add(itemEquipmentList[index]);
                     }
-                    for (var i = 0; i < widget.selectedEquipment.length; i++)
-                      widget.selectedEquipment[i].value = true;
+                    for (var i = 0;
+                        i < widget.selectedEquipmentList.length;
+                        i++) widget.selectedEquipmentList[i].isSelected = true;
                   } else {
-                    itemEquipmentList[index].value = false;
-                    widget.selectedEquipment.remove(itemEquipmentList[index]);
+                    itemEquipmentList[index].isSelected = false;
+                    widget.selectedEquipmentList
+                        .remove(itemEquipmentList[index]);
                   }
                 });
-                print("$index : $value");
+                print("$index : $isSelected");
+               
               },
               key: Key(
                 itemEquipmentList[index].index.toString(),
@@ -89,15 +97,15 @@ class _EquipmentState extends State<Equipment> {
 
   getAppBar() {
     return AppBar(
-      title: Text(widget.selectedEquipment.length < 1
+      title: Text(widget.selectedEquipmentList.length < 1
           ? "Selecciona los elementos"
-          : "${widget.selectedEquipment.length} elementos seleccionados"),
+          : "${widget.selectedEquipmentList.length} elementos seleccionados"),
       actions: <Widget>[
-        widget.selectedEquipment.length < 1
+        widget.selectedEquipmentList.length < 1
             ? Container()
             : InkWell(
                 onTap: () {
-                  Navigator.pop(context, widget.selectedEquipment);
+                  Navigator.pop(context, widget.selectedEquipmentList);
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),

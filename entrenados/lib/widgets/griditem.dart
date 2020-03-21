@@ -17,7 +17,7 @@ class _GridItemState extends State<GridItem> {
 
   @override
   Widget build(BuildContext context) {
-    isSelected = widget.item.value;
+    isSelected = widget.item.isSelected;
     return InkWell(
       onTap: () {
         setState(() {

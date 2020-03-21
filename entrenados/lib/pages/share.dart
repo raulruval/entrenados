@@ -22,12 +22,16 @@ class Share extends StatefulWidget {
   _ShareState createState() => _ShareState();
 }
 
-class _ShareState extends State<Share> {
+class _ShareState extends State<Share>
+    with AutomaticKeepAliveClientMixin<Share> {
   TextEditingController titleController = TextEditingController();
   TextEditingController notesController = TextEditingController();
   TextEditingController duracionController = TextEditingController();
-  List<Item> selectedMuscles = List();
-  List<Item> selectedEquipment = List();
+  List<Item> selectedMusclesList = List();
+  List<Item> selectedEquipmentList = List();
+  String selectedMuscles = "";
+  String selectedEquipment = "";
+  String mainResource = "";
   List _difficulty = ["Principiante", "Intermedio", "Avanzado"];
   List _group = [
     "Resistencia",
@@ -179,24 +183,30 @@ class _ShareState extends State<Share> {
     });
   }
 
+  buildItemSequence(List<Item> itemList) {
+    String sequence = "";
+    itemList.forEach((item) => {sequence += item.index.toString() + "-"});
+    return sequence;
+  }
+
   _getMusclesInvolved(context) async {
-    selectedMuscles = await Navigator.push(
+    selectedMusclesList = await Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => Musclesinvolved(selectedMuscles))) ??
-        selectedMuscles;
-    print("Musculos involucrados guardados en compartir");
-    print(selectedMuscles.toString());
+                builder: (context) => Musclesinvolved(selectedMusclesList))) ??
+        selectedMusclesList;
+
+    selectedMuscles = buildItemSequence(selectedMusclesList);
   }
 
   _getEquipment(context) async {
-    selectedEquipment = await Navigator.push(
+    selectedEquipmentList = await Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => Equipment(selectedEquipment))) ??
+                builder: (context) => Equipment(selectedEquipmentList))) ??
         selectedEquipment;
-    print("equipamiento guardados en compartir");
-    print(selectedEquipment.toString());
+
+    selectedEquipment = buildItemSequence(selectedEquipmentList);
   }
 
   compressImage() async {
@@ -224,8 +234,9 @@ class _ShareState extends State<Share> {
       int duration,
       String currentDifficulty,
       String currentGroup,
-      List<Item> selectedMuscles,
-      List<Item> selectedEquipment,
+      String selectedMuscles,
+      String selectedEquipment,
+      String mainResource,
       String notes}) {
     postsRef
         .document(widget.currentUser.id)
@@ -240,8 +251,9 @@ class _ShareState extends State<Share> {
       "duration": duration,
       "currentDifficulty": currentDifficulty,
       "currentGroup": currentGroup,
-      "selectedMuscles": {},
-      "selectedEquipment": {},
+      "selectedMuscles": selectedMuscles,
+      "selectedEquipment": selectedEquipment,
+      "mainResource": mainResource,
       "notes": notes,
       "timestamp": timestamp,
       "likes": {},
@@ -262,17 +274,32 @@ class _ShareState extends State<Share> {
         currentGroup: _currentGroup,
         selectedMuscles: selectedMuscles,
         selectedEquipment: selectedEquipment,
+        mainResource: mainResource,
         notes: notesController.text);
     titleController.clear();
     notesController.clear();
-    selectedEquipment.clear();
-    selectedMuscles.clear();
+    selectedEquipment = "";
+    selectedMuscles = "";
+    mainResource = "";
     setState(() {
       file = null;
       defaultImg = false;
       isUploading = false;
       postId = Uuid().v4();
     });
+  }
+
+  uploadResource() {
+    print("Uploading test resource");
+    if (notesController.text == "video") {
+      mainResource = "video";
+    }else if (notesController.text == "pdf"){
+      mainResource = "pdf";
+    }else if (notesController.text == "link"){
+      mainResource = "link";
+    }else{
+      mainResource ="no";
+    }
   }
 
   buildFormularioCompartir() {
@@ -424,7 +451,7 @@ class _ShareState extends State<Share> {
             borderRadius: BorderRadius.circular(30.0),
           ),
           color: Colors.teal,
-          onPressed: () => print("Escoge el recurso"),
+          onPressed: () => uploadResource(),
           icon: Icon(
             Icons.file_upload,
             color: Colors.white,
@@ -463,8 +490,11 @@ class _ShareState extends State<Share> {
     );
   }
 
+  bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return file == null && defaultImg == false
         ? buildCompartir()
         : buildFormularioCompartir();

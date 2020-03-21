@@ -25,7 +25,14 @@ class PostTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => showPost(context),
+      onTap: () => Hero(
+        transitionOnUserGestures: true,
+        tag: 'card',
+        child: Material(
+          type: MaterialType.transparency,
+          child: showPost(context),
+        ),
+      ),
       child: Container(
           margin: EdgeInsets.only(top: 15.0, left: 6.0, right: 6.0),
           decoration: BoxDecoration(
@@ -39,8 +46,8 @@ class PostTile extends StatelessWidget {
                 children: <Widget>[
                   Flexible(
                     child: Container(
-                      child: buildHeader(
-                          post.ownerId, post.currentUserId, false, post.title),
+                      child: buildHeader(post.ownerId, post.currentUserId,
+                          post.postId, false, post.title),
                     ),
                   )
                 ],
@@ -67,16 +74,29 @@ class PostTile extends StatelessWidget {
                               ),
                               borderRadius: BorderRadius.circular(20.0),
                             ),
-                            Text(
-                              "16",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Color.fromRGBO(255, 255, 255, 0.6),
-                                fontSize: 45.0,
-                                fontFamily: "Monserrat"
-                                
-                              ),
-                            ),
+                            post.mainResource == "video"
+                                ? Icon(
+                                    Icons.videocam,
+                                    size: 40.0,
+                                    color: Colors.teal,
+                                  )
+                                : post.mainResource == "pdf"
+                                    ? Icon(
+                                        Icons.picture_as_pdf,
+                                        size: 40.0,
+                                        color: Colors.teal,
+                                      )
+                                    : post.mainResource == "link"
+                                        ? Icon(
+                                            Icons.link,
+                                            size: 40.0,
+                                            color: Colors.teal,
+                                          )
+                                        : Icon(
+                                            Icons.not_listed_location,
+                                            size: 40.0,
+                                            color: Colors.teal,
+                                          )
                           ],
                         ),
                       ),
@@ -96,7 +116,7 @@ class PostTile extends StatelessWidget {
                               color: Colors.black,
                             ),
                           ),
-                          Text("Principiante"),
+                          Text(post.difficulty),
                         ],
                       ),
                       Divider(
@@ -112,7 +132,7 @@ class PostTile extends StatelessWidget {
                               color: Colors.black,
                             ),
                           ),
-                          Text("Sin equipamiento"),
+                          Text(checkEquipment()),
                         ],
                       ),
                       Divider(
@@ -128,7 +148,7 @@ class PostTile extends StatelessWidget {
                               color: Colors.black,
                             ),
                           ),
-                          Text("Resistencia"),
+                          Text(post.group),
                         ],
                       ),
                       Divider(
@@ -147,16 +167,16 @@ class PostTile extends StatelessWidget {
                               color: Colors.red,
                             ),
                           ),
-                          Text("540"),
+                          Text(post.getLikeCount(post.likes).toString()),
                           Padding(
                             padding:
                                 const EdgeInsets.only(left: 8.0, right: 8.0),
                             child: Icon(
-                              Icons.comment,
+                              Icons.timer,
                               color: Colors.blue,
                             ),
                           ),
-                          Text("540"),
+                          Text(post.duration.toString() + "'"),
                         ],
                       ),
                     ],
@@ -166,5 +186,15 @@ class PostTile extends StatelessWidget {
             ],
           )),
     );
+  }
+
+  String checkEquipment() {
+    if (post.equipment == "") {
+      return "Sin equipamiento";
+    } else {
+      int n = -1;
+      post.equipment.split("-").forEach((seq) => {n++});
+      return "Equipamiento [ " + n.toString() + " ]";
+    }
   }
 }

@@ -19,6 +19,11 @@ final StorageReference storageRef = FirebaseStorage.instance.ref();
 final usersRef = Firestore.instance.collection("users");
 final postsRef = Firestore.instance.collection("posts");
 final commentsRef = Firestore.instance.collection("comments");
+final activityFeedRef = Firestore.instance.collection("feed");
+final followersRef = Firestore.instance.collection("followers");
+final followingRef = Firestore.instance.collection("following");
+final timelineRef = Firestore.instance.collection("timeline");
+
 final DateTime timestamp = DateTime.now();
 User currentUser;
 String email;
@@ -30,7 +35,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  bool validacion = false;
+  bool isAuth = false;
   PageController pageController;
   int pageIndex = 0;
 
@@ -70,7 +75,7 @@ class _HomeState extends State<Home> {
 
   logout() {
     setState(() {
-      validacion = false;
+      isAuth = false;
     });
   }
 
@@ -82,14 +87,14 @@ class _HomeState extends State<Home> {
 
   handleSignInGoogle(GoogleSignInAccount account) async {
     if (account != null) {
-      crearUsuarioGoogleEnFirestore();
+      await crearUsuarioGoogleEnFirestore();
       setState(() {
-        validacion = true;
+        isAuth = true;
       });
       // configurePushNotification();
     } else {
       setState(() {
-        validacion = false;
+        isAuth = false;
       });
     }
   }
@@ -98,16 +103,16 @@ class _HomeState extends State<Home> {
     return true;
   }
 
-  handleSignIn(String email, String pwd) async {
+  handleSignIn(String email, String pwd) {
     bool encontrado = buscarUsuarioEnFirestore(email, pwd);
     if (encontrado) {
       setState(() {
-        validacion = true;
+        isAuth = true;
       });
       // configurePushNotification();
     } else {
       setState(() {
-        validacion = false;
+        isAuth = false;
 
         /// Retornar mensaje de inicio invalido.
       });
@@ -153,6 +158,12 @@ class _HomeState extends State<Home> {
       "timestamp": timestamp,
       "pwd": user.pwd,
     });
+    // Hacer un usuario su propio seguidor para que le aparezcan en el timeline sus publicaciones.
+    await followersRef
+        .document(user.id)
+        .collection('userFollowers')
+        .document(user.id)
+        .setData({});
 
     DocumentSnapshot doc = await usersRef.document(user.id).get();
     doc = await usersRef.document(user.id).get();
@@ -171,7 +182,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       body: PageView(
         children: <Widget>[
-          Timeline(),
+          Timeline(currentUser: currentUser),
           Search(),
           Share(currentUser: currentUser),
           MyPage(profileId: currentUser?.id),
@@ -430,6 +441,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return validacion ? buildValiacionScreen() : buildNoValiacionScreen();
+    return isAuth ? buildValiacionScreen() : buildNoValiacionScreen();
   }
 }

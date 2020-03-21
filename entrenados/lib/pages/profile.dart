@@ -30,6 +30,40 @@ class _ProfileState extends State<Profile> {
   void initState() {
     super.initState();
     getProfilePosts();
+    getFollowers();
+    getFollowing();
+    checkIfFollowing();
+  }
+
+  checkIfFollowing() async {
+    DocumentSnapshot doc = await followersRef
+        .document(widget.profileId)
+        .collection('userFollowers')
+        .document(currentUserId)
+        .get();
+    setState(() {
+      isFollowing = doc.exists;
+    });
+  }
+
+  getFollowers() async {
+    QuerySnapshot snapshot = await followersRef
+        .document(widget.profileId)
+        .collection('userFollowers')
+        .getDocuments();
+    setState(() {
+      followerCount = snapshot.documents.length;
+    });
+  }
+
+  getFollowing() async {
+    QuerySnapshot snapshot = await followingRef
+        .document(widget.profileId)
+        .collection('userFollowing')
+        .getDocuments();
+    setState(() {
+      followingCount = snapshot.documents.length;
+    });
   }
 
   getProfilePosts() async {
@@ -113,6 +147,71 @@ class _ProfileState extends State<Profile> {
             builder: (context) => EditProfile(currentUserId: currentUserId)));
   }
 
+  handleFollowing() {
+    setState(() {
+      isFollowing = false;
+    });
+    followersRef
+        .document(widget.profileId)
+        .collection('userFollowers')
+        .document(currentUserId)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+
+    followingRef
+        .document(currentUserId)
+        .collection('userFollowing')
+        .document(widget.profileId)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+    activityFeedRef
+        .document(widget.profileId)
+        .collection('feedItems')
+        .document(currentUserId)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+  }
+
+  handleFollow() {
+    setState(() {
+      isFollowing = true;
+    });
+    followersRef
+        .document(widget.profileId)
+        .collection('userFollowers')
+        .document(currentUserId)
+        .setData({});
+    followingRef
+        .document(currentUserId)
+        .collection('userFollowing')
+        .document(widget.profileId)
+        .setData({});
+    activityFeedRef
+        .document(widget.profileId)
+        .collection('feedItems')
+        .document(currentUserId)
+        .setData({
+      "type": "follow",
+      "ownerId": widget.profileId,
+      "username": currentUser.username,
+      "userId": currentUserId,
+      "userProfileImg": currentUser.photoUrl,
+      "timestamp": timestamp,
+    });
+  }
+
   buildProfileButton() {
     bool isProfileOwner = currentUserId == widget.profileId;
     if (isProfileOwner) {
@@ -125,12 +224,12 @@ class _ProfileState extends State<Profile> {
     } else if (isFollowing) {
       return buildButton(
         text: "Siguiendo",
-        // function: handleFollowing,
+        function: handleFollowing,
       );
     } else if (!isFollowing) {
       return buildButton(
         text: "Seguir",
-        // function: handleFollow,
+        function: handleFollow,
       );
     }
   }
@@ -227,23 +326,29 @@ class _ProfileState extends State<Profile> {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.all(15.0),
-                    child: buildCountColumn("seguidores", 0),
+                    child: buildCountColumn("seguidores", followerCount),
                   ),
-                  buildCountColumn("seguidos", 0),
+                  buildCountColumn("seguidos", followingCount),
                   buildProfileButton()
                 ],
               ),
               // BuildPosts
               Expanded(
-                child: Hero(
-                  transitionOnUserGestures: true,
-                  tag: 'card',
-                  child: Material(
-                    type: MaterialType.transparency,
+                child: Container(
+                  margin: EdgeInsets.only(top: 15.0, left: 6.0, right: 6.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(34.0),
+                    ),
+                  ),
+                  child: Hero(
+                    transitionOnUserGestures: true,
+                    tag: 'card',
                     child: buildCard(),
                   ),
                 ),
-              ),
+              )
             ],
           );
         });
@@ -251,40 +356,33 @@ class _ProfileState extends State<Profile> {
 
   buildCard() {
     return ListView(
+      shrinkWrap: true,
       children: <Widget>[
-        Container(
-          margin: EdgeInsets.only(top: 15.0, left: 6.0, right: 6.0),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(34.0),
-            ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: 25.0,
-                  left: 25.0,
-                  right: 25.0,
-                ),
-                child: Text(
-                  'Publicaciones ($postCount)',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 25,
-                    fontFamily: 'Monserrat',
-                  ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(
+                top: 25.0,
+                left: 25.0,
+                right: 25.0,
+              ),
+              child: Text(
+                'Publicaciones ($postCount)',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25,
+                  fontFamily: 'Monserrat',
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.all(15.0),
-                child: buildProfilePost(),
-              )
-            ],
-          ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(15.0),
+              child: buildProfilePost(),
+            )
+          ],
         ),
       ],
     );
@@ -297,20 +395,21 @@ class _ProfileState extends State<Profile> {
       return Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             SvgPicture.asset(
-              'assets/images/no_content.svg',
+              'assets/img/empty.svg',
               height: 260.0,
             ),
             Padding(
-              padding: EdgeInsets.only(top: 20.0),
+              padding: EdgeInsets.only(top: 20.0, bottom: 60),
               child: Text(
                 "No existen publicaciones",
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 40.0,
-                  fontWeight: FontWeight.bold,
-                ),
+                    color: Colors.black,
+                    fontSize: 40.0,
+                    fontWeight: FontWeight.bold),
               ),
             ),
           ],

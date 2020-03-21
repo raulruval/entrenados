@@ -1,26 +1,26 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:entrenados/pages/activity.dart';
 import 'package:flutter/material.dart';
 import 'package:entrenados/models/user.dart';
 import 'package:entrenados/pages/home.dart';
 import 'package:entrenados/widgets/progress.dart';
-
 
 class Search extends StatefulWidget {
   @override
   _SearchState createState() => _SearchState();
 }
 
-class _SearchState extends State<Search> with AutomaticKeepAliveClientMixin {
+class _SearchState extends State<Search> with AutomaticKeepAliveClientMixin<Search> {
   TextEditingController searchController = TextEditingController();
-  Future<QuerySnapshot> buscarResultadosFuturos;
+  Future<QuerySnapshot> searchFutureResults;
 
   handleBuscar(String consulta) {
     Future<QuerySnapshot> users = usersRef
         .where("displayName", isGreaterThanOrEqualTo: consulta)
         .getDocuments();
     setState(() {
-      buscarResultadosFuturos = users;
+      searchFutureResults = users;
     });
   }
 
@@ -47,7 +47,7 @@ class _SearchState extends State<Search> with AutomaticKeepAliveClientMixin {
         ),
         onFieldSubmitted: handleBuscar,
       ),
-      // bottom: TabBar(  
+      // bottom: TabBar(
       //   tabs: [
       //     Tab(text: 'Entrenamientos', icon: Icon(Icons.directions_run)),
       //     Tab(text: 'Instructores', icon: Icon(Icons.people)),
@@ -56,7 +56,7 @@ class _SearchState extends State<Search> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  buildSinContenido() {
+  buildNoContent() {
     return Container(
       child: Center(
         child: ListView(
@@ -78,17 +78,17 @@ class _SearchState extends State<Search> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  buildResultadosBuscar() {
+  buildSearchResults() {
     return FutureBuilder(
-      future: buscarResultadosFuturos,
+      future: searchFutureResults,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return circularProgress();
         } else {
-          List<ResultadoUsuarios> searchResults = [];
+          List<UserResult> searchResults = [];
           snapshot.data.documents.forEach((doc) {
             User user = User.fromDocument(doc);
-            ResultadoUsuarios searchResult = ResultadoUsuarios(user);
+            UserResult searchResult = UserResult(user);
             searchResults.add(searchResult);
           });
           return ListView(
@@ -119,25 +119,29 @@ class _SearchState extends State<Search> with AutomaticKeepAliveClientMixin {
                 ],
               ),
             ),
-            child: buscarResultadosFuturos == null
-                ? buildSinContenido()
-                : buildResultadosBuscar(),
+            child: searchFutureResults == null
+                ? buildNoContent()
+                : buildSearchResults(),
           ),
         ));
   }
 }
 
-class ResultadoUsuarios extends StatelessWidget {
+class UserResult extends StatelessWidget {
   final User user;
-  ResultadoUsuarios(this.user);
+  UserResult(this.user);
+
+  bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
+  
     return Container(
       color: Theme.of(context).primaryColor.withOpacity(0.7),
       child: Column(
         children: <Widget>[
           GestureDetector(
-            //    onTap: () => showProfile(context, profileId: user.id),
+            onTap: () => showProfile(context, profileId: user.id),
             child: ListTile(
               leading: CircleAvatar(
                 backgroundColor: Colors.grey,
