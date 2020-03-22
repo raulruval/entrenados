@@ -103,7 +103,7 @@ class _SearchPostState extends State<SearchPost> {
                             backgroundColor: Colors.teal[100],
                             labelPadding:
                                 const EdgeInsets.symmetric(horizontal: 16),
-                            labelStyle: widget.searchModel.selectedDuration
+                            labelStyle: widget.searchModel.selectedGroup
                                     .contains(group)
                                 ? TextStyle(color: Colors.white)
                                 : TextStyle(color: Colors.black),
@@ -120,12 +120,7 @@ class _SearchPostState extends State<SearchPost> {
             ),
           ),
         ),
-        FloatingActionButton(
-          onPressed: () => print("hola"),
-          elevation: 0.0,
-          backgroundColor: Colors.teal,
-          child: Text("Buscar"),
-        )
+      
       ],
     );
   }
