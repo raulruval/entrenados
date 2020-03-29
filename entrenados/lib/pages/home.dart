@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entrenados/pages/search.dart';
 import 'package:entrenados/pages/share.dart';
@@ -5,6 +6,7 @@ import 'package:entrenados/pages/create_account.dart';
 import 'package:entrenados/pages/create_google_account.dart';
 import 'package:entrenados/pages/timeline.dart';
 import 'package:entrenados/utils/constants.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +40,8 @@ class _HomeState extends State<Home> {
   bool isAuth = false;
   PageController pageController;
   int pageIndex = 0;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   @override
   void initState() {
@@ -50,7 +54,6 @@ class _HomeState extends State<Home> {
       print('Error al iniciar session: $err');
     });
     // Reautenticar usuario cuando vuelve a reabrir la app
-
     googleSignIn
         .signInSilently(suppressErrors: false)
         .then((cuenta) {})
@@ -91,12 +94,51 @@ class _HomeState extends State<Home> {
       setState(() {
         isAuth = true;
       });
-      // configurePushNotification();
+      configurePushNotification();
     } else {
       setState(() {
         isAuth = false;
       });
     }
+  }
+
+  configurePushNotification() {
+    final GoogleSignInAccount user = googleSignIn.currentUser;
+    if (Platform.isIOS) getIosPermission();
+
+    _firebaseMessaging.getToken().then((token) {
+      print("Firebase Messaging token: $token\n");
+      usersRef
+          .document(user.id)
+          .updateData({"androidNotificationToken": token});
+    });
+
+    _firebaseMessaging.configure(
+      // onLaunch: (Map<String, dynamic> message) async{}, // When the app is off.
+      // onResume: (Map<String, dynamic> message) async{}, // App Launch but in the background
+      onMessage: (Map<String, dynamic> message) async {
+        final String recipientId = message['data']['recipient'];
+        final String body = message['notification']['body'];
+        if (recipientId == user.id) {
+          SnackBar snackBar = SnackBar(
+            content: Text(
+              body,
+              overflow: TextOverflow.ellipsis,
+            ),
+          );
+          _scaffoldKey.currentState.showSnackBar(snackBar);
+        }
+      },
+    );
+  }
+
+  getIosPermission() {
+    _firebaseMessaging.requestNotificationPermissions(
+      IosNotificationSettings(alert: true, badge: true, sound: true),
+    );
+    _firebaseMessaging.onIosSettingsRegistered.listen((settings) {
+      print("Settings registered: $settings");
+    });
   }
 
   bool buscarUsuarioEnFirestore(String email, String pwd) {
@@ -180,6 +222,7 @@ class _HomeState extends State<Home> {
 
   Widget buildValiacionScreen() {
     return Scaffold(
+      key: _scaffoldKey,
       body: PageView(
         children: <Widget>[
           Timeline(currentUser: currentUser),
