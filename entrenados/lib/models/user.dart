@@ -7,7 +7,6 @@ class User {
    String photoUrl;
    String displayName;
    String bio;
-   String pwd;
 
   User({
     this.id,
@@ -16,7 +15,6 @@ class User {
     this.photoUrl,
     this.displayName,
     this.bio,
-    this.pwd,
   });
 
 
@@ -28,7 +26,6 @@ class User {
       photoUrl: doc['photoUrl'],
       displayName: doc['displayName'],
       bio: doc['bio'],
-      pwd: doc['pwd'],
     );
   }
 }

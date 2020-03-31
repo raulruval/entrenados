@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:entrenados/models/user.dart';
+import 'package:entrenados/pages/home.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:entrenados/widgets/header.dart';
 
@@ -10,28 +12,49 @@ class CreateAccount extends StatefulWidget {
 }
 
 class _CreateAccountState extends State<CreateAccount> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
-  String _id;
-  String _username;
-  String _photoURL;
-  String _email;
-  String _displayName;
+  User user = new User();
   String _pwd;
+
+  Future signUpUser() async {
+    FirebaseUser fUser = await _auth.createUserWithEmailAndPassword(
+        email: user.email, password: _pwd);
+    return fUser.uid;
+  }
+
+  Future<void> saveUserOnDb() async {
+    usersRef.document(user.id).setData({
+      "id": user.id,
+      "username": user.username,
+      "photoUrl": "",
+      "email": user.email,
+      "displayName": user.displayName,
+      "bio": "",
+      "timestamp": timestamp,
+    });
+    // Hacer un usuario su propio seguidor para que le aparezcan en el timeline sus publicaciones.
+    await followersRef
+        .document(user.id)
+        .collection('userFollowers')
+        .document(user.id)
+        .setData({});
+  }
 
   submit() {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      _id = "0";
-      User user = new User(
-          id: _id,
-          username: _username,
-          photoUrl: _photoURL,
-          email: _email,
-          displayName: _displayName,
-          pwd: _pwd);
+
+      signUpUser()
+          .then((uid) => {user.id = uid.toString()})
+          .then((_) => saveUserOnDb())
+          .catchError((onError) {
+        print(onError);
+      });
+      
       SnackBar snackbar = SnackBar(
-        content: Text("¡Bienvenido $_username!"),
+        content: Text("¡Bienvenido! Ahora puedes iniciar sesión"),
       );
       _scaffoldKey.currentState.showSnackBar(snackbar);
       Timer(Duration(seconds: 2), () {
@@ -69,7 +92,7 @@ class _CreateAccountState extends State<CreateAccount> {
                             return null;
                           }
                         },
-                        onSaved: (val) => _displayName = val,
+                        onSaved: (val) => user.displayName = val,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Nombre",
@@ -92,7 +115,7 @@ class _CreateAccountState extends State<CreateAccount> {
                             return null;
                           }
                         },
-                        onSaved: (val) => _username = val,
+                        onSaved: (val) => user.username = val,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Usuario",
@@ -115,7 +138,7 @@ class _CreateAccountState extends State<CreateAccount> {
                             return null;
                           }
                         },
-                        onSaved: (val) => _email = val,
+                        onSaved: (val) => user.email = val,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Email",
