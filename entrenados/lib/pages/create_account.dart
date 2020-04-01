@@ -28,7 +28,7 @@ class _CreateAccountState extends State<CreateAccount> {
     usersRef.document(user.id).setData({
       "id": user.id,
       "username": user.username,
-      "photoUrl": "",
+      "photoUrl": "https://firebasestorage.googleapis.com/v0/b/entrenados-4621b.appspot.com/o/profile.jpg?alt=media&token=26e5503d-53d7-4b3e-8d3a-43a9e4c9f479",
       "email": user.email,
       "displayName": user.displayName,
       "bio": "",
@@ -92,7 +92,7 @@ class _CreateAccountState extends State<CreateAccount> {
                             return null;
                           }
                         },
-                        onSaved: (val) => user.displayName = val,
+                        onSaved: (val) => user.displayName = val.trim(),
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Nombre",
@@ -115,7 +115,7 @@ class _CreateAccountState extends State<CreateAccount> {
                             return null;
                           }
                         },
-                        onSaved: (val) => user.username = val,
+                        onSaved: (val) => user.username = val.trim(),
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Usuario",
@@ -138,7 +138,7 @@ class _CreateAccountState extends State<CreateAccount> {
                             return null;
                           }
                         },
-                        onSaved: (val) => user.email = val,
+                        onSaved: (val) => user.email = val.trim(),
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Email",
@@ -160,7 +160,7 @@ class _CreateAccountState extends State<CreateAccount> {
                             return null;
                           }
                         },
-                        onSaved: (val) => _pwd = val,
+                        onSaved: (val) => _pwd = val.trim(),
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: "Contraseña",
