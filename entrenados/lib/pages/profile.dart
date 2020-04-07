@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entrenados/models/user.dart';
@@ -89,23 +90,26 @@ class _ProfileState extends State<Profile> {
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Text(
+        AutoSizeText(
           count.toString(),
           style: TextStyle(
               fontSize: 25.0,
               color: Colors.white,
               fontWeight: FontWeight.bold,
               fontFamily: 'Monserrat'),
+          maxLines: 1,
         ),
         Container(
           margin: EdgeInsets.only(top: 4.0),
-          child: Text(
+          child: AutoSizeText(
             label.toUpperCase(),
             style: TextStyle(
-                color: Colors.white,
-                fontSize: 15.0,
-                fontWeight: FontWeight.w400,
-                fontFamily: 'Monserrat'),
+              color: Colors.white,
+              fontSize: 15.0,
+              fontWeight: FontWeight.w400,
+              fontFamily: 'Monserrat',
+            ),
+            maxLines: 1,
           ),
         )
       ],
@@ -321,16 +325,29 @@ class _ProfileState extends State<Profile> {
                 ],
               ),
               // Parte de seguidores
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: buildCountColumn("seguidores", followerCount),
-                  ),
-                  buildCountColumn("seguidos", followingCount),
-                  buildProfileButton()
-                ],
+              Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                        width: MediaQuery.of(context).size.width * 0.25,
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: buildCountColumn("seguidores", followerCount),
+                        )),
+                    Container(
+                        width: MediaQuery.of(context).size.width * 0.25,
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: buildCountColumn("seguidos", followingCount),
+                        )),
+                    Container(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: buildProfileButton())),
+                  ],
+                ),
               ),
               // BuildPosts
               Expanded(

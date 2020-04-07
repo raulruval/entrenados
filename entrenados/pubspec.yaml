@@ -35,6 +35,7 @@ dependencies:
   cached_network_image: 2.0.0-rc
   flutter_svg:
   flutter_duration_picker: ^1.0.4
+  auto_size_text: ^2.1.0
 
   
 dev_dependencies:

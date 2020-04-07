@@ -57,50 +57,53 @@ class PostTile extends StatelessWidget {
               ),
               Row(
                 children: <Widget>[
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 10.0, right: 10.0, bottom: 10.0, left: 15.0),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: <Widget>[
-                            ClipRRect(
-                              child: cachedNetworkImage(
-                                post.mediaUrl,
-                                context,
-                                true,
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.21,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 10.0, right: 10.0, bottom: 10.0, left: 15.0),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: <Widget>[
+                              ClipRRect(
+                                child: cachedNetworkImage(
+                                  post.mediaUrl,
+                                  context,
+                                  true,
+                                ),
+                                borderRadius: BorderRadius.circular(20.0),
                               ),
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            post.mainResource == "video"
-                                ? Icon(
-                                    Icons.videocam,
-                                    size: 40.0,
-                                    color: Colors.teal,
-                                  )
-                                : post.mainResource == "pdf"
-                                    ? Icon(
-                                        Icons.picture_as_pdf,
-                                        size: 40.0,
-                                        color: Colors.teal,
-                                      )
-                                    : post.mainResource == "link"
-                                        ? Icon(
-                                            Icons.link,
-                                            size: 40.0,
-                                            color: Colors.teal,
-                                          )
-                                        : Icon(
-                                            Icons.not_listed_location,
-                                            size: 40.0,
-                                            color: Colors.teal,
-                                          )
-                          ],
+                              post.mainResource == "video"
+                                  ? Icon(
+                                      Icons.videocam,
+                                      size: 40.0,
+                                      color: Colors.teal,
+                                    )
+                                  : post.mainResource == "pdf"
+                                      ? Icon(
+                                          Icons.picture_as_pdf,
+                                          size: 40.0,
+                                          color: Colors.teal,
+                                        )
+                                      : post.mainResource == "link"
+                                          ? Icon(
+                                              Icons.link,
+                                              size: 40.0,
+                                              color: Colors.teal,
+                                            )
+                                          : Icon(
+                                              Icons.not_listed_location,
+                                              size: 40.0,
+                                              color: Colors.teal,
+                                            )
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

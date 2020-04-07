@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entrenados/pages/search.dart';
 import 'package:entrenados/pages/share.dart';
@@ -409,37 +410,41 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildLoginBtnGoogle() {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 15.0),
-      width: double.infinity,
-      child: RaisedButton(
-          elevation: 5.0,
-          onPressed: () => loginGoogle(),
-          padding: EdgeInsets.all(15.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
+    return RaisedButton(
+      elevation: 5.0,
+      onPressed: () => loginGoogle(),
+      padding: EdgeInsets.all(15.0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      color: Colors.white,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            width: MediaQuery.of(context).size.width * 0.1,
+            child: new Image.asset(
+              'assets/img/GoogleIcon.png',
+              height: 35.0,
+            ),
           ),
-          color: Colors.white,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              new Image.asset(
-                'assets/img/GoogleIcon.png',
-                height: 35.0,
-              ),
-              Padding(
-                padding: EdgeInsetsDirectional.only(end: 10),
-              ),
-              Text(
+          Container(
+            width: MediaQuery.of(context).size.width * 0.5,
+            child: Padding(
+              padding: EdgeInsets.only(left: 3.0),
+              child: AutoSizeText(
                 'Acceder con Google',
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 23.0,
                   fontFamily: 'OpenSans',
                 ),
+                maxLines: 1,
               ),
-            ],
-          )),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
