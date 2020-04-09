@@ -8,7 +8,7 @@ Widget cachedNetworkImage(
     fit: BoxFit.cover,
     height: !inTile
         ? MediaQuery.of(context).size.width * 0.5
-        : MediaQuery.of(context).size.width * 0.3,
+        : MediaQuery.of(context).size.width * 0.28,
     width: !inTile
         ? MediaQuery.of(context).size.width * 0.5
         : MediaQuery.of(context).size.width * 0.3,

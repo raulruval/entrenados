@@ -15,6 +15,8 @@ class Activity extends StatefulWidget {
 
 class _ActivityState extends State<Activity> {
 
+  
+
   getActivityFeed() async {
     QuerySnapshot snapshot = await activityFeedRef
         .document(currentUser.id)

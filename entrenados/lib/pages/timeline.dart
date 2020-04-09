@@ -27,7 +27,8 @@ class _TimelineState extends State<Timeline> {
     getTimeline();
     getFollowing();
   }
- getFollowing() async {
+
+  getFollowing() async {
     QuerySnapshot snapshot = await followingRef
         .document(currentUser.id)
         .collection('userFollowing')
@@ -36,6 +37,7 @@ class _TimelineState extends State<Timeline> {
       followingList = snapshot.documents.map((doc) => doc.documentID).toList();
     });
   }
+
   getTimeline() async {
     QuerySnapshot snapshot = await timelineRef
         .document(widget.currentUser.id)
@@ -50,7 +52,7 @@ class _TimelineState extends State<Timeline> {
     });
   }
 
-    buildUserToFollow() {
+  buildUserToFollow() {
     return StreamBuilder(
       stream:
           usersRef.orderBy('timestamp', descending: true).limit(30).snapshots(),
@@ -98,9 +100,7 @@ class _TimelineState extends State<Timeline> {
                   ],
                 ),
               ),
-              Column(
-                children: userResults,
-              )
+              Expanded(child: ListView(children: userResults)),
             ],
           ),
         );
@@ -126,13 +126,14 @@ class _TimelineState extends State<Timeline> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor:  Theme.of(context).accentColor.withOpacity(0.2),
-        appBar: header(context, isAppTitle: true, removeBackButton: true),
-        body: RefreshIndicator(
-          
-          onRefresh: () => getTimeline(),
-          child: buildTimeLine(),
-        ));
+    return SafeArea(
+          child: Scaffold(
+          backgroundColor: Theme.of(context).accentColor.withOpacity(0.2),
+          appBar: header(context, isAppTitle: true, removeBackButton: true),
+          body: RefreshIndicator(
+            onRefresh: () => getTimeline(),
+            child: buildTimeLine(),
+          )),
+    );
   }
 }

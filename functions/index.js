@@ -188,15 +188,15 @@ exports.onCreateActivityFeedItem = functions.firestore
       // 3) switch body value based off of notification type
       switch (activityFeedItem.type) {
         case "comment":
-          body = `${activityFeedItem.username} replied: ${
+          body = `${activityFeedItem.username} comentó: ${
             activityFeedItem.commentData
           }`;
           break;
         case "like":
-          body = `${activityFeedItem.username} liked your post`;
+          body = `A ${activityFeedItem.username} le gustó tu publicación`;
           break;
         case "follow":
-          body = `${activityFeedItem.username} started following you`;
+          body = `${activityFeedItem.username} comenzó a seguirte`;
           break;
         default:
           break;

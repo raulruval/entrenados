@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entrenados/models/user.dart';
@@ -89,23 +90,26 @@ class _ProfileState extends State<Profile> {
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Text(
+        AutoSizeText(
           count.toString(),
           style: TextStyle(
               fontSize: 25.0,
               color: Colors.white,
               fontWeight: FontWeight.bold,
               fontFamily: 'Monserrat'),
+          maxLines: 1,
         ),
         Container(
           margin: EdgeInsets.only(top: 4.0),
-          child: Text(
+          child: AutoSizeText(
             label.toUpperCase(),
             style: TextStyle(
-                color: Colors.white,
-                fontSize: 15.0,
-                fontWeight: FontWeight.w400,
-                fontFamily: 'Monserrat'),
+              color: Colors.white,
+              fontSize: 15.0,
+              fontWeight: FontWeight.w400,
+              fontFamily: 'Monserrat',
+            ),
+            maxLines: 1,
           ),
         )
       ],
@@ -265,77 +269,91 @@ class _ProfileState extends State<Profile> {
           User user = User.fromDocument(snapshot.data);
           return Column(
             children: <Widget>[
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(left: 25.0, top: 5.0),
-                    child: Hero(
-                      transitionOnUserGestures: true,
-                      tag: "fotoPerfil",
-                      child: CircleAvatar(
-                        radius: 45.0,
-                        backgroundImage:
-                            CachedNetworkImageProvider(user.photoUrl),
+              Container(
+                height: MediaQuery.of(context).size.height * 0.15,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(left: 25.0, top: 5.0),
+                      child: Hero(
+                        transitionOnUserGestures: true,
+                        tag: "fotoPerfil",
+                        child: CircleAvatar(
+                          radius:   MediaQuery.of(context).orientation == Orientation.portrait ?  45.0 : 25.0,
+                          backgroundImage:
+                              CachedNetworkImageProvider(user.photoUrl),
+                        ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 30.0, top: 18.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          user.displayName,
-                          style: TextStyle(
-                            fontFamily: 'Monserrat',
-                            fontSize: 30.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                    Padding(
+                      padding: const EdgeInsets.only(left: 30.0, top: 18.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            user.displayName,
+                            style: TextStyle(
+                              fontFamily: 'Monserrat',
+                              fontSize: 30.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5.0),
-                          child: Row(
-                            children: <Widget>[
-                              Icon(
-                                Icons.location_on,
-                                color: Colors.white,
-                              ),
-                              Text(
-                                user.bio,
-                                style: TextStyle(
-                                    fontFamily: 'Monserrat',
-                                    color: Colors.white,
-                                    wordSpacing: 2,
-                                    letterSpacing: 2,
-                                    fontSize: 17),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5.0),
+                            child: Row(
+                              children: <Widget>[
+                                MediaQuery.of(context).orientation == Orientation.portrait ? Icon(
+                                  Icons.location_on,
+                                  color: Colors.white,
+                                ) : SizedBox.shrink(),
+                                 MediaQuery.of(context).orientation == Orientation.portrait ? Text(
+                                  user.bio,
+                                  style: TextStyle(
+                                      fontFamily: 'Monserrat',
+                                      color: Colors.white,
+                                      wordSpacing: 2,
+                                      letterSpacing: 2,
+                                      fontSize: 17),
+                                ) : SizedBox.shrink() ,
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               // Parte de seguidores
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: buildCountColumn("seguidores", followerCount),
-                  ),
-                  buildCountColumn("seguidos", followingCount),
-                  buildProfileButton()
-                ],
+              Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                        width: MediaQuery.of(context).size.width * 0.28,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 12.0),
+                          child: buildCountColumn("seguidores", followerCount),
+                        )),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.28,
+                      child: buildCountColumn("seguidos", followingCount),
+                    ),
+                    Container(
+                        width: MediaQuery.of(context).size.width * 0.44,
+                        child: Padding(
+                            padding: const EdgeInsets.only(right: 5.0),
+                            child: buildProfileButton())),
+                  ],
+                ),
               ),
               // BuildPosts
               Expanded(
                 child: Container(
-                  margin: EdgeInsets.only(top: 15.0, left: 6.0, right: 6.0),
+                  margin: EdgeInsets.only(top: 15.0, left: 4.0, right: 4.0),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.vertical(
@@ -379,7 +397,7 @@ class _ProfileState extends State<Profile> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(15.0),
+              padding: EdgeInsets.all(5.0),
               child: buildProfilePost(),
             )
           ],
@@ -396,6 +414,7 @@ class _ProfileState extends State<Profile> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SvgPicture.asset(
               'assets/img/empty.svg',
@@ -422,7 +441,7 @@ class _ProfileState extends State<Profile> {
       });
       return GridView.count(
         crossAxisCount: 1,
-        childAspectRatio: 1.5,
+        childAspectRatio: 1.6,
         crossAxisSpacing: 5,
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
