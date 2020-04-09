@@ -14,16 +14,19 @@ class PostTile extends StatelessWidget {
     Navigator.push(
       context,
       PageRouteBuilder(
-          transitionDuration: Duration(milliseconds: 160),
-          pageBuilder: (_, __, ___) => PostScreen(
-                postId: post.postId,
-                userId: post.ownerId,
-              )),
+        transitionDuration: Duration(milliseconds: 160),
+        pageBuilder: (_, __, ___) => PostScreen(
+          postId: post.postId,
+          userId: post.ownerId,
+        ),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+
+
     return GestureDetector(
       onTap: () => Hero(
         transitionOnUserGestures: true,
@@ -46,6 +49,8 @@ class PostTile extends StatelessWidget {
                 children: <Widget>[
                   Flexible(
                     child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.06,
                       child: buildHeader(post.ownerId, post.currentUserId,
                           post.postId, false, post.title),
                     ),
@@ -55,136 +60,143 @@ class PostTile extends StatelessWidget {
               Divider(
                 thickness: 0.8,
               ),
-              Row(
-                children: <Widget>[
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.21,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              top: 10.0, right: 10.0, bottom: 10.0, left: 15.0),
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: <Widget>[
-                              ClipRRect(
-                                child: cachedNetworkImage(
-                                  post.mediaUrl,
-                                  context,
-                                  true,
-                                ),
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                              post.mainResource == "video"
-                                  ? Icon(
-                                      Icons.videocam,
-                                      size: 40.0,
-                                      color: Colors.teal,
-                                    )
-                                  : post.mainResource == "pdf"
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.18,
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 10.0,
+                                right: 10.0,
+                                bottom: 10.0,
+                                left: 15.0),
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              height: MediaQuery.of(context).size.height * 0.15,
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: <Widget>[
+                                  ClipRRect(
+                                    child: cachedNetworkImage(
+                                      post.mediaUrl,
+                                      context,
+                                      true,
+                                    ),
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                  post.mainResource == "video"
                                       ? Icon(
-                                          Icons.picture_as_pdf,
+                                          Icons.videocam,
                                           size: 40.0,
                                           color: Colors.teal,
                                         )
-                                      : post.mainResource == "link"
+                                      : post.mainResource == "pdf"
                                           ? Icon(
-                                              Icons.link,
+                                              Icons.picture_as_pdf,
                                               size: 40.0,
                                               color: Colors.teal,
                                             )
-                                          : Icon(
-                                              Icons.not_listed_location,
-                                              size: 40.0,
-                                              color: Colors.teal,
-                                            )
+                                          : post.mainResource == "link"
+                                              ? Icon(
+                                                  Icons.link,
+                                                  size: 40.0,
+                                                  color: Colors.teal,
+                                                )
+                                              : Icon(
+                                                  Icons.not_listed_location,
+                                                  size: 40.0,
+                                                  color: Colors.teal,
+                                                )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Flexible(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 8.0, right: 8.0, top: 15.0),
+                                child: Icon(
+                                  Icons.arrow_upward,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              Text(post.difficulty),
                             ],
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(left: 8.0, right: 8.0),
-                            child: Icon(
-                              Icons.arrow_upward,
-                              color: Colors.black,
-                            ),
+
+                          Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 8.0, right: 8.0),
+                                child: Icon(
+                                  Icons.fitness_center,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              Text(checkEquipment()),
+                            ],
                           ),
-                          Text(post.difficulty),
+
+                          Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 8.0, right: 8.0),
+                                child: Icon(
+                                  Icons.rowing,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              Text(post.group),
+                            ],
+                          ),
+
+                          Row(
+                            children: <Widget>[],
+                          ),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.center,
+                          //   children: <Widget>[
+                          //     Padding(
+                          //       padding: const EdgeInsets.only(
+                          //           left: 8.0, right: 8.0),
+                          //       child: Icon(
+                          //         Icons.favorite,
+                          //         color: Colors.red,
+                          //       ),
+                          //     ),
+                          //     Text(post.getLikeCount(post.likes).toString()),
+                          //     Padding(
+                          //       padding: const EdgeInsets.only(
+                          //           left: 8.0, right: 8.0),
+                          //       child: Icon(
+                          //         Icons.timer,
+                          //         color: Colors.blue,
+                          //       ),
+                          //     ),
+                          //     Text(post.duration.toString() + "'"),
+                          //   ],
+                          // ),
                         ],
                       ),
-                      Divider(
-                        height: 5.0,
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(left: 8.0, right: 8.0),
-                            child: Icon(
-                              Icons.fitness_center,
-                              color: Colors.black,
-                            ),
-                          ),
-                          Text(checkEquipment()),
-                        ],
-                      ),
-                      Divider(
-                        height: 5.0,
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(left: 8.0, right: 8.0),
-                            child: Icon(
-                              Icons.rowing,
-                              color: Colors.black,
-                            ),
-                          ),
-                          Text(post.group),
-                        ],
-                      ),
-                      Divider(
-                        height: 5.0,
-                      ),
-                      Row(
-                        children: <Widget>[],
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(left: 8.0, right: 8.0),
-                            child: Icon(
-                              Icons.favorite,
-                              color: Colors.red,
-                            ),
-                          ),
-                          Text(post.getLikeCount(post.likes).toString()),
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(left: 8.0, right: 8.0),
-                            child: Icon(
-                              Icons.timer,
-                              color: Colors.blue,
-                            ),
-                          ),
-                          Text(post.duration.toString() + "'"),
-                        ],
-                      ),
-                    ],
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
             ],
           )),

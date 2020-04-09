@@ -130,24 +130,25 @@ class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
                   Padding(
                     padding: EdgeInsets.all(5.0),
                     child: Container(
-                      padding: EdgeInsets.only(left: 10.0,right: 10.0),
+                      padding: EdgeInsets.only(left: 10.0, right: 10.0),
                       height: MediaQuery.of(context).size.width * 0.3,
-                      width:  MediaQuery.of(context).size.width * 0,
+                      width: MediaQuery.of(context).size.width * 0,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.0),
                           color: Colors.grey.shade100),
-                      child: Row(
-                        children: <Widget>[
-                          IconButton(
-                            icon: Icon(Icons.favorite,
-                                color: Theme.of(context).primaryColor),
-                            iconSize: 50.0,
-                            onPressed: () {},
-                          ),
-                          SizedBox(width: 5.0),
-                          Padding(
-                            padding: EdgeInsets.only(top: 27.0),
-                            child: Column(
+                      child: GestureDetector(
+                        onTap: () => print("Abrir entrenamientos"),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(
+                              Icons.favorite,
+                              color: Colors.red,
+                              size: 60.0,
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
@@ -166,14 +167,13 @@ class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
                                 )
                               ],
                             ),
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.arrow_forward_ios,
-                                color: Theme.of(context).primaryColor),
-                            iconSize: 30.0,
-                            onPressed: () {},
-                          )
-                        ],
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: Colors.red,
+                              size: 50.0,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -193,7 +193,7 @@ class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
                         Text(
                           'Ver todos',
                           style: TextStyle(
-                              color: Theme.of(context).primaryColor,
+                              
                               fontWeight: FontWeight.bold,
                               fontSize: 15.0,
                               fontFamily: 'Montserrat'),

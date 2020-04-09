@@ -126,12 +126,14 @@ class _TimelineState extends State<Timeline> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Theme.of(context).accentColor.withOpacity(0.2),
-        appBar: header(context, isAppTitle: true, removeBackButton: true),
-        body: RefreshIndicator(
-          onRefresh: () => getTimeline(),
-          child: buildTimeLine(),
-        ));
+    return SafeArea(
+          child: Scaffold(
+          backgroundColor: Theme.of(context).accentColor.withOpacity(0.2),
+          appBar: header(context, isAppTitle: true, removeBackButton: true),
+          body: RefreshIndicator(
+            onRefresh: () => getTimeline(),
+            child: buildTimeLine(),
+          )),
+    );
   }
 }
