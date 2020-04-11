@@ -9,6 +9,7 @@ import 'package:entrenados/widgets/progress.dart';
 import 'package:flutter/material.dart';
 import 'package:entrenados/widgets/post.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 class Profile extends StatefulWidget {
   final String profileId;
@@ -259,7 +260,7 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  buildContentProfile() {
+  buildMobileProfile() {
     return FutureBuilder(
         future: usersRef.document(widget.profileId).get(),
         builder: (context, snapshot) {
@@ -269,58 +270,68 @@ class _ProfileState extends State<Profile> {
           User user = User.fromDocument(snapshot.data);
           return Column(
             children: <Widget>[
-              Container(
-                height: MediaQuery.of(context).size.height * 0.15,
+              Flexible(
+                fit: FlexFit.tight,
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(left: 25.0, top: 5.0),
-                      child: Hero(
-                        transitionOnUserGestures: true,
-                        tag: "fotoPerfil",
-                        child: CircleAvatar(
-                          radius:   MediaQuery.of(context).orientation == Orientation.portrait ?  45.0 : 25.0,
-                          backgroundImage:
-                              CachedNetworkImageProvider(user.photoUrl),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                        child: Hero(
+                          transitionOnUserGestures: true,
+                          tag: "fotoPerfil",
+                          child: SizedBox(
+                            height: 90.0,
+                            width: 90.0,
+                            child: CircleAvatar(
+                              radius: 45.0,
+                              backgroundImage:
+                                  CachedNetworkImageProvider(user.photoUrl),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 30.0, top: 18.0),
+                    Flexible(
+                      flex: 2,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Text(
-                            user.displayName,
-                            style: TextStyle(
-                              fontFamily: 'Monserrat',
-                              fontSize: 30.0,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                          Flexible(
+                            child: AutoSizeText(
+                              user.displayName,
+                              style: TextStyle(
+                                fontFamily: 'Monserrat',
+                                fontSize: 30.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                              maxLines: 1,
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 5.0),
+                          Flexible(
                             child: Row(
                               children: <Widget>[
-                                MediaQuery.of(context).orientation == Orientation.portrait ? Icon(
+                                Icon(
                                   Icons.location_on,
                                   color: Colors.white,
-                                ) : SizedBox.shrink(),
-                                 MediaQuery.of(context).orientation == Orientation.portrait ? Text(
+                                ),
+                                AutoSizeText(
                                   user.bio,
                                   style: TextStyle(
-                                      fontFamily: 'Monserrat',
-                                      color: Colors.white,
-                                      wordSpacing: 2,
-                                      letterSpacing: 2,
-                                      fontSize: 17),
-                                ) : SizedBox.shrink() ,
+                                    fontFamily: 'Monserrat',
+                                    color: Colors.white,
+                                    wordSpacing: 2,
+                                    letterSpacing: 2,
+                                  ),
+                                  maxLines: 1,
+                                ),
                               ],
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -328,43 +339,41 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
               // Parte de seguidores
-              Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
+              Flexible(
+                fit: FlexFit.tight,
+                child: Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                          width: MediaQuery.of(context).size.width * 0.28,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 12.0),
+                            child:
+                                buildCountColumn("seguidores", followerCount),
+                          )),
+                      Container(
                         width: MediaQuery.of(context).size.width * 0.28,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 12.0),
-                          child: buildCountColumn("seguidores", followerCount),
-                        )),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.28,
-                      child: buildCountColumn("seguidos", followingCount),
-                    ),
-                    Container(
-                        width: MediaQuery.of(context).size.width * 0.44,
-                        child: Padding(
-                            padding: const EdgeInsets.only(right: 5.0),
-                            child: buildProfileButton())),
-                  ],
+                        child: buildCountColumn("seguidos", followingCount),
+                      ),
+                      Container(
+                          width: MediaQuery.of(context).size.width * 0.44,
+                          child: Padding(
+                              padding: const EdgeInsets.only(right: 5.0),
+                              child: buildProfileButton())),
+                    ],
+                  ),
                 ),
               ),
               // BuildPosts
               Expanded(
-                child: Container(
-                  margin: EdgeInsets.only(top: 15.0, left: 4.0, right: 4.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(34.0),
-                    ),
-                  ),
-                  child: Hero(
-                    transitionOnUserGestures: true,
-                    tag: 'card',
-                    child: buildCard(),
-                  ),
+                flex: 4,
+                child: Row(
+                  children: <Widget>[
+                    Flexible(
+                      child: buildCard(),
+                    )
+                  ],
                 ),
               )
             ],
@@ -374,39 +383,53 @@ class _ProfileState extends State<Profile> {
 
   buildCard() {
     return ListView(
-      shrinkWrap: true,
       children: <Widget>[
-        Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 25.0,
-                left: 25.0,
-                right: 25.0,
-              ),
-              child: Text(
-                'Publicaciones ($postCount)',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 25,
-                  fontFamily: 'Monserrat',
-                ),
-              ),
+        Container(
+          margin: EdgeInsets.only(top: 15.0, left: 4.0, right: 4.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(34.0),
             ),
-            Padding(
-              padding: EdgeInsets.all(5.0),
-              child: buildProfilePost(),
-            )
-          ],
+          ),
+          child: Hero(
+            transitionOnUserGestures: true,
+            tag: 'card',
+            child: Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 25.0,
+                        left: 25.0,
+                        right: 25.0,
+                      ),
+                      child: Text(
+                        'Publicaciones ($postCount)',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 25,
+                          fontFamily: 'Monserrat',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    buildProfilePosts(),
+                  ],
+                )
+              ],
+            ),
+          ),
         ),
       ],
     );
   }
 
-  buildProfilePost() {
+  buildProfilePosts() {
     if (isLoading) {
       return circularProgress();
     } else if (posts.isEmpty) {
@@ -439,24 +462,28 @@ class _ProfileState extends State<Profile> {
       posts.forEach((post) {
         gridTiles.add(GridTile(child: PostTile(post)));
       });
-      return GridView.count(
-        crossAxisCount: 1,
-        childAspectRatio: 1.6,
-        crossAxisSpacing: 5,
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        children: gridTiles,
+      return Expanded(
+        child: ListView(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          children: gridTiles,
+        ),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: buildAppBarProfile(),
-        body: Container(
-          color: Theme.of(context).primaryColor,
-          child: buildContentProfile(),
-        ));
+    return SafeArea(
+      child: Scaffold(
+          appBar: buildAppBarProfile(),
+          body: Container(
+            color: Theme.of(context).primaryColor,
+            child: OrientationLayoutBuilder(
+              portrait: (context) => buildMobileProfile(),
+              landscape: (context) => buildCard(),
+            ),
+          )),
+    );
   }
 }
