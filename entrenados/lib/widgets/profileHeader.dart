@@ -16,53 +16,55 @@ Widget buildHeader(
       }
       User user = User.fromDocument(snapshot.data);
       bool isPostOwner = currentUserId == ownerId;
-      return ListTile(
-        leading: GestureDetector(
-          onTap: () => showProfile(context, profileId: ownerId),
-          child: CircleAvatar(
-            backgroundImage: CachedNetworkImageProvider(user.photoUrl),
-            backgroundColor: Colors.grey,
+      return Center(
+        child: ListTile(
+          leading: GestureDetector(
+            onTap: () => showProfile(context, profileId: ownerId),
+            child: CircleAvatar(
+              backgroundImage: CachedNetworkImageProvider(user.photoUrl),
+              backgroundColor: Colors.grey,
+            ),
           ),
-        ),
-        title: title == null
-            ? GestureDetector(
-                onTap: () => showProfile(context, profileId: ownerId),
-                child: Text(
-                  user.username,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
+          title: title == null
+              ? GestureDetector(
+                  onTap: () => showProfile(context, profileId: ownerId),
+                  child: Text(
+                    user.username,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () => showProfile(context, profileId: ownerId),
-                    child: Text(
-                      user.username,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () => showProfile(context, profileId: ownerId),
+                      child: Text(
+                        user.username,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      title,
-                      textAlign: TextAlign.right,
+                    Expanded(
+                      child: Text(
+                        title,
+                        textAlign: TextAlign.right,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-        subtitle: showLocation ? Text("location") : null,
-        trailing: isPostOwner
-            ? IconButton(
-                onPressed: () => handleDeletePost(context, ownerId, postId),
-                icon: Icon(Icons.more_vert),
-              )
-            : Text(''),
+                  ],
+                ),
+          subtitle: showLocation ? Text("location") : null,
+          trailing: isPostOwner
+              ? IconButton(
+                  onPressed: () => handleDeletePost(context, ownerId, postId),
+                  icon: Icon(Icons.more_vert),
+                )
+              : Text(''),
+        ),
       );
     },
   );

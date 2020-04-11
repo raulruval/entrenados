@@ -268,17 +268,20 @@ class _ProfileState extends State<Profile> {
             return circularProgress();
           }
           User user = User.fromDocument(snapshot.data);
+
           return Column(
             children: <Widget>[
               Flexible(
-                fit: FlexFit.tight,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Flexible(
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                        padding: const EdgeInsets.only(
+                          left: 10.0,
+                          right: 10.0,
+                        ),
                         child: Hero(
                           transitionOnUserGestures: true,
                           tag: "fotoPerfil",
@@ -366,15 +369,10 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
               // BuildPosts
-              Expanded(
+              Flexible(
                 flex: 4,
-                child: Row(
-                  children: <Widget>[
-                    Flexible(
-                      child: buildCard(),
-                    )
-                  ],
-                ),
+                fit: FlexFit.tight,
+                child: buildCard(),
               )
             ],
           );

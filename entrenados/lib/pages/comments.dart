@@ -83,6 +83,7 @@ class CommentsState extends State<Comments> {
               "mediaUrl": postMediaUrl,
             }));
       }
+      
       commentController.clear();
   }
 
