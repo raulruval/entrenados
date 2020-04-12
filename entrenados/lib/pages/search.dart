@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entrenados/models/searchModel.dart';
@@ -84,7 +85,7 @@ class _SearchState extends State<Search>
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(top: 75.0),
-            child: Text(
+            child: AutoSizeText(
               "Encontrar usuarios",
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -93,6 +94,7 @@ class _SearchState extends State<Search>
                 fontWeight: FontWeight.w600,
                 fontSize: 60.0,
               ),
+              maxLines: 2,
             ),
           ),
         ],

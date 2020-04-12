@@ -38,6 +38,7 @@ dependencies:
   auto_size_text: ^2.1.0
   device_preview: ^0.4.4
   responsive_builder: ^0.1.5
+  font_awesome_flutter: ^8.8.1
   
 dev_dependencies:
   flutter_test:

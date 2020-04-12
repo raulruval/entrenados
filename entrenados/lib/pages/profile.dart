@@ -431,26 +431,24 @@ class _ProfileState extends State<Profile> {
     if (isLoading) {
       return circularProgress();
     } else if (posts.isEmpty) {
-      return Container(
+      return Expanded(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SvgPicture.asset(
               'assets/img/empty.svg',
-              height: 260.0,
+              height: MediaQuery.of(context).size.height / 2,
+              width: MediaQuery.of(context).size.width / 1.5,
             ),
-            Padding(
-              padding: EdgeInsets.only(top: 20.0, bottom: 60),
-              child: Text(
-                "No existen publicaciones",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 40.0,
-                    fontWeight: FontWeight.bold),
-              ),
+            AutoSizeText(
+              "No existen publicaciones",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 40.0,
+                  fontWeight: FontWeight.bold),
+              maxLines: 2,
             ),
           ],
         ),

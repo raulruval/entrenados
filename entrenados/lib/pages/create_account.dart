@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entrenados/models/user.dart';
 import 'package:entrenados/pages/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,6 +18,7 @@ class _CreateAccountState extends State<CreateAccount> {
   final _formKey = GlobalKey<FormState>();
   User user = new User();
   String _pwd = "";
+  bool oldUser = false;
 
   Future signUpUser() async {
     FirebaseUser fUser = await _auth.createUserWithEmailAndPassword(
@@ -43,7 +45,7 @@ class _CreateAccountState extends State<CreateAccount> {
         .setData({});
   }
 
-  Future<void> showAlertRegister() async {
+  Future<void> showAlertRegister(String texto) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -54,7 +56,7 @@ class _CreateAccountState extends State<CreateAccount> {
             child: ListBody(
               children: <Widget>[
                 Text(
-                    'El email introducido ya existe, por favor, intentelo de nuevo con uno distinto.'),
+                    texto),
               ],
             ),
           ),
@@ -71,25 +73,35 @@ class _CreateAccountState extends State<CreateAccount> {
     );
   }
 
-  submit() {
+  submit() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-
-      signUpUser()
-          .then((uid) => {user.id = uid.toString()})
-          .then((_) => saveUserOnDb())
-          .then((_) {
-        SnackBar snackbar = SnackBar(
-          content: Text("¡Bienvenido!"),
-        );
-        _scaffoldKey.currentState.showSnackBar(snackbar);
-        Timer(Duration(seconds: 2), () {
-          Navigator.pop(context, user);
+      oldUser = await _checkIfExists(user.username);
+      if (oldUser) {
+        showAlertRegister('El usuario introducido ya existe, por favor, intentelo de nuevo con uno distinto.');
+      } else {
+        signUpUser()
+            .then((uid) => {user.id = uid.toString()})
+            .then((_) => saveUserOnDb())
+            .then((_) {
+          SnackBar snackbar = SnackBar(
+            content: Text("¡Bienvenido!"),
+          );
+          _scaffoldKey.currentState.showSnackBar(snackbar);
+          Timer(Duration(seconds: 2), () {
+            Navigator.pop(context, user);
+          });
+        }).catchError((onError) {
+          showAlertRegister('El email introducido ya existe, por favor, intentelo de nuevo con uno distinto.');
         });
-      }).catchError((onError) {
-        showAlertRegister();
-      });
+      }
     }
+  }
+
+  _checkIfExists(String username) async {
+    QuerySnapshot query =
+        await usersRef.where("displayName", isEqualTo: username).getDocuments();
+    return query.documents.isNotEmpty;
   }
 
   @override
@@ -139,9 +151,9 @@ class _CreateAccountState extends State<CreateAccount> {
                       child: Container(
                         child: TextFormField(
                           validator: (val) {
-                            if (val.trim().length < 3 || val.isEmpty) {
+                            if (val.isEmpty) {
                               return 'Usuario demasiado corto';
-                            } else if (val.trim().length > 12) {
+                            } else if (val.trim().length > 10) {
                               return 'Usuario demasiado largo';
                             } else {
                               return null;
@@ -152,7 +164,7 @@ class _CreateAccountState extends State<CreateAccount> {
                             border: OutlineInputBorder(),
                             labelText: "Usuario",
                             labelStyle: TextStyle(fontSize: 15.0),
-                            hintText: "Deben ser al menos 3 caracteres",
+                            hintText: "Nombre por el que serás visible",
                           ),
                         ),
                       ),
