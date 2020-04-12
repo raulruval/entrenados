@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:entrenados/pages/home.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter_duration_picker/flutter_duration_picker.dart';
 import 'package:image/image.dart' as Im;
@@ -155,21 +156,19 @@ class _ShareState extends State<Share>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(top: 250.0),
-            child: RaisedButton(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0)),
-              child: Text(
-                "Compartir",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 50.0,
-                ),
+          Padding(padding: EdgeInsets.all(25),),
+          RaisedButton(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0)),
+            child: Text(
+              "Compartir",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 50.0,
               ),
-              color: Colors.teal,
-              onPressed: () => selectImage(context),
             ),
+            color: Colors.teal,
+            onPressed: () => selectImage(context),
           ),
         ],
       ),
@@ -496,7 +495,10 @@ class _ShareState extends State<Share>
   Widget build(BuildContext context) {
     super.build(context);
     return file == null && defaultImg == false
-        ? buildCompartir()
+        ?  OrientationLayoutBuilder(
+          portrait: (context) => buildCompartir(),
+          landscape: (context) => buildCompartir(),
+        ) 
         : buildFormularioCompartir();
   }
 }
