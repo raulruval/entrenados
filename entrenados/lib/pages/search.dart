@@ -3,13 +3,16 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entrenados/models/searchModel.dart';
 import 'package:entrenados/pages/activity.dart';
-import 'package:entrenados/pages/search_post.dart';
+import 'package:entrenados/pages/searchPostsResponse.dart';
 import 'package:flutter/material.dart';
 import 'package:entrenados/models/user.dart';
 import 'package:entrenados/pages/home.dart';
 import 'package:entrenados/widgets/progress.dart';
 
 class Search extends StatefulWidget {
+  final SearchModel searchModel;
+
+  Search({this.searchModel});
   @override
   _SearchState createState() => _SearchState();
 }
@@ -40,7 +43,7 @@ class _SearchState extends State<Search>
     setState(() {});
   }
 
-  handleBuscar(String consulta) {
+  handleSearchUser(String consulta) {
     Future<QuerySnapshot> users = usersRef
         .where("displayName", isGreaterThanOrEqualTo: consulta)
         .getDocuments();
@@ -73,7 +76,7 @@ class _SearchState extends State<Search>
             onPressed: () => clearSearch(),
           ),
         ),
-        onFieldSubmitted: handleBuscar,
+        onFieldSubmitted: handleSearchUser,
       ),
     );
   }
@@ -154,6 +157,121 @@ class _SearchState extends State<Search>
     );
   }
 
+  Widget buildSearchPost(BuildContext context) {
+    return ListView(
+      children: <Widget>[
+        Center(
+          child: Container(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 24.0),
+                    child: Text("Dificultad",
+                        style: TextStyle(fontWeight: FontWeight.w800)),
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                    child: Wrap(
+                      spacing: MediaQuery.of(context).size.width * 0.0465,
+                      children: [
+                        for (var difficulty in widget.searchModel.difficulty)
+                          ChoiceChip(
+                              selected: widget.searchModel.selectedDifficulty
+                                  .contains(difficulty),
+                              selectedColor: Colors.teal[900],
+                              backgroundColor: Colors.teal[100],
+                              labelPadding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              labelStyle: widget.searchModel.selectedDifficulty
+                                      .contains(difficulty)
+                                  ? TextStyle(color: Colors.white)
+                                  : TextStyle(color: Colors.black),
+                              label: Text(difficulty),
+                              onSelected: (isSelected) {
+                                setState(() {
+                                  _onDifficultySelected(isSelected, difficulty);
+                                });
+                              }),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 24.0),
+                    child: Text("Duración aproximada",
+                        style: TextStyle(fontWeight: FontWeight.w800)),
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                    child: Wrap(
+                      spacing: MediaQuery.of(context).size.width * 0.098,
+                      children: [
+                        for (var duration in widget.searchModel.durationWorkout)
+                          ChoiceChip(
+                              selected: widget.searchModel.selectedDuration
+                                  .contains(duration),
+                              selectedColor: Colors.teal[900],
+                              backgroundColor: Colors.teal[100],
+                              labelPadding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              labelStyle: widget.searchModel.selectedDuration
+                                      .contains(duration)
+                                  ? TextStyle(color: Colors.white)
+                                  : TextStyle(color: Colors.black),
+                              label: Text(duration),
+                              onSelected: (isSelected) {
+                                setState(() {
+                                  _onDurationSelected(isSelected, duration);
+                                });
+                              }),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 24.0),
+                    child: Text("Grupo",
+                        style: TextStyle(fontWeight: FontWeight.w800)),
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                    child: Wrap(
+                      spacing: MediaQuery.of(context).size.width * 0.08,
+                      children: [
+                        for (var group in widget.searchModel.group)
+                          ChoiceChip(
+                              selected: widget.searchModel.selectedGroup
+                                  .contains(group),
+                              selectedColor: Colors.teal[900],
+                              backgroundColor: Colors.teal[100],
+                              labelPadding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              labelStyle: widget.searchModel.selectedGroup
+                                      .contains(group)
+                                  ? TextStyle(color: Colors.white)
+                                  : TextStyle(color: Colors.black),
+                              label: Text(group),
+                              onSelected: (isSelected) {
+                                setState(() {
+                                  _onGroupSelected(isSelected, group);
+                                });
+                              }),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   _getWorkouts() {
     return Center(
       child: Container(
@@ -169,7 +287,19 @@ class _SearchState extends State<Search>
             end: Alignment.bottomCenter,
           ),
         ),
-        child: SearchPost(SearchModel()),
+        child: buildSearchPost(context),
+      ),
+    );
+  }
+
+  handleSearchPostTiles() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SearchPostsResponse(
+            widget.searchModel.selectedDifficulty,
+            widget.searchModel.selectedDuration,
+            widget.searchModel.selectedGroup),
       ),
     );
   }
@@ -177,7 +307,7 @@ class _SearchState extends State<Search>
   _getFab() {
     return _tabController.index == 0
         ? FloatingActionButton.extended(
-            onPressed: () => print("Buscar"),
+            onPressed: () => handleSearchPostTiles(),
             label: Text("Buscar"),
             icon: Icon(Icons.search),
           )
@@ -251,6 +381,27 @@ class _SearchState extends State<Search>
         floatingActionButton: _getFab(),
       ),
     );
+  }
+
+  void _onDifficultySelected(bool isSelected, String difficulty) {
+    isSelected
+        ? widget.searchModel.selectedDifficulty.add(difficulty)
+        : widget.searchModel.selectedDifficulty.remove(difficulty);
+    print(widget.searchModel.selectedDifficulty);
+  }
+
+  void _onDurationSelected(bool isSelected, String duration) {
+    isSelected
+        ? widget.searchModel.selectedDuration.add(duration)
+        : widget.searchModel.selectedDuration.remove(duration);
+    print(widget.searchModel.selectedDuration);
+  }
+
+  void _onGroupSelected(bool isSelected, String group) {
+    isSelected
+        ? widget.searchModel.selectedGroup.add(group)
+        : widget.searchModel.selectedGroup.remove(group);
+    print(widget.searchModel.selectedGroup);
   }
 }
 

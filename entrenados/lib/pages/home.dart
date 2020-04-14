@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:entrenados/models/user.dart';
+import 'package:entrenados/models/searchModel.dart';
 
 import 'mypage.dart';
 
@@ -42,6 +43,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  SearchModel sm = new SearchModel();
   bool isAuth = false;
   PageController pageController;
   int pageIndex = 0;
@@ -270,7 +272,7 @@ class _HomeState extends State<Home> {
       body: PageView(
         children: <Widget>[
           Timeline(currentUser: currentUser),
-          Search(),
+          Search(searchModel: sm),
           Share(currentUser: currentUser),
           MyPage(profileId: currentUser?.id),
         ],

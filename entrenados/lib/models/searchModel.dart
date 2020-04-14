@@ -8,13 +8,13 @@ class SearchModel {
     Difficulty.intermedio,
     Difficulty.avanzado,
   ];
-  List<String> duration = [
-    Duration.five,
-    Duration.ten,
-    Duration.twenty,
-    Duration.thirty,
-    Duration.fortyfive,
-    Duration.sixty,
+  List<String> durationWorkout = [
+    DurationWorkout.five,
+    DurationWorkout.ten,
+    DurationWorkout.twenty,
+    DurationWorkout.thirty,
+    DurationWorkout.fortyfive,
+    DurationWorkout.sixty,
   ];
 
     List<String> group = [
@@ -33,7 +33,7 @@ class Difficulty {
   static const String avanzado = "Avanzado";
 }
 
-class Duration {
+class DurationWorkout {
   static const String five = "<   5 min";
   static const String ten = "< 10 min";
   static const String twenty = "< 20 min";
