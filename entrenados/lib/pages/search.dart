@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:entrenados/models/item.dart';
 import 'package:entrenados/models/searchModel.dart';
 import 'package:entrenados/pages/activity.dart';
 import 'package:entrenados/pages/searchPostsResponse.dart';
@@ -19,11 +20,15 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search>
     with AutomaticKeepAliveClientMixin<Search>, SingleTickerProviderStateMixin {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController searchController = TextEditingController();
   Future<QuerySnapshot> searchFutureResults;
   bool searchuser = false;
   bool workouts = true;
   TabController _tabController;
+  String _durationDigits = "";
+  String _musclesParsed = "";
+  String _equipmentParsed = "";
 
   @override
   void initState() {
@@ -176,7 +181,7 @@ class _SearchState extends State<Search>
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                     child: Wrap(
-                      spacing: MediaQuery.of(context).size.width * 0.0465,
+                      spacing: 20.0,
                       children: [
                         for (var difficulty in widget.searchModel.difficulty)
                           ChoiceChip(
@@ -208,7 +213,7 @@ class _SearchState extends State<Search>
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                     child: Wrap(
-                      spacing: MediaQuery.of(context).size.width * 0.098,
+                      spacing: 20.0,
                       children: [
                         for (var duration in widget.searchModel.durationWorkout)
                           ChoiceChip(
@@ -240,7 +245,7 @@ class _SearchState extends State<Search>
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                     child: Wrap(
-                      spacing: MediaQuery.of(context).size.width * 0.08,
+                      spacing: 20.0,
                       children: [
                         for (var group in widget.searchModel.group)
                           ChoiceChip(
@@ -272,7 +277,7 @@ class _SearchState extends State<Search>
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                     child: Wrap(
-                      spacing: MediaQuery.of(context).size.width * 0.08,
+                      spacing: 20.0,
                       children: [
                         for (var muscle in widget.searchModel.muscles)
                           ChoiceChip(
@@ -286,7 +291,7 @@ class _SearchState extends State<Search>
                                       .contains(muscle)
                                   ? TextStyle(color: Colors.white)
                                   : TextStyle(color: Colors.black),
-                              label: Text(muscle),
+                              label: Text(muscle.name),
                               onSelected: (isSelected) {
                                 setState(() {
                                   _onMusclesSelected(isSelected, muscle);
@@ -304,7 +309,7 @@ class _SearchState extends State<Search>
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                     child: Wrap(
-                      spacing: MediaQuery.of(context).size.width * 0.08,
+                      spacing: 20.0,
                       children: [
                         for (var equipment in widget.searchModel.equipment)
                           ChoiceChip(
@@ -318,7 +323,7 @@ class _SearchState extends State<Search>
                                       .contains(equipment)
                                   ? TextStyle(color: Colors.white)
                                   : TextStyle(color: Colors.black),
-                              label: Text(equipment),
+                              label: Text(equipment.name),
                               onSelected: (isSelected) {
                                 setState(() {
                                   _onEquipmentSelected(isSelected, equipment);
@@ -357,24 +362,42 @@ class _SearchState extends State<Search>
   }
 
   handleSearchPostTiles() {
-    String durationDigits = (widget.searchModel.selectedDuration)
-        .replaceAll(RegExp('[A-Za-z]'), "")
-        .substring(2);
+    if (widget.searchModel.selectedDuration == "" ||
+        widget.searchModel.selectedDifficulty == "" ||
+        widget.searchModel.group == null) {
+      SnackBar snackbar = SnackBar(
+        content: AutoSizeText(
+          "Debes seleccionar al menos una dificultad, duración y grupo.",
+          maxLines: 1,
+        ),
+      );
+      _scaffoldKey.currentState.showSnackBar(snackbar);
+    } else {
+      _durationDigits = (widget.searchModel.selectedDuration)
+          .replaceAll(RegExp('[A-Za-z]'), "")
+          .substring(2);
 
-    // Antes de pasar el selectedmuscles y equipment tengo que convertirlos al string de numeros
-    String musclesParsed = "";
-    String equipmentParsed = "";
+      _musclesParsed = buildItemSequence(widget.searchModel.selectedMuscles);
+      _equipmentParsed =
+          buildItemSequence(widget.searchModel.selectedEquipment);
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => SearchPostsResponse(
-              widget.searchModel.selectedDifficulty,
-              int.parse(durationDigits.replaceAll(" ", "")),
-              widget.searchModel.selectedGroup,
-              musclesParsed,
-              equipmentParsed)),
-    );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => SearchPostsResponse(
+                widget.searchModel.selectedDifficulty,
+                int.parse(_durationDigits.replaceAll(" ", "")),
+                widget.searchModel.selectedGroup,
+                _musclesParsed,
+                _equipmentParsed)),
+      );
+    }
+  }
+
+  buildItemSequence(List<Item> itemList) {
+    String sequence = "";
+    itemList.forEach((item) => {sequence += item.index.toString() + "-"});
+    return sequence;
   }
 
   _getFab() {
@@ -394,6 +417,7 @@ class _SearchState extends State<Search>
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        key: _scaffoldKey,
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           elevation: 0,
@@ -460,35 +484,30 @@ class _SearchState extends State<Search>
     isSelected
         ? widget.searchModel.selectedDifficulty = difficulty
         : widget.searchModel.selectedDifficulty = "";
-    print(widget.searchModel.selectedDifficulty);
   }
 
   void _onDurationSelected(bool isSelected, String duration) {
     isSelected
         ? widget.searchModel.selectedDuration = duration
         : widget.searchModel.selectedDuration = "";
-    print(widget.searchModel.selectedDuration);
   }
 
   void _onGroupSelected(bool isSelected, String group) {
     isSelected
         ? widget.searchModel.selectedGroup.add(group)
         : widget.searchModel.selectedGroup.remove(group);
-    print(widget.searchModel.selectedGroup);
   }
 
-  void _onMusclesSelected(bool isSelected, String muscle) {
+  void _onMusclesSelected(bool isSelected, Item muscle) {
     isSelected
         ? widget.searchModel.selectedMuscles.add(muscle)
         : widget.searchModel.selectedMuscles.remove(muscle);
-    print(widget.searchModel.selectedMuscles);
   }
 
-  void _onEquipmentSelected(bool isSelected, String equipment) {
+  void _onEquipmentSelected(bool isSelected, Item equipment) {
     isSelected
         ? widget.searchModel.selectedEquipment.add(equipment)
         : widget.searchModel.selectedEquipment.remove(equipment);
-    print(widget.searchModel.selectedEquipment);
   }
 }
 

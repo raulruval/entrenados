@@ -156,7 +156,9 @@ class _ShareState extends State<Share>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Padding(padding: EdgeInsets.all(25),),
+          Padding(
+            padding: EdgeInsets.all(25),
+          ),
           RaisedButton(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0)),
@@ -292,12 +294,12 @@ class _ShareState extends State<Share>
     print("Uploading test resource");
     if (notesController.text == "video") {
       mainResource = "video";
-    }else if (notesController.text == "pdf"){
+    } else if (notesController.text == "pdf") {
       mainResource = "pdf";
-    }else if (notesController.text == "link"){
+    } else if (notesController.text == "link") {
       mainResource = "link";
-    }else{
-      mainResource ="no";
+    } else {
+      mainResource = "no";
     }
   }
 
@@ -495,10 +497,10 @@ class _ShareState extends State<Share>
   Widget build(BuildContext context) {
     super.build(context);
     return file == null && defaultImg == false
-        ?  OrientationLayoutBuilder(
-          portrait: (context) => buildCompartir(),
-          landscape: (context) => buildCompartir(),
-        ) 
+        ? OrientationLayoutBuilder(
+            portrait: (context) => buildCompartir(),
+            landscape: (context) => buildCompartir(),
+          )
         : buildFormularioCompartir();
   }
 }

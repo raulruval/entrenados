@@ -1,9 +1,12 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entrenados/pages/home.dart';
+import 'package:entrenados/widgets/header.dart';
 import 'package:entrenados/widgets/post.dart';
 import 'package:entrenados/widgets/post_tile.dart';
 import 'package:entrenados/widgets/progress.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class SearchPostsResponse extends StatefulWidget {
   final String selectedDifficulty;
@@ -18,15 +21,14 @@ class SearchPostsResponse extends StatefulWidget {
 }
 
 class _SearchPostsResponseState extends State<SearchPostsResponse> {
-  bool isLoading = false;
   List<Post> posts = [];
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
     getPrueba().then((results) {
       setState(() {
-        print(widget.selectedDuration);
         querySnapshot = results;
         getPosts();
       });
@@ -46,21 +48,23 @@ class _SearchPostsResponseState extends State<SearchPostsResponse> {
       });
 
       for (int i = 0; i < querySnapshot.documents.length; i++) {
-        QuerySnapshot snapshot = await postsRef
-            .document(querySnapshot.documents[i].documentID)
-            .collection('userPosts')
-            .where('currentDifficulty', isEqualTo: widget.selectedDifficulty)
-            .where(
-              'currentGroup',
-              isEqualTo: widget.selectedGroup,
-            )
-            .orderBy('timestamp', descending: true)
-            .getDocuments();
+        for (int g = 0; g < widget.selectedGroup.length; g++) {
+          QuerySnapshot snapshot = await postsRef
+              .document(querySnapshot.documents[i].documentID)
+              .collection('userPosts')
+              .where('currentDifficulty', isEqualTo: widget.selectedDifficulty)
+              .where('duration', isLessThanOrEqualTo: widget.selectedDuration)
+              .where('currentGroup', isEqualTo: widget.selectedGroup[g])
+              .where('selectedMuscles', isEqualTo: widget.selectedMuscles)
+              .where('selectedEquipment', isEqualTo: widget.selectedEquipment)
+              .getDocuments();
 
-        setState(() {
-          posts +=
-              snapshot.documents.map((doc) => Post.fromDocument(doc)).toList();
-        });
+          setState(() {
+            posts += snapshot.documents
+                .map((doc) => Post.fromDocument(doc))
+                .toList();
+          });
+        }
       }
       setState(() {
         isLoading = false;
@@ -68,9 +72,33 @@ class _SearchPostsResponseState extends State<SearchPostsResponse> {
     }
   }
 
-  buildPostsResponse1() {
+  buildPostsResponse() {
     if (isLoading) {
       return circularProgress();
+    } else if (posts.isEmpty) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(left: 12.0, right: 12.0),
+            child: SvgPicture.asset(
+              'assets/img/empty.svg',
+              height: MediaQuery.of(context).size.height / 2,
+              width: MediaQuery.of(context).size.width / 1.5,
+            ),
+          ),
+          AutoSizeText(
+            "Lo sentimos, no se encontró ninguna publicación con esos filtros. ¡Prueba con otros!",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 40.0,
+                fontWeight: FontWeight.bold),
+            maxLines: 3,
+          ),
+        ],
+      );
     } else {
       List<GridTile> gridTiles = [];
       posts.forEach((post) {
@@ -83,59 +111,12 @@ class _SearchPostsResponseState extends State<SearchPostsResponse> {
     }
   }
 
-  buildPostsResponse() {
-    if (querySnapshot != null) {
-      return ListView.builder(
-        primary: false,
-        itemCount: querySnapshot.documents.length,
-        padding: EdgeInsets.all(12),
-        itemBuilder: (context, i) {
-          return Column(
-            children: <Widget>[
-//load data into widgets
-
-              Text("${querySnapshot.documents[i].data['currentDifficulty']}"),
-            ],
-          );
-        },
-      );
-    } else {
-      return Center(
-        child: CircularProgressIndicator(),
-      );
-    }
-
-    // if (isLoading) {
-    //   return circularProgress();
-    // } else {
-    //   List<GridTile> gridTiles = [];
-    //   posts.forEach((post) {
-    //     gridTiles.add(GridTile(child: PostTile(post)));
-    //   });
-    //   return ListView(
-    //     shrinkWrap: true,
-    //     physics: NeverScrollableScrollPhysics(),
-    //     children: gridTiles,
-    //   );
-    // }
-  }
-
   @override
   Widget build(BuildContext context) {
     print(widget.selectedDifficulty[0]);
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
-        elevation: 0.0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          color: Colors.white,
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
-      body: buildPostsResponse1(),
+      appBar: header(context,isAppTitle: false,removeBackButton: false,titleText: "Publicaciones"),
+      body: buildPostsResponse(),
     );
   }
 }

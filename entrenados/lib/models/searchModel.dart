@@ -1,9 +1,11 @@
+import 'package:entrenados/models/item.dart';
+
 class SearchModel {
   String selectedDifficulty = "";
   String selectedDuration = "";
   List<String> selectedGroup = [];
-  List<String> selectedMuscles = [];
-  List<String> selectedEquipment = [];
+  List<Item> selectedMuscles = [];
+  List<Item> selectedEquipment = [];
 
   List<String> difficulty = [
     Difficulty.pricipiante,
@@ -28,23 +30,24 @@ class SearchModel {
     Group.hiit,
   ];
 
-  List<String> muscles = [
-    Muscles.abs,
-    Muscles.back,
-    Muscles.biceps,
-    Muscles.forearm,
-    Muscles.quadriceps,
-    Muscles.shoulders,
-    Muscles.triceps,
-    Muscles.twins
+  List<Item> muscles = [
+    Item("assets/img/arm.jpg", Muscles.biceps, 1, false),
+    Item("assets/img/leg.jpg", Muscles.twins, 2, false),
+    Item("assets/img/espalda.jpg", Muscles.back, 3, false),
+    Item("assets/img/abs.jpg", Muscles.abs, 4, false),
+    Item("assets/img/triceps.jpg", Muscles.triceps, 5, false),
+    Item("assets/img/shoulder.jpg", Muscles.shoulders, 6, false),
+    Item("assets/img/quadriceps.jpg", Muscles.quadriceps, 7, false),
+    Item("assets/img/forearm.jpg", Muscles.forearm, 8, false),
   ];
-  List<String> equipment = [
-    EquipmentList.ball,
-    EquipmentList.bench,
-    EquipmentList.boxing,
-    EquipmentList.dumbbells,
-    EquipmentList.mat,
-    EquipmentList.rope,
+
+  List<Item> equipment = [
+    Item("assets/img/ball.jpg", EquipmentList.ball, 1, false),
+    Item("assets/img/bank.jpg", EquipmentList.bench, 2, false),
+    Item("assets/img/dumbell.jpg", EquipmentList.dumbbells, 3, false),
+    Item("assets/img/rope.jpg", EquipmentList.rope, 4, false),
+    Item("assets/img/sack.jpg", EquipmentList.boxing, 5, false),
+    Item("assets/img/yoga.jpg", EquipmentList.mat, 6, false),
   ];
 }
 
