@@ -180,8 +180,8 @@ class _SearchState extends State<Search>
                       children: [
                         for (var difficulty in widget.searchModel.difficulty)
                           ChoiceChip(
-                              selected: widget.searchModel.selectedDifficulty
-                                  .contains(difficulty),
+                              selected: widget.searchModel.selectedDifficulty ==
+                                  difficulty,
                               selectedColor: Colors.teal[900],
                               backgroundColor: Colors.teal[100],
                               labelPadding:
@@ -212,8 +212,8 @@ class _SearchState extends State<Search>
                       children: [
                         for (var duration in widget.searchModel.durationWorkout)
                           ChoiceChip(
-                              selected: widget.searchModel.selectedDuration
-                                  .contains(duration),
+                              selected: widget.searchModel.selectedDuration ==
+                                  duration,
                               selectedColor: Colors.teal[900],
                               backgroundColor: Colors.teal[100],
                               labelPadding:
@@ -293,12 +293,15 @@ class _SearchState extends State<Search>
   }
 
   handleSearchPostTiles() {
+    String durationDigits =
+        (widget.searchModel.selectedDuration).replaceAll(RegExp('[A-Za-z]'),"").substring(2);
+
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => SearchPostsResponse(
             widget.searchModel.selectedDifficulty,
-            widget.searchModel.selectedDuration,
+            durationDigits.replaceAll(" ", ""),
             widget.searchModel.selectedGroup),
       ),
     );
@@ -385,15 +388,15 @@ class _SearchState extends State<Search>
 
   void _onDifficultySelected(bool isSelected, String difficulty) {
     isSelected
-        ? widget.searchModel.selectedDifficulty.add(difficulty)
-        : widget.searchModel.selectedDifficulty.remove(difficulty);
+        ? widget.searchModel.selectedDifficulty = difficulty
+        : widget.searchModel.selectedDifficulty = "";
     print(widget.searchModel.selectedDifficulty);
   }
 
   void _onDurationSelected(bool isSelected, String duration) {
     isSelected
-        ? widget.searchModel.selectedDuration.add(duration)
-        : widget.searchModel.selectedDuration.remove(duration);
+        ? widget.searchModel.selectedDuration = duration
+        : widget.searchModel.selectedDuration = "";
     print(widget.searchModel.selectedDuration);
   }
 

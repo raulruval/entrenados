@@ -1,6 +1,6 @@
 class SearchModel {
-  List<String> selectedDifficulty = [];
-  List<String> selectedDuration = [];
+  String selectedDifficulty = "";
+  String selectedDuration = "";
     List<String> selectedGroup = [];
 
   List<String> difficulty = [

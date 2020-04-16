@@ -6,8 +6,8 @@ import 'package:entrenados/widgets/progress.dart';
 import 'package:flutter/material.dart';
 
 class SearchPostsResponse extends StatefulWidget {
-  final List<String> selectedDifficulty;
-  final List<String> selectedDuration;
+  final String selectedDifficulty;
+  final String selectedDuration;
   final List<String> selectedGroup;
   SearchPostsResponse(
       this.selectedDifficulty, this.selectedDuration, this.selectedGroup);
@@ -24,6 +24,7 @@ class _SearchPostsResponseState extends State<SearchPostsResponse> {
     super.initState();
     getPrueba().then((results) {
       setState(() {
+        print(widget.selectedDuration);
         querySnapshot = results;
         getPosts();
       });
@@ -47,6 +48,8 @@ class _SearchPostsResponseState extends State<SearchPostsResponse> {
         QuerySnapshot snapshot = await postsRef
             .document(querySnapshot.documents[i].documentID)
             .collection('userPosts')
+            .where('currentDifficulty',isEqualTo: widget.selectedDifficulty)
+            .where('currentGroup', isEqualTo: widget.selectedGroup,)
             .orderBy('timestamp', descending: true)
             .getDocuments();
 
@@ -71,7 +74,6 @@ class _SearchPostsResponseState extends State<SearchPostsResponse> {
       });
       return ListView(
         shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
         children: gridTiles,
       );
     }
