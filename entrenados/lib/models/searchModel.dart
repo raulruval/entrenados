@@ -1,7 +1,9 @@
 class SearchModel {
   String selectedDifficulty = "";
   String selectedDuration = "";
-    List<String> selectedGroup = [];
+  List<String> selectedGroup = [];
+  List<String> selectedMuscles = [];
+  List<String> selectedEquipment = [];
 
   List<String> difficulty = [
     Difficulty.pricipiante,
@@ -17,13 +19,32 @@ class SearchModel {
     DurationWorkout.sixty,
   ];
 
-    List<String> group = [
+  List<String> group = [
     Group.resistence,
     Group.mobility,
     Group.strength,
     Group.yoga,
     Group.pilates,
     Group.hiit,
+  ];
+
+  List<String> muscles = [
+    Muscles.abs,
+    Muscles.back,
+    Muscles.biceps,
+    Muscles.forearm,
+    Muscles.quadriceps,
+    Muscles.shoulders,
+    Muscles.triceps,
+    Muscles.twins
+  ];
+  List<String> equipment = [
+    EquipmentList.ball,
+    EquipmentList.bench,
+    EquipmentList.boxing,
+    EquipmentList.dumbbells,
+    EquipmentList.mat,
+    EquipmentList.rope,
   ];
 }
 
@@ -49,4 +70,24 @@ class Group {
   static const String yoga = "Yoga";
   static const String pilates = "Pilates";
   static const String hiit = "HIIT";
+}
+
+class Muscles {
+  static const String biceps = "Bíceps";
+  static const String twins = "Gemelos";
+  static const String back = "Espalda";
+  static const String abs = "Abdominales";
+  static const String triceps = "Tríceps";
+  static const String shoulders = "Hombros";
+  static const String quadriceps = "Cuádriceps";
+  static const String forearm = "Antebrazo";
+}
+
+class EquipmentList {
+  static const String ball = "Balón";
+  static const String bench = "Banco";
+  static const String dumbbells = "Mancuernas";
+  static const String rope = "Comba";
+  static const String boxing = "Saco de boxeo";
+  static const String mat = "Estera";
 }

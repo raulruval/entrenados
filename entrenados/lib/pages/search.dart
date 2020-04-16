@@ -263,6 +263,70 @@ class _SearchState extends State<Search>
                       ],
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 24.0),
+                    child: Text("Músculos involucrados",
+                        style: TextStyle(fontWeight: FontWeight.w800)),
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                    child: Wrap(
+                      spacing: MediaQuery.of(context).size.width * 0.08,
+                      children: [
+                        for (var muscle in widget.searchModel.muscles)
+                          ChoiceChip(
+                              selected: widget.searchModel.selectedMuscles
+                                  .contains(muscle),
+                              selectedColor: Colors.teal[900],
+                              backgroundColor: Colors.teal[100],
+                              labelPadding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              labelStyle: widget.searchModel.selectedMuscles
+                                      .contains(muscle)
+                                  ? TextStyle(color: Colors.white)
+                                  : TextStyle(color: Colors.black),
+                              label: Text(muscle),
+                              onSelected: (isSelected) {
+                                setState(() {
+                                  _onMusclesSelected(isSelected, muscle);
+                                });
+                              }),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 24.0),
+                    child: Text("Material necesario",
+                        style: TextStyle(fontWeight: FontWeight.w800)),
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                    child: Wrap(
+                      spacing: MediaQuery.of(context).size.width * 0.08,
+                      children: [
+                        for (var equipment in widget.searchModel.equipment)
+                          ChoiceChip(
+                              selected: widget.searchModel.selectedEquipment
+                                  .contains(equipment),
+                              selectedColor: Colors.teal[900],
+                              backgroundColor: Colors.teal[100],
+                              labelPadding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              labelStyle: widget.searchModel.selectedEquipment
+                                      .contains(equipment)
+                                  ? TextStyle(color: Colors.white)
+                                  : TextStyle(color: Colors.black),
+                              label: Text(equipment),
+                              onSelected: (isSelected) {
+                                setState(() {
+                                  _onEquipmentSelected(isSelected, equipment);
+                                });
+                              }),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -293,17 +357,23 @@ class _SearchState extends State<Search>
   }
 
   handleSearchPostTiles() {
-    String durationDigits =
-        (widget.searchModel.selectedDuration).replaceAll(RegExp('[A-Za-z]'),"").substring(2);
+    String durationDigits = (widget.searchModel.selectedDuration)
+        .replaceAll(RegExp('[A-Za-z]'), "")
+        .substring(2);
+
+    // Antes de pasar el selectedmuscles y equipment tengo que convertirlos al string de numeros
+    String musclesParsed = "";
+    String equipmentParsed = "";
 
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SearchPostsResponse(
-            widget.searchModel.selectedDifficulty,
-            durationDigits.replaceAll(" ", ""),
-            widget.searchModel.selectedGroup),
-      ),
+          builder: (context) => SearchPostsResponse(
+              widget.searchModel.selectedDifficulty,
+              int.parse(durationDigits.replaceAll(" ", "")),
+              widget.searchModel.selectedGroup,
+              musclesParsed,
+              equipmentParsed)),
     );
   }
 
@@ -405,6 +475,20 @@ class _SearchState extends State<Search>
         ? widget.searchModel.selectedGroup.add(group)
         : widget.searchModel.selectedGroup.remove(group);
     print(widget.searchModel.selectedGroup);
+  }
+
+  void _onMusclesSelected(bool isSelected, String muscle) {
+    isSelected
+        ? widget.searchModel.selectedMuscles.add(muscle)
+        : widget.searchModel.selectedMuscles.remove(muscle);
+    print(widget.searchModel.selectedMuscles);
+  }
+
+  void _onEquipmentSelected(bool isSelected, String equipment) {
+    isSelected
+        ? widget.searchModel.selectedEquipment.add(equipment)
+        : widget.searchModel.selectedEquipment.remove(equipment);
+    print(widget.searchModel.selectedEquipment);
   }
 }
 

@@ -7,10 +7,12 @@ import 'package:flutter/material.dart';
 
 class SearchPostsResponse extends StatefulWidget {
   final String selectedDifficulty;
-  final String selectedDuration;
+  final int selectedDuration;
   final List<String> selectedGroup;
-  SearchPostsResponse(
-      this.selectedDifficulty, this.selectedDuration, this.selectedGroup);
+  final String selectedMuscles;
+  final String selectedEquipment;
+  SearchPostsResponse(this.selectedDifficulty, this.selectedDuration,
+      this.selectedGroup, this.selectedMuscles, this.selectedEquipment);
   @override
   _SearchPostsResponseState createState() => _SearchPostsResponseState();
 }
@@ -29,7 +31,6 @@ class _SearchPostsResponseState extends State<SearchPostsResponse> {
         getPosts();
       });
     });
-    
   }
 
   QuerySnapshot querySnapshot;
@@ -48,8 +49,11 @@ class _SearchPostsResponseState extends State<SearchPostsResponse> {
         QuerySnapshot snapshot = await postsRef
             .document(querySnapshot.documents[i].documentID)
             .collection('userPosts')
-            .where('currentDifficulty',isEqualTo: widget.selectedDifficulty)
-            .where('currentGroup', isEqualTo: widget.selectedGroup,)
+            .where('currentDifficulty', isEqualTo: widget.selectedDifficulty)
+            .where(
+              'currentGroup',
+              isEqualTo: widget.selectedGroup,
+            )
             .orderBy('timestamp', descending: true)
             .getDocuments();
 
