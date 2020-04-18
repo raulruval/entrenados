@@ -49,6 +49,16 @@ class SearchModel {
     Item("assets/img/sack.jpg", EquipmentList.boxing, 5, false),
     Item("assets/img/yoga.jpg", EquipmentList.mat, 6, false),
   ];
+
+  getMuscles(){
+  return this.muscles;
+}
+
+
+  getEquipment(){
+  return this.equipment;
+}
+
 }
 
 class Difficulty {
@@ -94,3 +104,5 @@ class EquipmentList {
   static const String boxing = "Saco de boxeo";
   static const String mat = "Estera";
 }
+
+

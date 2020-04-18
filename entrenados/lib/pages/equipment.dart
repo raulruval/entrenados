@@ -1,28 +1,17 @@
 import 'package:entrenados/models/item.dart';
+import 'package:entrenados/models/searchModel.dart';
 import 'package:flutter/material.dart';
 import 'package:entrenados/widgets/griditem.dart';
 
 class Equipment extends StatefulWidget {
   final List<Item> selectedEquipmentList;
+  final SearchModel searchModel;
 
-  Equipment(this.selectedEquipmentList);
+  Equipment(this.selectedEquipmentList, this.searchModel);
 
   @override
   _EquipmentState createState() => _EquipmentState();
 
-    static List<Item> getEquipment(){
-    List<Item> itemEquipmentList = List();
-    itemEquipmentList.add(Item("assets/img/ball.jpg", "Balón", 1, false));
-    itemEquipmentList.add(Item("assets/img/bank.jpg", "Banco", 2, false));
-    itemEquipmentList
-        .add(Item("assets/img/dumbell.jpg", "Mancuernas", 3, false));
-    itemEquipmentList.add(Item("assets/img/rope.jpg", "Comba", 4, false));
-    itemEquipmentList
-        .add(Item("assets/img/sack.jpg", "Saco de boxeo", 5, false));
-    itemEquipmentList
-        .add(Item("assets/img/yoga.jpg", "Estera", 6, false));
-    return itemEquipmentList;
-  }
 }
 
 class _EquipmentState extends State<Equipment> {
@@ -34,7 +23,7 @@ class _EquipmentState extends State<Equipment> {
     print("Equipamiento guardado en equipamiento");
     print(widget.selectedEquipmentList);
     if (widget.selectedEquipmentList.length < 1) {
-      itemEquipmentList = Equipment.getEquipment();
+      itemEquipmentList = widget.searchModel.equipment;
     }
   }
 
@@ -85,7 +74,6 @@ class _EquipmentState extends State<Equipment> {
                   }
                 });
                 print("$index : $isSelected");
-               
               },
               key: Key(
                 itemEquipmentList[index].index.toString(),

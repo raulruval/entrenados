@@ -1,29 +1,17 @@
 import 'package:entrenados/models/item.dart';
+import 'package:entrenados/models/searchModel.dart';
 import 'package:flutter/material.dart';
 import 'package:entrenados/widgets/griditem.dart';
 
 class Musclesinvolved extends StatefulWidget {
   final List<Item> selectedMusclesList;
+    final SearchModel searchModel;
 
-  Musclesinvolved(this.selectedMusclesList);
+  Musclesinvolved(this.selectedMusclesList,this.searchModel);
 
   @override
   _MusclesinvolvedState createState() => _MusclesinvolvedState();
 
-  static List<Item> getMuscles() {
-    List<Item> itemMusclesList = List();
-    itemMusclesList.add(Item("assets/img/arm.jpg", "Bíceps", 1,false));
-    itemMusclesList.add(Item("assets/img/leg.jpg", "Gemelos", 2,false));
-    itemMusclesList.add(Item("assets/img/espalda.jpg", "Espalda", 3,false));
-    itemMusclesList.add(Item("assets/img/abs.jpg", "Abdominales", 4,false));
-    itemMusclesList.add(Item("assets/img/triceps.jpg", "Tríceps", 5,false));
-    itemMusclesList.add(Item("assets/img/shoulder.jpg", "Hombros", 6,false));
-    itemMusclesList
-        .add(Item("assets/img/quadriceps.jpg", "Cuádriceps", 7,false));
-    itemMusclesList.add(Item("assets/img/forearm.jpg", "Antebrazo", 8,false));
-
-    return itemMusclesList;
-  }
 }
 
 class _MusclesinvolvedState extends State<Musclesinvolved> {
@@ -34,7 +22,7 @@ class _MusclesinvolvedState extends State<Musclesinvolved> {
     print("Musculos involucrados guardados en equipamiento");
     print(widget.selectedMusclesList);
     if (widget.selectedMusclesList.length < 1) {
-      itemMusclesList = Musclesinvolved.getMuscles();
+      itemMusclesList = widget.searchModel.muscles;
     }
   }
 
@@ -66,7 +54,6 @@ class _MusclesinvolvedState extends State<Musclesinvolved> {
                         } else {
                           itemMusclesList[index].isSelected = true;
                           widget.selectedMusclesList.add(itemMusclesList[index]);
-                          print("hola");
                         }
                       }
                     } else {

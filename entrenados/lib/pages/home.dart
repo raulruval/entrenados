@@ -273,7 +273,7 @@ class _HomeState extends State<Home> {
         children: <Widget>[
           Timeline(currentUser: currentUser),
           Search(searchModel: sm),
-          Share(currentUser: currentUser),
+          Share(currentUser: currentUser, searchModel: sm),
           MyPage(profileId: currentUser?.id),
         ],
         controller: pageController,

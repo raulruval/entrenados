@@ -46,6 +46,7 @@ class _SearchPostsResponseState extends State<SearchPostsResponse> {
       setState(() {
         isLoading = true;
       });
+      print(widget.selectedMuscles + " y " + widget.selectedEquipment);
 
       for (int i = 0; i < querySnapshot.documents.length; i++) {
         for (int g = 0; g < widget.selectedGroup.length; g++) {

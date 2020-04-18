@@ -3,10 +3,9 @@ import 'dart:async';
 import 'package:animator/animator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entrenados/models/item.dart';
+import 'package:entrenados/models/searchModel.dart';
 import 'package:entrenados/pages/comments.dart';
-import 'package:entrenados/pages/equipment.dart';
 import 'package:entrenados/pages/home.dart';
-import 'package:entrenados/pages/musclesinvolved.dart';
 import 'package:entrenados/widgets/custom_image.dart';
 import 'package:entrenados/widgets/profileHeader.dart';
 import 'package:flutter/cupertino.dart';
@@ -85,7 +84,8 @@ class Post extends StatefulWidget {
   getSelectedEquipment(String equipment) {
     List<Item> list;
     List<Item> actualEquipment = new List();
-    list = Equipment.getEquipment();
+    SearchModel sm = new SearchModel();
+    list = sm.getEquipment();
     equipment.split("-").forEach((seq) => {
           list.forEach((equip) => {
                 if (seq == equip.index.toString()) {actualEquipment.add(equip)}
@@ -97,7 +97,8 @@ class Post extends StatefulWidget {
   getSelectedMuscles(String muscles) {
     List<Item> list;
     List<Item> actualMuscles = new List();
-    list = Musclesinvolved.getMuscles();
+    SearchModel sm = new SearchModel();
+    list = sm.getMuscles();
     muscles.split("-").forEach((seq) => {
           list.forEach((mus) => {
                 if (seq == mus.index.toString()) {actualMuscles.add(mus)}

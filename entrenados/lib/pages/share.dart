@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:entrenados/models/item.dart';
+import 'package:entrenados/models/searchModel.dart';
 import 'package:entrenados/models/user.dart';
 import 'package:entrenados/pages/equipment.dart';
 import 'package:entrenados/pages/musclesinvolved.dart';
@@ -17,8 +18,9 @@ import 'package:image/image.dart' as Im;
 
 class Share extends StatefulWidget {
   final User currentUser;
+  final SearchModel searchModel;
 
-  Share({this.currentUser});
+  Share({this.currentUser, this.searchModel});
   @override
   _ShareState createState() => _ShareState();
 }
@@ -33,15 +35,6 @@ class _ShareState extends State<Share>
   String selectedMuscles = "";
   String selectedEquipment = "";
   String mainResource = "";
-  List _difficulty = ["Principiante", "Intermedio", "Avanzado"];
-  List _group = [
-    "Resistencia",
-    "Movilidad",
-    "Fuerza",
-    "Yoga",
-    "Pilates",
-    "HIIT"
-  ];
   String _currentDifficulty;
   String _currentGroup;
   List<DropdownMenuItem<String>> _dropDownMenuItemsDifficulty;
@@ -58,7 +51,7 @@ class _ShareState extends State<Share>
 
   List<DropdownMenuItem<String>> getDropDownMenuItemsDifficulty() {
     List<DropdownMenuItem<String>> items = new List();
-    for (String difficulty in _difficulty) {
+    for (String difficulty in widget.searchModel.difficulty) {
       items.add(
           new DropdownMenuItem(value: difficulty, child: new Text(difficulty)));
     }
@@ -67,7 +60,7 @@ class _ShareState extends State<Share>
 
   List<DropdownMenuItem<String>> getDropDownMenuItemsGroup() {
     List<DropdownMenuItem<String>> items = new List();
-    for (String group in _group) {
+    for (String group in widget.searchModel.group) {
       items.add(new DropdownMenuItem(value: group, child: new Text(group)));
     }
     return items;
@@ -185,16 +178,22 @@ class _ShareState extends State<Share>
   }
 
   buildItemSequence(List<Item> itemList) {
-    String sequence = "";
-    itemList.forEach((item) => {sequence += item.index.toString() + "-"});
-    return sequence;
+    List<int> sequence = [];
+    itemList.forEach((item) => {sequence.add(item.index)});
+
+    sequence.sort();
+    String sortSequence = "";
+    sequence.forEach((sequence) => {sortSequence += sequence.toString() + "-"});
+
+    return sortSequence;
   }
 
   _getMusclesInvolved(context) async {
     selectedMusclesList = await Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => Musclesinvolved(selectedMusclesList))) ??
+                builder: (context) => Musclesinvolved(
+                    selectedMusclesList, widget.searchModel))) ??
         selectedMusclesList;
 
     selectedMuscles = buildItemSequence(selectedMusclesList);
@@ -204,7 +203,8 @@ class _ShareState extends State<Share>
     selectedEquipmentList = await Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => Equipment(selectedEquipmentList))) ??
+                builder: (context) =>
+                    Equipment(selectedEquipmentList, widget.searchModel))) ??
         selectedEquipment;
 
     selectedEquipment = buildItemSequence(selectedEquipmentList);
@@ -281,6 +281,8 @@ class _ShareState extends State<Share>
     notesController.clear();
     selectedEquipment = "";
     selectedMuscles = "";
+    selectedEquipmentList = [];
+    selectedMusclesList = [];
     mainResource = "";
     setState(() {
       file = null;

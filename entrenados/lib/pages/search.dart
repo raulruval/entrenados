@@ -395,9 +395,14 @@ class _SearchState extends State<Search>
   }
 
   buildItemSequence(List<Item> itemList) {
-    String sequence = "";
-    itemList.forEach((item) => {sequence += item.index.toString() + "-"});
-    return sequence;
+    List<int> sequence = [];
+    itemList.forEach((item) => {sequence.add(item.index)});
+
+    sequence.sort();
+    String sortSequence = "";
+    sequence.forEach((sequence) => {sortSequence += sequence.toString() + "-"});
+
+    return sortSequence;
   }
 
   _getFab() {
