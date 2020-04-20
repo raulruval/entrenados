@@ -50,11 +50,13 @@ class _SearchState extends State<Search>
 
   handleSearchUser(String consulta) {
     Future<QuerySnapshot> users = usersRef
-        .where("displayName", isGreaterThanOrEqualTo: consulta)
+        .where("displayName", isGreaterThanOrEqualTo: consulta.toUpperCase())
         .getDocuments();
+
     setState(() {
       searchFutureResults = users;
     });
+    
   }
 
   clearSearch() {
@@ -81,7 +83,7 @@ class _SearchState extends State<Search>
             onPressed: () => clearSearch(),
           ),
         ),
-        onFieldSubmitted: handleSearchUser,
+        onChanged:  handleSearchUser,
       ),
     );
   }

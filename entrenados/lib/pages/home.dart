@@ -241,7 +241,7 @@ class _HomeState extends State<Home> {
         "username": username,
         "photoUrl": user.photoUrl,
         "email": user.email,
-        "displayName": user.displayName,
+        "displayName": user.displayName.toUpperCase(),
         "bio": "",
         "timestamp": timestamp,
       });

@@ -39,6 +39,7 @@ dependencies:
   device_preview: ^0.4.4
   responsive_builder: ^0.1.5
   font_awesome_flutter: ^8.8.1
+  chewie: ^0.9.7
   
 dev_dependencies:
   flutter_test:
@@ -85,3 +86,4 @@ flutter:
     - assets/img/sack.jpg
     - assets/img/yoga.jpg
     - assets/img/empty.svg
+    - videos/KettlebellTraining.mp4

@@ -305,6 +305,29 @@ class _ShareState extends State<Share>
     }
   }
 
+  uploadResourceFab() {
+    return Container(
+      width: 200.0,
+      height: 100.0,
+      alignment: Alignment.center,
+      child: RaisedButton.icon(
+        label: Text(
+          "Subir recurso",
+          style: TextStyle(color: Colors.white),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        color: Colors.teal,
+        onPressed: () => uploadResource(),
+        icon: Icon(
+          Icons.file_upload,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
   buildFormularioCompartir() {
     var children2 = <Widget>[
       isUploading ? linearProgress() : Text(""),
@@ -441,26 +464,6 @@ class _ShareState extends State<Share>
           ),
         ),
       ),
-      Container(
-        width: 200.0,
-        height: 100.0,
-        alignment: Alignment.center,
-        child: RaisedButton.icon(
-          label: Text(
-            "Subir recurso",
-            style: TextStyle(color: Colors.white),
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-          color: Colors.teal,
-          onPressed: () => uploadResource(),
-          icon: Icon(
-            Icons.file_upload,
-            color: Colors.white,
-          ),
-        ),
-      )
     ];
     return Scaffold(
       appBar: AppBar(
@@ -490,6 +493,7 @@ class _ShareState extends State<Share>
       body: ListView(
         children: children2,
       ),
+      floatingActionButton: uploadResourceFab(),
     );
   }
 

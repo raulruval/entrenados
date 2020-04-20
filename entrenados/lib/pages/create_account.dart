@@ -92,6 +92,7 @@ class _CreateAccountState extends State<CreateAccount> {
             Navigator.pop(context, user);
           });
         }).catchError((onError) {
+          print(onError);
           showAlertRegister('El email introducido ya existe, por favor, intentelo de nuevo con uno distinto.');
         });
       }
@@ -100,7 +101,7 @@ class _CreateAccountState extends State<CreateAccount> {
 
   _checkIfExists(String username) async {
     QuerySnapshot query =
-        await usersRef.where("displayName", isEqualTo: username).getDocuments();
+        await usersRef.where("username", isEqualTo: username).getDocuments();
     return query.documents.isNotEmpty;
   }
 
@@ -135,7 +136,7 @@ class _CreateAccountState extends State<CreateAccount> {
                               return null;
                             }
                           },
-                          onSaved: (val) => user.displayName = val.trim(),
+                          onSaved: (val) => user.displayName = val.trim().toUpperCase(),
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: "Nombre",
@@ -200,7 +201,7 @@ class _CreateAccountState extends State<CreateAccount> {
                         child: TextFormField(
                           keyboardType: TextInputType.visiblePassword,
                           validator: (val) {
-                            if (val.trim().length < 4 || val.isEmpty) {
+                            if (val.trim().length < 6 || val.isEmpty) {
                               return 'Contraseña demasiado corta';
                             } else {
                               return null;
@@ -211,7 +212,7 @@ class _CreateAccountState extends State<CreateAccount> {
                             border: OutlineInputBorder(),
                             labelText: "Contraseña",
                             labelStyle: TextStyle(fontSize: 15.0),
-                            hintText: "Deben ser al menos 4 caracteres",
+                            hintText: "Deben ser al menos 6 caracteres",
                           ),
                         ),
                       ),

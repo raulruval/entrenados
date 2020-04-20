@@ -1,15 +1,16 @@
 import 'dart:async';
-
 import 'package:animator/animator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entrenados/models/item.dart';
 import 'package:entrenados/models/searchModel.dart';
 import 'package:entrenados/pages/comments.dart';
 import 'package:entrenados/pages/home.dart';
+import 'package:entrenados/widgets/chewei_list_item.dart';
 import 'package:entrenados/widgets/custom_image.dart';
 import 'package:entrenados/widgets/profileHeader.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 
 class Post extends StatefulWidget {
   final String currentUserId;
@@ -541,6 +542,21 @@ class PostState extends State<Post> {
     }));
   }
 
+  buildVideoResource() {
+    return Flexible(
+      child: ExpansionTile(
+          title: Text("Recursos de la publicación"),
+          leading: Icon(Icons.ondemand_video),
+          children: <Widget>[
+            ChewieListItem(
+              videoPlayerController:
+                  VideoPlayerController.asset('videos/KettlebellTraining.mp4'),
+              looping: true,
+            ),
+          ]),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     isLiked = (likes[currentUserId] == true);
@@ -568,6 +584,11 @@ class PostState extends State<Post> {
               Row(
                 children: <Widget>[
                   buildPostInfo(),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  buildVideoResource(),
                 ],
               )
             ],

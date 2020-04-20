@@ -38,7 +38,7 @@ class _EditProfileState extends State<EditProfile> {
     });
     DocumentSnapshot doc = await usersRef.document(widget.currentUserId).get();
     user = User.fromDocument(doc);
-    displayNameController.text = user.displayName;
+    displayNameController.text = user.displayName.toUpperCase();
     bioController.text = user.bio;
     setState(() {
       isLoading = false;
@@ -124,12 +124,12 @@ class _EditProfileState extends State<EditProfile> {
     if (_displayNameValid && _bioValid && _image != null) {
       usersRef.document(widget.currentUserId).updateData({
         "photoUrl": url,
-        "displayName": displayNameController.text,
+        "displayName": displayNameController.text.toUpperCase(),
         "bio": bioController.text
       });
     } else if (_displayNameValid && _bioValid) {
       usersRef.document(widget.currentUserId).updateData({
-        "displayName": displayNameController.text,
+        "displayName": displayNameController.text.toUpperCase(),
         "bio": bioController.text
       });
     }
