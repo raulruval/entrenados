@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(DevicePreview(enabled: !kReleaseMode, builder: (context) => MyApp()));
+  runApp(DevicePreview(enabled: kReleaseMode, builder: (context) => MyApp()));
   Firestore.instance.settings(timestampsInSnapshotsEnabled: true).then((_) {
     print("Timestamps funcionando");
   }, onError: (_) {

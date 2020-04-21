@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:entrenados/models/item.dart';
 import 'package:entrenados/models/searchModel.dart';
@@ -80,7 +81,6 @@ class _ShareState extends State<Share>
 
   Duration resultingDuration = new Duration(hours: 0, minutes: 30, seconds: 0);
   File file;
-  bool defaultImg = false;
   bool isUploading = false;
   String postId = Uuid().v4();
 
@@ -103,13 +103,6 @@ class _ShareState extends State<Share>
     });
   }
 
-  handleDefecto() {
-    Navigator.pop(context);
-    setState(() {
-      defaultImg = true;
-    });
-  }
-
   selectImage(parentContext) {
     return showDialog(
         context: parentContext,
@@ -126,8 +119,8 @@ class _ShareState extends State<Share>
                 onPressed: handleGaleria,
               ),
               SimpleDialogOption(
-                child: Text("Usar una imagen por defecto"),
-                onPressed: handleDefecto,
+                child: Text("Limpiar imagen"),
+                onPressed: () => {clearImage(),Navigator.pop(context)},
               ),
               SimpleDialogOption(
                 child: Text("Cancelar"),
@@ -138,42 +131,9 @@ class _ShareState extends State<Share>
         });
   }
 
-  Container buildCompartir() {
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("assets/img/share.jpg"),
-          fit: BoxFit.fill,
-        ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(25),
-          ),
-          RaisedButton(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0)),
-            child: Text(
-              "Compartir",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 50.0,
-              ),
-            ),
-            color: Colors.teal,
-            onPressed: () => selectImage(context),
-          ),
-        ],
-      ),
-    );
-  }
-
   clearImage() {
     setState(() {
       file = null;
-      defaultImg = false;
     });
   }
 
@@ -262,34 +222,46 @@ class _ShareState extends State<Share>
   }
 
   handlesSubmit() async {
-    setState(() {
-      isUploading = true;
-    });
-    await compressImage();
-    String mediaUrl = await uploadImage(file);
-    createPostInFirestore(
-        mediaUrl: mediaUrl,
-        title: titleController.text,
-        duration: resultingDuration.inMinutes,
-        currentDifficulty: _currentDifficulty,
-        currentGroup: _currentGroup,
-        selectedMuscles: selectedMuscles,
-        selectedEquipment: selectedEquipment,
-        mainResource: mainResource,
-        notes: notesController.text);
-    titleController.clear();
-    notesController.clear();
-    selectedEquipment = "";
-    selectedMuscles = "";
-    selectedEquipmentList = [];
-    selectedMusclesList = [];
-    mainResource = "";
-    setState(() {
-      file = null;
-      defaultImg = false;
-      isUploading = false;
-      postId = Uuid().v4();
-    });
+    if (file == null) {
+      Scaffold.of(context).showSnackBar(new SnackBar(
+          content: new AutoSizeText(
+        "Debes incluir una foto para subir tu entrenamiento.",
+        maxLines: 1,
+      )));
+    } else {
+      setState(() {
+        isUploading = true;
+      });
+      await compressImage();
+      String mediaUrl = await uploadImage(file);
+      createPostInFirestore(
+          mediaUrl: mediaUrl,
+          title: titleController.text,
+          duration: resultingDuration.inMinutes,
+          currentDifficulty: _currentDifficulty,
+          currentGroup: _currentGroup,
+          selectedMuscles: selectedMuscles,
+          selectedEquipment: selectedEquipment,
+          mainResource: mainResource,
+          notes: notesController.text);
+      titleController.clear();
+      notesController.clear();
+      selectedEquipment = "";
+      selectedMuscles = "";
+      selectedEquipmentList = [];
+      selectedMusclesList = [];
+      mainResource = "";
+      setState(() {
+        file = null;
+        isUploading = false;
+        postId = Uuid().v4();
+      });
+      Scaffold.of(context).showSnackBar(new SnackBar(
+          content: new AutoSizeText(
+        "Tu publicación se ha subido correctamente",
+        maxLines: 1,
+      )));
+    }
   }
 
   uploadResource() {
@@ -337,14 +309,17 @@ class _ShareState extends State<Share>
         child: Center(
           child: AspectRatio(
             aspectRatio: 16 / 9,
-            child: Container(
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                fit: BoxFit.cover,
-                image: defaultImg == true
-                    ? AssetImage('assets/img/share.jpg')
-                    : FileImage(file),
-              )),
+            child: GestureDetector(
+              onTap: () => selectImage(context),
+              child: Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: file == null
+                      ? AssetImage('assets/img/addPhoto.png')
+                      : FileImage(file),
+                )),
+              ),
             ),
           ),
         ),
@@ -464,15 +439,11 @@ class _ShareState extends State<Share>
           ),
         ),
       ),
+      uploadResourceFab(),
     ];
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Colors.teal,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            color: Colors.white,
-            onPressed: clearImage,
-          ),
           title: Text(
             "Compartir Post",
             style: TextStyle(color: Colors.white),
@@ -493,7 +464,6 @@ class _ShareState extends State<Share>
       body: ListView(
         children: children2,
       ),
-      floatingActionButton: uploadResourceFab(),
     );
   }
 
@@ -502,11 +472,9 @@ class _ShareState extends State<Share>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return file == null && defaultImg == false
-        ? OrientationLayoutBuilder(
-            portrait: (context) => buildCompartir(),
-            landscape: (context) => buildCompartir(),
-          )
-        : buildFormularioCompartir();
+    return OrientationLayoutBuilder(
+      portrait: (context) => buildFormularioCompartir(),
+      landscape: (context) => buildFormularioCompartir(),
+    );
   }
 }
