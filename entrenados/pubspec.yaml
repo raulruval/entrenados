@@ -40,6 +40,7 @@ dependencies:
   responsive_builder: ^0.1.5
   font_awesome_flutter: ^8.8.1
   chewie: ^0.9.7
+  flutter_video_compress: ^0.3.7+8
   
 dev_dependencies:
   flutter_test:

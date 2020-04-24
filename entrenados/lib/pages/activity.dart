@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:entrenados/pages/post_screen.dart';
 import 'package:entrenados/pages/profile.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:entrenados/widgets/header.dart';
@@ -89,15 +88,16 @@ class ActivityFeedItem extends StatelessWidget {
     );
   }
   showPost(context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => PostScreen(
-          postId: postId,
-          userId: userId,
-        ),
-      ),
-    );
+    print("No funciona correctamente");
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => PostScreen(
+    //       postId: postId,
+    //       userId: userId,
+    //     ),
+    //   ),
+    // );
   }
 
   configureMediaPreview(context) {

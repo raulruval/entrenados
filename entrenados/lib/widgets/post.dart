@@ -22,7 +22,9 @@ class Post extends StatefulWidget {
   final String group;
   final int duration;
   final String description;
-  final String mediaUrl;
+  final String photoUrl;
+  final String videoUrl;
+  final String documentUrl;
   final String notes;
   final dynamic likes;
   final String equipment;
@@ -41,7 +43,9 @@ class Post extends StatefulWidget {
       this.group,
       this.duration,
       this.description,
-      this.mediaUrl,
+      this.photoUrl,
+      this.videoUrl,
+      this.documentUrl,
       this.notes,
       this.likes,
       this.equipment,
@@ -60,7 +64,9 @@ class Post extends StatefulWidget {
       group: doc['currentGroup'],
       duration: doc['duration'],
       description: doc['description'],
-      mediaUrl: doc['mediaUrl'],
+      photoUrl: doc['photoUrl'],
+      videoUrl: doc['videoUrl'],
+      documentUrl: doc['documentUrl'],
       notes: doc['notes'],
       likes: doc['likes'],
       equipment: doc['selectedEquipment'],
@@ -118,7 +124,9 @@ class Post extends StatefulWidget {
         group: this.group,
         duration: this.duration,
         description: this.description,
-        mediaUrl: this.mediaUrl,
+        photoUrl: this.photoUrl,
+        videoUrl: this.videoUrl,
+        documentUrl: this.documentUrl,
         notes: this.notes,
         likeCount: getLikeCount(likes),
         likes: this.likes,
@@ -140,7 +148,9 @@ class PostState extends State<Post> {
   final String group;
   final int duration;
   final String description;
-  final String mediaUrl;
+  final String photoUrl;
+  final String videoUrl;
+  final String documentUrl;
   final String notes;
   Map likes;
   int likeCount;
@@ -161,7 +171,9 @@ class PostState extends State<Post> {
     this.group,
     this.duration,
     this.description,
-    this.mediaUrl,
+    this.photoUrl,
+    this.videoUrl,
+    this.documentUrl,
     this.notes,
     this.likes,
     this.equipment,
@@ -185,7 +197,7 @@ class PostState extends State<Post> {
         "userId": currentUser.id,
         "userProfileImg": currentUser.photoUrl,
         "postId": postId,
-        "mediaUrl": mediaUrl,
+        "mediaUrl": photoUrl,
         "timestamp": timestamp,
       });
     }
@@ -251,7 +263,7 @@ class PostState extends State<Post> {
           alignment: Alignment.center,
           children: <Widget>[
             ClipRRect(
-              child: cachedNetworkImage(mediaUrl, context, false),
+              child: cachedNetworkImage(photoUrl, context, false),
               borderRadius: BorderRadius.circular(20.0),
             ),
             showHeart
@@ -479,12 +491,8 @@ class PostState extends State<Post> {
         Row(
           children: <Widget>[
             GestureDetector(
-              onTap: () => showComments(
-                context,
-                postId: postId,
-                ownerId: ownerId,
-                mediaUrl: mediaUrl,
-              ),
+              onTap: () => showComments(context,
+                  postId: postId, ownerId: ownerId, photoUrl: photoUrl),
               child: Icon(
                 Icons.chat,
                 size: 38.0,
@@ -532,12 +540,12 @@ class PostState extends State<Post> {
   }
 
   showComments(BuildContext context,
-      {String postId, String ownerId, String mediaUrl}) {
+      {String postId, String ownerId, String photoUrl}) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return Comments(
         postId: postId,
         postOwnerId: ownerId,
-        postMediaUrl: mediaUrl,
+        postMediaUrl: photoUrl,
       );
     }));
   }
@@ -550,7 +558,7 @@ class PostState extends State<Post> {
           children: <Widget>[
             ChewieListItem(
               videoPlayerController:
-                  VideoPlayerController.asset('videos/KettlebellTraining.mp4'),
+                  VideoPlayerController.network(this.videoUrl),
               looping: true,
             ),
           ]),
@@ -586,11 +594,13 @@ class PostState extends State<Post> {
                   buildPostInfo(),
                 ],
               ),
-              Row(
-                children: <Widget>[
-                  buildVideoResource(),
-                ],
-              )
+              this.videoUrl != null
+                  ? Row(
+                      children: <Widget>[
+                        buildVideoResource(),
+                      ],
+                    )
+                  : SizedBox.shrink()
             ],
           ),
         ),

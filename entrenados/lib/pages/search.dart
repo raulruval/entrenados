@@ -183,7 +183,7 @@ class _SearchState extends State<Search>
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                     child: Wrap(
-                      spacing: 20.0,
+                      spacing: 10.0,
                       children: [
                         for (var difficulty in widget.searchModel.difficulty)
                           ChoiceChip(

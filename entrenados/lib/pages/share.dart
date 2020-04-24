@@ -6,10 +6,12 @@ import 'package:entrenados/models/searchModel.dart';
 import 'package:entrenados/models/user.dart';
 import 'package:entrenados/pages/equipment.dart';
 import 'package:entrenados/pages/musclesinvolved.dart';
+import 'package:entrenados/widgets/circularFab.dart';
 import 'package:entrenados/widgets/progress.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:entrenados/pages/home.dart';
+import 'package:flutter_video_compress/flutter_video_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:responsive_builder/responsive_builder.dart';
@@ -27,7 +29,8 @@ class Share extends StatefulWidget {
 }
 
 class _ShareState extends State<Share>
-    with AutomaticKeepAliveClientMixin<Share> {
+    with AutomaticKeepAliveClientMixin<Share>, SingleTickerProviderStateMixin {
+  final _flutterVideoCompress = FlutterVideoCompress();
   TextEditingController titleController = TextEditingController();
   TextEditingController notesController = TextEditingController();
   TextEditingController duracionController = TextEditingController();
@@ -40,6 +43,9 @@ class _ShareState extends State<Share>
   String _currentGroup;
   List<DropdownMenuItem<String>> _dropDownMenuItemsDifficulty;
   List<DropdownMenuItem<String>> _dropDownMenuItemsGroup;
+  AnimationController _animationController;
+  Animation _degOneTranslationAnimation;
+  Animation _rotationAnimation;
 
   @override
   void initState() {
@@ -47,6 +53,20 @@ class _ShareState extends State<Share>
     _dropDownMenuItemsGroup = getDropDownMenuItemsGroup();
     _currentDifficulty = _dropDownMenuItemsDifficulty[0].value;
     _currentGroup = _dropDownMenuItemsGroup[0].value;
+    _animationController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 250));
+    _degOneTranslationAnimation = TweenSequence(<TweenSequenceItem>[
+      TweenSequenceItem<double>(
+          tween: Tween<double>(begin: 0.0, end: 1.2), weight: 75.0),
+      TweenSequenceItem<double>(
+          tween: Tween<double>(begin: 1.2, end: 1.0), weight: 25.0),
+    ]).animate(_animationController);
+    _rotationAnimation = Tween<double>(begin: 180.0, end: 0.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
+    _animationController.addListener(() {
+      setState(() {});
+    });
     super.initState();
   }
 
@@ -80,47 +100,76 @@ class _ShareState extends State<Share>
   }
 
   Duration resultingDuration = new Duration(hours: 0, minutes: 30, seconds: 0);
-  File file;
+  File imgFile;
+  File videoFile;
+  File docFile;
   bool isUploading = false;
   String postId = Uuid().v4();
 
-  handleGaleria() async {
+  handleGaleria(String fileType) async {
     Navigator.pop(context);
-    File file = await ImagePicker.pickImage(
-        source: ImageSource.gallery, maxHeight: 675, maxWidth: 960);
-    setState(() {
-      this.file = file;
-    });
+    switch (fileType) {
+      case "image":
+        File file = await ImagePicker.pickImage(
+            source: ImageSource.gallery, maxHeight: 675, maxWidth: 960);
+        setState(() {
+          this.imgFile = file;
+        });
+        break;
+      case "video":
+        File file = await ImagePicker.pickVideo(source: ImageSource.gallery);
+        setState(() {
+          this.videoFile = file;
+        });
+        break;
+      case "document":
+        print("documento");
+        break;
+    }
   }
 
-  handleCamara() async {
+  handleCamara(String fileType) async {
     Navigator.pop(context);
-    File file = await ImagePicker.pickImage(
-        source: ImageSource.camera, maxHeight: 675, maxWidth: 960);
-
-    setState(() {
-      this.file = file;
-    });
+    switch (fileType) {
+      case "image":
+        File file = await ImagePicker.pickImage(
+            source: ImageSource.camera, maxHeight: 675, maxWidth: 960);
+        setState(() {
+          this.imgFile = file;
+        });
+        break;
+      case "video":
+        File file = await ImagePicker.pickVideo(source: ImageSource.camera);
+        setState(() {
+          this.videoFile = file;
+        });
+        break;
+      case "document":
+        print("documento");
+        break;
+    }
   }
 
-  selectImage(parentContext) {
+  selectFile(parentContext, bool withCamera, String fileType) {
     return showDialog(
         context: parentContext,
         builder: (context) {
           return SimpleDialog(
-            title: Text("Subir imagen del recurso"),
+            title: Text("Subir recurso"),
             children: <Widget>[
+              withCamera
+                  ? SimpleDialogOption(
+                      child: Text("Recurso desde cámara"),
+                      onPressed: () => handleCamara(fileType),
+                    )
+                  : "",
               SimpleDialogOption(
-                child: Text("Realizar foto para la imagen"),
-                onPressed: handleCamara,
+                child: Text("Recurso desde documentos"),
+                onPressed: () => handleGaleria(fileType),
               ),
               SimpleDialogOption(
-                child: Text("Usar imagen de galería"),
-                onPressed: handleGaleria,
-              ),
-              SimpleDialogOption(
-                child: Text("Limpiar imagen"),
-                onPressed: () => {clearImage(),Navigator.pop(context)},
+                child: Text("Limpiar recursos"),
+                onPressed: () => {clearFiles(), Navigator.pop(context)},
               ),
               SimpleDialogOption(
                 child: Text("Cancelar"),
@@ -131,9 +180,9 @@ class _ShareState extends State<Share>
         });
   }
 
-  clearImage() {
+  clearFiles() {
     setState(() {
-      file = null;
+      imgFile = null;
     });
   }
 
@@ -173,24 +222,48 @@ class _ShareState extends State<Share>
   compressImage() async {
     final tempDir = await getTemporaryDirectory();
     final path = tempDir.path;
-    Im.Image imageFile = Im.decodeImage(file.readAsBytesSync());
+    Im.Image imageFile = Im.decodeImage(imgFile.readAsBytesSync());
     final compressedImageFile = File('$path/img_$postId.jpg')
       ..writeAsBytesSync(Im.encodeJpg(imageFile, quality: 65));
     setState(() {
-      file = compressedImageFile;
+      imgFile = compressedImageFile;
     });
   }
 
-  Future<String> uploadImage(imageFile) async {
-    StorageUploadTask uploadTask =
-        storageRef.child("post_$postId.jpg").putFile(imageFile);
+  compressVideo() async {
+    final info = await _flutterVideoCompress.compressVideo(
+      videoFile.path,
+      quality:
+          VideoQuality.HighestQuality, // default(VideoQuality.DefaultQuality)
+      deleteOrigin: false, // default(false)
+    );
+    setState(() {
+      videoFile = info.file;
+    });
+  }
+
+  Future<String> uploadResource(file, String typeFile) async {
+    StorageUploadTask uploadTask;
+    if (typeFile == "image") {
+      uploadTask = storageRef.child("post_$postId.jpg").putFile(file);
+    } else if (typeFile == "video") {
+      uploadTask = storageRef.child("post_$postId.mp4").putFile(file);
+      mainResource = "video";
+    } else if (typeFile == "pdf") {
+      uploadTask = storageRef.child("post_$postId.pdf").putFile(file);
+      mainResource = "pdf";
+    } else {
+      return null;
+    }
     StorageTaskSnapshot storageSnap = await uploadTask.onComplete;
     String downloadUrl = await storageSnap.ref.getDownloadURL();
     return downloadUrl;
   }
 
   createPostInFirestore(
-      {String mediaUrl,
+      {String photoUrl,
+      String videoUrl,
+      String documentUrl,
       String title,
       int duration,
       String currentDifficulty,
@@ -207,7 +280,9 @@ class _ShareState extends State<Share>
       "postId": postId,
       "ownerId": widget.currentUser.id,
       "username": widget.currentUser.username,
-      "mediaUrl": mediaUrl,
+      "photoUrl": photoUrl,
+      "videoUrl": videoUrl,
+      "documentUrl": documentUrl,
       "title": title,
       "duration": duration,
       "currentDifficulty": currentDifficulty,
@@ -222,7 +297,7 @@ class _ShareState extends State<Share>
   }
 
   handlesSubmit() async {
-    if (file == null) {
+    if (imgFile == null) {
       Scaffold.of(context).showSnackBar(new SnackBar(
           content: new AutoSizeText(
         "Debes incluir una foto para subir tu entrenamiento.",
@@ -233,9 +308,18 @@ class _ShareState extends State<Share>
         isUploading = true;
       });
       await compressImage();
-      String mediaUrl = await uploadImage(file);
+
+      String photoUrl = await uploadResource(imgFile, "image");
+      String videoUrl = "", documentUrl = "";
+      if (videoFile != null) {
+        await compressVideo();
+        videoUrl = await uploadResource(videoFile, "video");
+      }
+      if (docFile != null) documentUrl = await uploadResource(docFile, "doc");
       createPostInFirestore(
-          mediaUrl: mediaUrl,
+          photoUrl: photoUrl,
+          videoUrl: videoUrl,
+          documentUrl: documentUrl,
           title: titleController.text,
           duration: resultingDuration.inMinutes,
           currentDifficulty: _currentDifficulty,
@@ -252,7 +336,9 @@ class _ShareState extends State<Share>
       selectedMusclesList = [];
       mainResource = "";
       setState(() {
-        file = null;
+        documentUrl = null;
+        videoFile = null;
+        imgFile = null;
         isUploading = false;
         postId = Uuid().v4();
       });
@@ -264,40 +350,32 @@ class _ShareState extends State<Share>
     }
   }
 
-  uploadResource() {
-    print("Uploading test resource");
-    if (notesController.text == "video") {
-      mainResource = "video";
-    } else if (notesController.text == "pdf") {
-      mainResource = "pdf";
-    } else if (notesController.text == "link") {
-      mainResource = "link";
-    } else {
-      mainResource = "no";
-    }
-  }
+  // uploadResourceFab() {
+  //   return Container(
+  //     width: 200.0,
+  //     height: 100.0,
+  //     alignment: Alignment.center,
+  //     child: RaisedButton.icon(
+  //       label: Text(
+  //         "Subir recurso",
+  //         style: TextStyle(color: Colors.white),
+  //       ),
+  //       shape: RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.circular(30.0),
+  //       ),
+  //       color: Colors.teal,
+  //       onPressed: () => selectFile(context, true, "video"),
+  //       icon: Icon(
+  //         Icons.file_upload,
+  //         color: Colors.white,
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  uploadResourceFab() {
-    return Container(
-      width: 200.0,
-      height: 100.0,
-      alignment: Alignment.center,
-      child: RaisedButton.icon(
-        label: Text(
-          "Subir recurso",
-          style: TextStyle(color: Colors.white),
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30.0),
-        ),
-        color: Colors.teal,
-        onPressed: () => uploadResource(),
-        icon: Icon(
-          Icons.file_upload,
-          color: Colors.white,
-        ),
-      ),
-    );
+  double getRadiansFromDegree(double degree) {
+    double unitRadian = 57.295779513;
+    return degree / unitRadian;
   }
 
   buildFormularioCompartir() {
@@ -310,14 +388,14 @@ class _ShareState extends State<Share>
           child: AspectRatio(
             aspectRatio: 16 / 9,
             child: GestureDetector(
-              onTap: () => selectImage(context),
+              onTap: () => selectFile(context, true, "image"),
               child: Container(
                 decoration: BoxDecoration(
                     image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: file == null
+                  image: imgFile == null
                       ? AssetImage('assets/img/addPhoto.png')
-                      : FileImage(file),
+                      : FileImage(imgFile),
                 )),
               ),
             ),
@@ -439,9 +517,10 @@ class _ShareState extends State<Share>
           ),
         ),
       ),
-      uploadResourceFab(),
+      // uploadResourceFab(),
     ];
     return Scaffold(
+      floatingActionButton: fab(),
       appBar: AppBar(
           backgroundColor: Colors.teal,
           title: Text(
@@ -464,6 +543,97 @@ class _ShareState extends State<Share>
       body: ListView(
         children: children2,
       ),
+    );
+  }
+
+  fab() {
+    return Stack(
+      children: <Widget>[
+        Transform.translate(
+          offset: Offset.fromDirection(getRadiansFromDegree(270),
+              _degOneTranslationAnimation.value * 90),
+          child: Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.rotationZ(
+                getRadiansFromDegree(_rotationAnimation.value))
+              ..scale(_degOneTranslationAnimation.value),
+            child: CircularFab(
+              color: Colors.blue,
+              width: 50,
+              height: 50,
+              icon: Icon(
+                Icons.insert_link,
+                color: Colors.white,
+              ),
+              onClick: () => selectFile(context, true, "enlace"),
+            ),
+          ),
+        ),
+        Transform.translate(
+          offset: Offset.fromDirection(getRadiansFromDegree(225),
+              _degOneTranslationAnimation.value * 90),
+          child: Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.rotationZ(
+                getRadiansFromDegree(_rotationAnimation.value))
+              ..scale(_degOneTranslationAnimation.value),
+            child: CircularFab(
+                color: Colors.purple,
+                width: 50,
+                height: 50,
+                icon: Icon(
+                  Icons.ondemand_video,
+                  color: Colors.white,
+                ),
+                onClick: () => print("hola"))
+          ),
+        ),
+        Transform.translate(
+          offset: Offset.fromDirection(getRadiansFromDegree(180),
+              _degOneTranslationAnimation.value * 90),
+          child: Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.rotationZ(
+                getRadiansFromDegree(_rotationAnimation.value))
+              ..scale(_degOneTranslationAnimation.value),
+            child: CircularFab(
+              color: Colors.orangeAccent,
+              width: 50,
+              height: 50,
+              icon: Icon(
+                Icons.picture_as_pdf,
+                color: Colors.white,
+              ),
+              onClick: () => print("hola"),
+            ),
+          ),
+        ),
+        Container(
+          height: 60,
+          width: 60,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+          child: Transform(
+            alignment: Alignment.center,
+            transform:
+                Matrix4.rotationZ(getRadiansFromDegree(_rotationAnimation.value)),
+            child: CircularFab(
+              color: Colors.red,
+              width: 60,
+              height: 60,
+              icon: Icon(
+                Icons.menu,
+                color: Colors.white,
+              ),
+              onClick: () {
+                if (_animationController.isCompleted) {
+                  _animationController.reverse();
+                } else {
+                  _animationController.forward();
+                }
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 

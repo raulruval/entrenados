@@ -76,7 +76,7 @@ class PostTile extends StatelessWidget {
                             children: <Widget>[
                               ClipRRect(
                                 child: cachedNetworkImage(
-                                  post.mediaUrl,
+                                  post.photoUrl,
                                   context,
                                   true,
                                 ),

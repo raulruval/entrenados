@@ -60,6 +60,9 @@ class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
             body: SafeArea(
               child: Column(
                 children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(top: 7),
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -118,6 +121,9 @@ class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
                       )
                     ],
                   ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 15),
+                  ),
                   Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10.0),
@@ -125,9 +131,9 @@ class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
                     child: GestureDetector(
                       onTap: () => print("Abrir entrenamientos"),
                       child: Padding(
-                      padding: const EdgeInsets.only(top:8.0, bottom: 8.0),
+                        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             Icon(
@@ -166,7 +172,7 @@ class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: 10.0),
+                    padding: EdgeInsets.only(top: 20.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.center,
