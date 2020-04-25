@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:entrenados/models/user.dart';
 import 'package:entrenados/pages/activity.dart';
 import 'package:entrenados/pages/profile.dart';
+import 'package:entrenados/pages/storePosts.dart';
 import 'package:entrenados/widgets/progress.dart';
 import 'package:flutter/material.dart';
 
@@ -124,12 +125,20 @@ class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
                   Padding(
                     padding: EdgeInsets.only(top: 15),
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        color: Colors.grey.shade100),
-                    child: GestureDetector(
-                      onTap: () => print("Abrir entrenamientos"),
+                  GestureDetector(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => StorePosts(
+                          currentUser: currentUser,
+                        ),
+                      ),
+                    ),
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.2,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          color: Colors.grey.shade100),
                       child: Padding(
                         padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                         child: Row(

@@ -8,6 +8,8 @@ import 'package:entrenados/pages/home.dart';
 import 'package:entrenados/widgets/progress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:image/image.dart' as Im;
 
 class EditProfile extends StatefulWidget {
   final String currentUserId;
@@ -93,10 +95,23 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
+  compressImage() async {
+    final tempDir = await getTemporaryDirectory();
+    final path = tempDir.path;
+    Im.Image imageFile = Im.decodeImage(_image.readAsBytesSync());
+    var userId = user.id;
+    final compressedImageFile = File('$path/img_$userId.jpg')
+      ..writeAsBytesSync(Im.encodeJpg(imageFile, quality: 65));
+    setState(() {
+      _image = compressedImageFile;
+    });
+  }
+
   Future updateProfileData(BuildContext context) async {
     String fileName;
     String url;
     if (_image != null) {
+      await compressImage();
       try {
         fileName = basename(_image.path);
         StorageReference firebaseStorageRef =
@@ -212,11 +227,11 @@ class _EditProfileState extends State<EditProfile> {
                                       child: (_image != null)
                                           ? Image.file(
                                               _image,
-                                              fit: BoxFit.fitWidth,
+                                              fit: BoxFit.cover,
                                             )
                                           : Image.network(
                                               user.photoUrl,
-                                              fit: BoxFit.fitWidth,
+                                              fit: BoxFit.cover,
                                             ),
                                     ),
                                   ),

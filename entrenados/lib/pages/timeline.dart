@@ -116,7 +116,7 @@ class _TimelineState extends State<Timeline> {
     } else {
       List<GridTile> gridTiles = [];
       posts.forEach((post) {
-        gridTiles.add(GridTile(child: PostTile(post)));
+        gridTiles.add(GridTile(child: PostTile(post,true)));
       });
       return ListView(
         children: gridTiles,

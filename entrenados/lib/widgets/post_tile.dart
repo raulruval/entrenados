@@ -8,8 +8,9 @@ import 'package:entrenados/widgets/post.dart';
 
 class PostTile extends StatelessWidget {
   final Post post;
+  final bool realTimeInfo;
 
-  PostTile(this.post);
+  PostTile(this.post,this.realTimeInfo);
 
   showPost(context) {
     Navigator.push(
@@ -165,7 +166,7 @@ class PostTile extends StatelessWidget {
                           ],
                         ),
                         Padding(padding: EdgeInsets.only(bottom: 4.0)),
-                        Row(
+                        realTimeInfo ? Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
                             Icon(
@@ -183,7 +184,7 @@ class PostTile extends StatelessWidget {
                             ),
                             Padding(padding: EdgeInsets.only(left: 5.0)),
                           ],
-                        ),
+                        ) : SizedBox.shrink(),
                       ],
                     ),
                   )

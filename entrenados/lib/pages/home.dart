@@ -29,6 +29,7 @@ final activityFeedRef = Firestore.instance.collection("feed");
 final followersRef = Firestore.instance.collection("followers");
 final followingRef = Firestore.instance.collection("following");
 final timelineRef = Firestore.instance.collection("timeline");
+final storedPostsRef = Firestore.instance.collection("storedPosts");
 
 final DateTime timestamp = DateTime.now();
 

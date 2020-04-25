@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:entrenados/pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:entrenados/widgets/header.dart';
 
@@ -12,20 +14,60 @@ class _CreateGoogleAccountState extends State<CreateGoogleAccount> {
   String username;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
+  bool oldUser = false;
 
-  submit() {
+  Future<void> showAlertRegister(String texto) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Email existente'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(texto),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Volver a intentarlo'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  submit() async {
     final form = _formKey.currentState;
 
     if (form.validate()) {
       form.save();
-      SnackBar snackbar = SnackBar(
-        content: Text("¡Bienvenido $username!"),
-      );
-      _scaffoldKey.currentState.showSnackBar(snackbar);
-      Timer(Duration(seconds: 2), () {
-        Navigator.pop(context, username);
-      });
+      oldUser = await _checkIfExists(username);
+      if (oldUser) {
+        showAlertRegister(
+            'El usuario introducido ya existe, por favor, intentelo de nuevo con uno distinto.');
+      } else {
+        SnackBar snackbar = SnackBar(
+          content: Text("¡Bienvenido $username!"),
+        );
+        _scaffoldKey.currentState.showSnackBar(snackbar);
+        Timer(Duration(seconds: 2), () {
+          Navigator.pop(context, username);
+        });
+      }
     }
+  }
+
+  _checkIfExists(String username) async {
+    QuerySnapshot query =
+        await usersRef.where("username", isEqualTo: username).getDocuments();
+    return query.documents.isNotEmpty;
   }
 
   @override

@@ -103,7 +103,7 @@ class _SearchPostsResponseState extends State<SearchPostsResponse> {
     } else {
       List<GridTile> gridTiles = [];
       posts.forEach((post) {
-        gridTiles.add(GridTile(child: PostTile(post)));
+        gridTiles.add(GridTile(child: PostTile(post,true)));
       });
       return ListView(
         shrinkWrap: true,

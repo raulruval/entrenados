@@ -29,9 +29,10 @@ class Post extends StatefulWidget {
   final dynamic likes;
   final String equipment;
   final String muscles;
-  final List<Item> selectedEquipment;
-  final List<Item> selectedMuscles;
+  final String selectedEquipment;
+  final String selectedMuscles;
   final String mainResource;
+  final Timestamp timestamp;
 
   Post(
       {this.currentUserId,
@@ -52,27 +53,28 @@ class Post extends StatefulWidget {
       this.muscles,
       this.selectedMuscles,
       this.selectedEquipment,
-      this.mainResource});
+      this.mainResource,
+      this.timestamp});
 
   factory Post.fromDocument(DocumentSnapshot doc) {
     return Post(
-      postId: doc['postId'],
-      username: doc['username'],
-      ownerId: doc['ownerId'],
-      title: doc['title'],
-      difficulty: doc['currentDifficulty'],
-      group: doc['currentGroup'],
-      duration: doc['duration'],
-      description: doc['description'],
-      photoUrl: doc['photoUrl'],
-      videoUrl: doc['videoUrl'],
-      documentUrl: doc['documentUrl'],
-      notes: doc['notes'],
-      likes: doc['likes'],
-      equipment: doc['selectedEquipment'],
-      muscles: doc['selectedMuscles'],
-      mainResource: doc['mainResource'],
-    );
+        postId: doc['postId'],
+        username: doc['username'],
+        ownerId: doc['ownerId'],
+        title: doc['title'],
+        difficulty: doc['currentDifficulty'],
+        group: doc['currentGroup'],
+        duration: doc['duration'],
+        description: doc['description'],
+        photoUrl: doc['photoUrl'],
+        videoUrl: doc['videoUrl'],
+        documentUrl: doc['documentUrl'],
+        notes: doc['notes'],
+        likes: doc['likes'],
+        equipment: doc['selectedEquipment'],
+        muscles: doc['selectedMuscles'],
+        mainResource: doc['mainResource'],
+        timestamp: doc['timestamp']);
   }
 
   int getLikeCount(likes) {
@@ -219,6 +221,19 @@ class PostState extends State<Post> {
     }
   }
 
+  deleteStoredPostsRef(currentUserId, postId) async {
+    storedPostsRef
+        .document(currentUserId)
+        .collection('userPosts')
+        .document(postId)
+        .get()
+        .then((doc) {
+      if (doc.exists) {
+        doc.reference.delete();
+      }
+    });
+  }
+
   handleLikePost() {
     bool _isLiked = (likes[currentUserId] == true);
     if (_isLiked) {
@@ -227,24 +242,51 @@ class PostState extends State<Post> {
           .collection('userPosts')
           .document(postId)
           .updateData({'likes.$currentUserId': false});
+
       removeLikeFromActivityFeed();
       setState(() {
         likeCount -= 1;
         isLiked = false;
         likes[currentUserId] = false;
       });
+
+      deleteStoredPostsRef(currentUserId, postId);
     } else if (!_isLiked) {
       postsRef
           .document((ownerId))
           .collection('userPosts')
           .document(postId)
           .updateData({'likes.$currentUserId': true});
+
       addLikeToActivityFeed();
       setState(() {
         likeCount += 1;
         isLiked = true;
         likes[currentUserId] = true;
         showHeart = true;
+      });
+
+      storedPostsRef
+          .document(currentUserId)
+          .collection("userPosts")
+          .document(postId)
+          .setData({
+        "postId": postId,
+        "ownerId": ownerId,
+        "username": username,
+        "photoUrl": photoUrl,
+        "videoUrl": videoUrl,
+        "documentUrl": documentUrl,
+        "title": title,
+        "duration": duration,
+        "currentDifficulty": difficulty,
+        "currentGroup": group,
+        "selectedMuscles": muscles,
+        "selectedEquipment": equipment,
+        "mainResource": mainResource,
+        "notes": notes,
+        "timestamp": timestamp,
+        "likes": likes,
       });
       Timer(Duration(milliseconds: 500), () {
         setState(() {
