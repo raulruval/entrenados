@@ -197,14 +197,17 @@ class _HomeState extends State<Home> {
         .signInWithEmailAndPassword(email: _email, password: _pwd)
         .catchError((onError) => {showAlertNoValid()});
 
-    return fUser.uid;
+    fUser.sendEmailVerification();
+
+    return fUser;
   }
 
   handleSignIn(bool auto, String uidAuto) async {
+    FirebaseUser fUser;
     if (!auto) {
-      String uid = await signIpUser();
+      fUser = await signIpUser();
       await usersRef
-          .document(uid)
+          .document(fUser.uid)
           .get()
           .then((doc) => currentUser = User.fromDocument(doc))
           .catchError((onError) => print(onError));
@@ -216,11 +219,18 @@ class _HomeState extends State<Home> {
           .catchError((onError) => print(onError));
     }
 
-    if (currentUser != null) {
+    if (currentUser != null && fUser.isEmailVerified) {
       setState(() {
         isAuth = true;
       });
       configurePushNotification(false, currentUser);
+    } else if (currentUser != null) {
+      SnackBar snackBar = SnackBar(
+          content: AutoSizeText(
+        "Por favor, verifique su cuenta de correo electrónico para poder iniciar sesión.",
+        maxLines: 2,
+      ));
+      _scaffoldKey.currentState.showSnackBar(snackBar);
     } else {
       setState(() {
         isAuth = false;
@@ -231,7 +241,14 @@ class _HomeState extends State<Home> {
   createGoogleUserInFirestore() async {
     // 1) Comprueba si el usuario existe en la colección de firebase.
     final GoogleSignInAccount user = googleSignIn.currentUser;
+    final GoogleSignInAuthentication googleAuth = await user.authentication;
+
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+        idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
+    await _auth.signInWithCredential(credential);
+
     DocumentSnapshot doc = await usersRef.document(user.id).get();
+
     // 2) Si el usuario no existe, lo llevamos a la página de crear cuenta(google).
     if (!doc.exists) {
       final username = await Navigator.push(context,

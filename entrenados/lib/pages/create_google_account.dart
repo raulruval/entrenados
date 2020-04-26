@@ -22,7 +22,7 @@ class _CreateGoogleAccountState extends State<CreateGoogleAccount> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Email existente'),
+          title: Text('Usuario existente'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[

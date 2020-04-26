@@ -6,6 +6,7 @@ import 'package:entrenados/pages/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:entrenados/widgets/header.dart';
+import 'package:flutter_svg/svg.dart';
 
 class CreateAccount extends StatefulWidget {
   @override
@@ -55,8 +56,7 @@ class _CreateAccountState extends State<CreateAccount> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text(
-                    texto),
+                Text(texto),
               ],
             ),
           ),
@@ -78,7 +78,8 @@ class _CreateAccountState extends State<CreateAccount> {
       _formKey.currentState.save();
       oldUser = await _checkIfExists(user.username);
       if (oldUser) {
-        showAlertRegister('El usuario introducido ya existe, por favor, intentelo de nuevo con uno distinto.');
+        showAlertRegister(
+            'El usuario introducido ya existe, por favor, intentelo de nuevo con uno distinto.');
       } else {
         signUpUser()
             .then((uid) => {user.id = uid.toString()})
@@ -93,7 +94,8 @@ class _CreateAccountState extends State<CreateAccount> {
           });
         }).catchError((onError) {
           print(onError);
-          showAlertRegister('El email introducido ya existe, por favor, intentelo de nuevo con uno distinto.');
+          showAlertRegister(
+              'El email introducido ya existe, por favor, intentelo de nuevo con uno distinto.');
         });
       }
     }
@@ -124,6 +126,12 @@ class _CreateAccountState extends State<CreateAccount> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    MediaQuery.of(context).orientation == Orientation.portrait ? Center(
+                      child: SvgPicture.asset(
+                        'assets/img/start.svg',
+                        height: MediaQuery.of(context).size.height * 0.2,
+                      ),
+                    ) : SizedBox.shrink(),
                     Padding(
                       padding:
                           EdgeInsets.only(left: 30.0, right: 30, top: 50.0),
@@ -136,7 +144,8 @@ class _CreateAccountState extends State<CreateAccount> {
                               return null;
                             }
                           },
-                          onSaved: (val) => user.displayName = val.trim().toUpperCase(),
+                          onSaved: (val) =>
+                              user.displayName = val.trim().toUpperCase(),
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: "Nombre",
@@ -152,34 +161,10 @@ class _CreateAccountState extends State<CreateAccount> {
                       child: Container(
                         child: TextFormField(
                           validator: (val) {
-                            if (val.isEmpty) {
-                              return 'Usuario demasiado corto';
-                            } else if (val.trim().length > 10) {
-                              return 'Usuario demasiado largo';
-                            } else {
-                              return null;
-                            }
-                          },
-                          onSaved: (val) => user.username = val.trim(),
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: "Usuario",
-                            labelStyle: TextStyle(fontSize: 15.0),
-                            hintText: "Nombre por el que serás visible",
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding:
-                          EdgeInsets.only(left: 30.0, right: 30, top: 10.0),
-                      child: Container(
-                        child: TextFormField(
-                          validator: (val) {
                             if (!RegExp(
                                     r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
                                 .hasMatch(val)) {
-                              return 'Por favor, introduce un email valido';
+                              return 'Por favor, introduce un email válido';
                             } else {
                               return null;
                             }
