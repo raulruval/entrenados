@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entrenados/models/user.dart';
 import 'package:entrenados/pages/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -30,7 +28,7 @@ class _CreateAccountState extends State<CreateAccount> {
   Future<void> saveUserOnDb() async {
     usersRef.document(user.id).setData({
       "id": user.id,
-      "username": user.username,
+      "username": "",
       "photoUrl":
           "https://firebasestorage.googleapis.com/v0/b/entrenados-4621b.appspot.com/o/profile.jpg?alt=media&token=26e5503d-53d7-4b3e-8d3a-43a9e4c9f479",
       "email": user.email,
@@ -76,35 +74,23 @@ class _CreateAccountState extends State<CreateAccount> {
   submit() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      oldUser = await _checkIfExists(user.username);
-      if (oldUser) {
-        showAlertRegister(
-            'El usuario introducido ya existe, por favor, intentelo de nuevo con uno distinto.');
-      } else {
-        signUpUser()
-            .then((uid) => {user.id = uid.toString()})
-            .then((_) => saveUserOnDb())
-            .then((_) {
-          SnackBar snackbar = SnackBar(
-            content: Text("¡Bienvenido!"),
-          );
-          _scaffoldKey.currentState.showSnackBar(snackbar);
-          Timer(Duration(seconds: 2), () {
-            Navigator.pop(context, user);
-          });
-        }).catchError((onError) {
-          print(onError);
-          showAlertRegister(
-              'El email introducido ya existe, por favor, intentelo de nuevo con uno distinto.');
+      signUpUser()
+          .then((uid) => {user.id = uid.toString()})
+          .then((_) => saveUserOnDb())
+          .then((_) {
+        SnackBar snackbar = SnackBar(
+          content: Text("¡Bienvenido! Por favor, verifique su cuenta de correo electrónico para poder iniciar sesión."),
+        );
+        _scaffoldKey.currentState.showSnackBar(snackbar);
+        Timer(Duration(seconds: 3), () {
+          Navigator.pop(context, user);
         });
-      }
+      }).catchError((onError) {
+        print(onError);
+        showAlertRegister(
+            'El email introducido ya existe, por favor, intentelo de nuevo con uno distinto.');
+      });
     }
-  }
-
-  _checkIfExists(String username) async {
-    QuerySnapshot query =
-        await usersRef.where("username", isEqualTo: username).getDocuments();
-    return query.documents.isNotEmpty;
   }
 
   @override
@@ -115,7 +101,7 @@ class _CreateAccountState extends State<CreateAccount> {
         appBar: header(
           context,
           titleText: "Configura tu perfil",
-          removeBackButton: false,
+          removeBackButton: true,
         ),
         body: ListView(children: <Widget>[
           Container(
@@ -126,12 +112,14 @@ class _CreateAccountState extends State<CreateAccount> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    MediaQuery.of(context).orientation == Orientation.portrait ? Center(
-                      child: SvgPicture.asset(
-                        'assets/img/start.svg',
-                        height: MediaQuery.of(context).size.height * 0.2,
-                      ),
-                    ) : SizedBox.shrink(),
+                    MediaQuery.of(context).orientation == Orientation.portrait
+                        ? Center(
+                            child: SvgPicture.asset(
+                              'assets/img/start.svg',
+                              height: MediaQuery.of(context).size.height * 0.2,
+                            ),
+                          )
+                        : SizedBox.shrink(),
                     Padding(
                       padding:
                           EdgeInsets.only(left: 30.0, right: 30, top: 50.0),

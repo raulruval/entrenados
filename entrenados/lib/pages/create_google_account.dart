@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entrenados/pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:entrenados/widgets/header.dart';
+import 'package:flutter_svg/svg.dart';
 
 class CreateGoogleAccount extends StatefulWidget {
   @override
@@ -84,6 +85,14 @@ class _CreateGoogleAccountState extends State<CreateGoogleAccount> {
           Container(
             child: Column(
               children: <Widget>[
+                MediaQuery.of(context).orientation == Orientation.portrait
+                        ? Center(
+                            child: Padding( child: SvgPicture.asset(
+                              'assets/img/username.svg',
+                              height: MediaQuery.of(context).size.height * 0.2,
+                            ), padding: EdgeInsets.only(top:20),),
+                          )
+                        : SizedBox.shrink(),
                 Padding(
                   padding: EdgeInsets.only(top: 25.0),
                   child: Center(

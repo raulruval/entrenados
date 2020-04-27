@@ -164,18 +164,17 @@ class _HomeState extends State<Home> {
     });
   }
 
-  Future<void> showAlertNoValid() async {
+  Future<void> showAlertNoValid(String titulo, String texto) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Credenciales incorrectos'),
+          title: Text(titulo),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text(
-                    'El email y contraseña introducidos no coindicen con ninguno de nuestros usuarios'),
+                Text(texto),
               ],
             ),
           ),
@@ -195,15 +194,19 @@ class _HomeState extends State<Home> {
   Future signIpUser() async {
     FirebaseUser fUser = await _auth
         .signInWithEmailAndPassword(email: _email, password: _pwd)
-        .catchError((onError) => {showAlertNoValid()});
-
-    fUser.sendEmailVerification();
-
+        .catchError((onError) => {
+              showAlertNoValid("Credenciales no validos",
+                  'El email y contraseña introducidos no coindicen con ninguno de nuestros usuarios')
+            });
+    if (!fUser.isEmailVerified) {
+      fUser.sendEmailVerification();
+    }
     return fUser;
   }
 
   handleSignIn(bool auto, String uidAuto) async {
     FirebaseUser fUser;
+    bool userVerify = false;
     if (!auto) {
       fUser = await signIpUser();
       await usersRef
@@ -218,19 +221,27 @@ class _HomeState extends State<Home> {
           .then((doc) => currentUser = User.fromDocument(doc))
           .catchError((onError) => print(onError));
     }
-
-    if (currentUser != null && fUser.isEmailVerified) {
+    try {
+      userVerify = fUser.isEmailVerified;
+    } catch (ex) {
+      print(ex);
+    }
+    if (currentUser != null && userVerify) {
+      if (currentUser.username == "") {
+        final username = await Navigator.push(context,
+            MaterialPageRoute(builder: (context) => CreateGoogleAccount()));
+        usersRef.document(currentUser.id).updateData({'username': username});
+      }
       setState(() {
         isAuth = true;
       });
       configurePushNotification(false, currentUser);
-    } else if (currentUser != null) {
-      SnackBar snackBar = SnackBar(
-          content: AutoSizeText(
-        "Por favor, verifique su cuenta de correo electrónico para poder iniciar sesión.",
-        maxLines: 2,
-      ));
-      _scaffoldKey.currentState.showSnackBar(snackBar);
+    } else if (currentUser != null && !auto) {
+      showAlertNoValid("Email no verificado",
+          "Por favor, verifique su cuenta de correo electrónico para poder iniciar sesión.");
+      setState(() {
+        isAuth = false;
+      });
     } else {
       setState(() {
         isAuth = false;
