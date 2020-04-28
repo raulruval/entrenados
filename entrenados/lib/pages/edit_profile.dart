@@ -78,7 +78,7 @@ class _EditProfileState extends State<EditProfile> {
         Padding(
           padding: EdgeInsets.only(top: 12.0),
           child: Text(
-            "Bio",
+            "Ciudad",
             style: TextStyle(
               color: Colors.grey,
             ),
@@ -176,121 +176,123 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text(
-          "Editar Perfil",
-          style: TextStyle(
-            color: Colors.black,
+    return SafeArea(
+          child: Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          title: Text(
+            "Editar Perfil",
+            style: TextStyle(
+              color: Colors.black,
+            ),
           ),
+          actions: <Widget>[
+            IconButton(
+                icon: Icon(
+                  Icons.done,
+                  size: 30,
+                  color: Colors.green,
+                ),
+                onPressed: () => {
+                      Navigator.pop(context),
+                      _image = null,
+                    }),
+          ],
         ),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(
-                Icons.done,
-                size: 30,
-                color: Colors.green,
-              ),
-              onPressed: () => {
-                    Navigator.pop(context),
-                    _image = null,
-                  }),
-        ],
-      ),
-      body: Builder(
-        builder: (context) => isLoading
-            ? circularProgress()
-            : ListView(
-                children: <Widget>[
-                  Container(
-                    child: Column(
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: 16.0,
-                            bottom: 8.0,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              GestureDetector(
-                                onTap: getImage,
-                                child: CircleAvatar(
-                                  radius: 80.0,
-                                  backgroundColor: Colors.teal,
-                                  child: ClipOval(
-                                    child: new SizedBox(
-                                      width: 160,
-                                      height: 160,
-                                      child: (_image != null)
-                                          ? Image.file(
-                                              _image,
-                                              fit: BoxFit.cover,
-                                            )
-                                          : Image.network(
-                                              user.photoUrl,
-                                              fit: BoxFit.cover,
-                                            ),
+        body: Builder(
+          builder: (context) => isLoading
+              ? circularProgress()
+              : ListView(
+                  children: <Widget>[
+                    Container(
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(
+                              top: 16.0,
+                              bottom: 8.0,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                GestureDetector(
+                                  onTap: getImage,
+                                  child: CircleAvatar(
+                                    radius: 80.0,
+                                    backgroundColor: Colors.teal,
+                                    child: ClipOval(
+                                      child: new SizedBox(
+                                        width: 160,
+                                        height: 160,
+                                        child: (_image != null)
+                                            ? Image.file(
+                                                _image,
+                                                fit: BoxFit.cover,
+                                              )
+                                            : Image.network(
+                                                user.photoUrl,
+                                                fit: BoxFit.cover,
+                                              ),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(top: 100),
-                                child: IconButton(
-                                    icon: Icon(
-                                      Icons.add_a_photo,
-                                      size: 35.0,
-                                    ),
-                                    onPressed: getImage),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Column(
-                            children: <Widget>[
-                              buildDisplayNameField(),
-                              buildBioField(),
-                            ],
-                          ),
-                        ),
-                        RaisedButton(
-                          onPressed: () => updateProfileData(context),
-                          child: Text(
-                            "Actualizar Perfil",
-                            style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontSize: 20.0,
-                              fontWeight: FontWeight.bold,
+                                Padding(
+                                  padding: EdgeInsets.only(top: 100),
+                                  child: IconButton(
+                                      icon: Icon(
+                                        Icons.add_a_photo,
+                                        size: 35.0,
+                                      ),
+                                      onPressed: getImage),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: FlatButton.icon(
-                            onPressed: () => logout(),
-                            icon: Icon(
-                              Icons.cancel,
-                              color: Colors.red,
+                          Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Column(
+                              children: <Widget>[
+                                buildDisplayNameField(),
+                                buildBioField(),
+                              ],
                             ),
-                            label: Text(
-                              "Salir",
+                          ),
+                          RaisedButton(
+                            onPressed: () => updateProfileData(context),
+                            child: Text(
+                              "Actualizar Perfil",
                               style: TextStyle(
-                                color: Colors.red,
+                                color: Theme.of(context).primaryColor,
                                 fontSize: 20.0,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
+                          Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: FlatButton.icon(
+                              onPressed: () => logout(),
+                              icon: Icon(
+                                Icons.cancel,
+                                color: Colors.red,
+                              ),
+                              label: Text(
+                                "Salir",
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 20.0,
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+        ),
       ),
     );
   }

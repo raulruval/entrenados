@@ -72,7 +72,7 @@ class _StorePostsState extends State<StorePosts> {
     } else {
       List<GridTile> gridTiles = [];
       posts.forEach((post) {
-        gridTiles.add(GridTile(child: PostTile(post,false)));
+        gridTiles.add(GridTile(child: PostTile(post, false)));
       });
       return ListView(
         children: gridTiles,
@@ -82,12 +82,14 @@ class _StorePostsState extends State<StorePosts> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: header(context,
-          isAppTitle: false,
-          removeBackButton: false,
-          titleText: "Publicaciones guardadas"),
-      body: buildStoredPosts(),
+    return SafeArea(
+      child: Scaffold(
+        appBar: header(context,
+            isAppTitle: false,
+            removeBackButton: false,
+            titleText: "Publicaciones guardadas"),
+        body: buildStoredPosts(),
+      ),
     );
   }
 }

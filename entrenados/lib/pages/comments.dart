@@ -89,32 +89,34 @@ class CommentsState extends State<Comments> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: header(
-        context,
-        titleText: "Comentarios",
-        isAppTitle: false,
-      ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: buildComments(),
-          ),
-          Divider(),
-          ListTile(
-            title: TextFormField(
-              controller: commentController,
-              decoration: InputDecoration(
-                labelText: ("Escribe un comentario..."),
+    return SafeArea(
+          child: Scaffold(
+        appBar: header(
+          context,
+          titleText: "Comentarios",
+          isAppTitle: false,
+        ),
+        body: Column(
+          children: <Widget>[
+            Expanded(
+              child: buildComments(),
+            ),
+            Divider(),
+            ListTile(
+              title: TextFormField(
+                controller: commentController,
+                decoration: InputDecoration(
+                  labelText: ("Escribe un comentario..."),
+                ),
+              ),
+              trailing: OutlineButton(
+                onPressed: addComment,
+                borderSide: BorderSide.none,
+                child: Text("Añadir"),
               ),
             ),
-            trailing: OutlineButton(
-              onPressed: addComment,
-              borderSide: BorderSide.none,
-              child: Text("Añadir"),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       builder: DevicePreview.appBuilder,
       title: 'Entrenados',
-      theme: ThemeData(fontFamily: 'Open Sans', primarySwatch: Colors.teal),
+      theme: ThemeData(fontFamily: 'Manrope', primarySwatch: Colors.teal),
       home: Home(),
     );
   }

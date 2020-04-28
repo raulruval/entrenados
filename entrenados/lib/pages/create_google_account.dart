@@ -73,89 +73,91 @@ class _CreateGoogleAccountState extends State<CreateGoogleAccount> {
 
   @override
   Widget build(BuildContext parentContext) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: header(
-        context,
-        titleText: "Configura tu perfil",
-        removeBackButton: true,
-      ),
-      body: ListView(
-        children: <Widget>[
-          Container(
-            child: Column(
-              children: <Widget>[
-                MediaQuery.of(context).orientation == Orientation.portrait
-                        ? Center(
-                            child: Padding( child: SvgPicture.asset(
-                              'assets/img/username.svg',
-                              height: MediaQuery.of(context).size.height * 0.2,
-                            ), padding: EdgeInsets.only(top:20),),
-                          )
-                        : SizedBox.shrink(),
-                Padding(
-                  padding: EdgeInsets.only(top: 25.0),
-                  child: Center(
-                    child: Text(
-                      "Introduce un nombre de usuario",
-                      style: TextStyle(
-                        fontSize: 25.0,
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Container(
-                    child: Form(
-                      key: _formKey,
-                      child: TextFormField(
-                        autovalidate: true,
-                        validator: (val) {
-                          if (val.trim().length < 3 || val.isEmpty) {
-                            return 'Usuario demasiado corto';
-                          } else if (val.trim().length > 12) {
-                            return 'Usuario demasiado largo';
-                          } else {
-                            return null;
-                          }
-                        },
-                        onSaved: (val) => username = val,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: "Usuario",
-                          labelStyle: TextStyle(fontSize: 15.0),
-                          hintText: "Deben ser al menos 3 caracteres",
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: submit,
-                  child: Container(
-                    height: 50.0,
-                    width: 350.0,
-                    decoration: BoxDecoration(
-                      color: Colors.teal,
-                      borderRadius: BorderRadius.circular(7.0),
-                    ),
+    return SafeArea(
+          child: Scaffold(
+        key: _scaffoldKey,
+        appBar: header(
+          context,
+          titleText: "Configura tu perfil",
+          removeBackButton: true,
+        ),
+        body: ListView(
+          children: <Widget>[
+            Container(
+              child: Column(
+                children: <Widget>[
+                  MediaQuery.of(context).orientation == Orientation.portrait
+                          ? Center(
+                              child: Padding( child: SvgPicture.asset(
+                                'assets/img/username.svg',
+                                height: MediaQuery.of(context).size.height * 0.2,
+                              ), padding: EdgeInsets.only(top:20),),
+                            )
+                          : SizedBox.shrink(),
+                  Padding(
+                    padding: EdgeInsets.only(top: 25.0),
                     child: Center(
                       child: Text(
-                        "Entrar",
+                        "Introduce un nombre de usuario",
                         style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15.0,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 25.0,
                         ),
                       ),
                     ),
                   ),
-                )
-              ],
-            ),
-          )
-        ],
+                  Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Container(
+                      child: Form(
+                        key: _formKey,
+                        child: TextFormField(
+                          autovalidate: true,
+                          validator: (val) {
+                            if (val.trim().length < 3 || val.isEmpty) {
+                              return 'Usuario demasiado corto';
+                            } else if (val.trim().length > 12) {
+                              return 'Usuario demasiado largo';
+                            } else {
+                              return null;
+                            }
+                          },
+                          onSaved: (val) => username = val,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: "Usuario",
+                            labelStyle: TextStyle(fontSize: 15.0),
+                            hintText: "Deben ser al menos 3 caracteres",
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: submit,
+                    child: Container(
+                      height: 50.0,
+                      width: 350.0,
+                      decoration: BoxDecoration(
+                        color: Colors.teal,
+                        borderRadius: BorderRadius.circular(7.0),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Entrar",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

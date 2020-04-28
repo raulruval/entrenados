@@ -7,7 +7,7 @@ AppBar header(context, { bool isAppTitle = false, String titleText, removeBackBu
       isAppTitle ? 'Entrenados' : titleText,
       style: TextStyle(
         color: Colors.white,
-        fontFamily: isAppTitle ? "Signatra" : "default",
+        fontFamily: isAppTitle ? "Viga" : "default",
         fontSize: isAppTitle ? 50.0 : 22.0,
       ),
       overflow: TextOverflow.ellipsis,

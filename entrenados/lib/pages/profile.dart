@@ -250,13 +250,6 @@ class _ProfileState extends State<Profile> {
           Navigator.of(context).pop();
         },
       ),
-      actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.more_vert),
-          color: Colors.white,
-          onPressed: (() {}),
-        )
-      ],
     );
   }
 
@@ -454,17 +447,33 @@ class _ProfileState extends State<Profile> {
         ),
       );
     } else {
+      int postsCount = 0;
       List<GridTile> gridTiles = [];
       posts.forEach((post) {
-        gridTiles.add(GridTile(child: PostTile(post,true)));
+        gridTiles.add(GridTile(child: PostTile(post, true)));
+        postsCount++;
       });
-      return Expanded(
-        child: ListView(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          children: gridTiles,
-        ),
-      );
+
+      if (postsCount == 1) {
+        return Expanded(
+          child: Container(
+            height: MediaQuery.of(context).size.height  * 0.51,
+            child: ListView(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              children: gridTiles,
+            ),
+          ),
+        );
+      } else {
+         return Expanded(
+          child: ListView(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            children: gridTiles,
+          ),
+        );
+      }
     }
   }
 

@@ -6,12 +6,14 @@ import 'package:entrenados/pages/profile.dart';
 import 'package:entrenados/pages/storePosts.dart';
 import 'package:entrenados/widgets/progress.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'home.dart';
 
 class MyPage extends StatefulWidget {
   final String profileId;
-  MyPage({this.profileId});
+  final bool activateNotifyAlert;
+  MyPage({this.profileId, this.activateNotifyAlert});
   @override
   _MyPageState createState() => _MyPageState();
 }
@@ -20,6 +22,7 @@ class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
   AnimationController _breathingController;
   var _breathe = 0.0;
   int timesBreathe = 0;
+  bool _activateNotifyAlert = false;
 
   @override
   void initState() {
@@ -33,6 +36,7 @@ class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
         _breathingController.forward();
         timesBreathe++;
       }
+      _activateNotifyAlert = widget.activateNotifyAlert;
     });
     _breathingController.addListener(() {
       setState(() {
@@ -57,9 +61,9 @@ class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
             return circularProgress();
           }
           User user = User.fromDocument(snapshot.data);
-          return Scaffold(
-            body: SafeArea(
-              child: Column(
+          return SafeArea(
+            child: Scaffold(
+              body: Column(
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.only(top: 7),
@@ -80,11 +84,15 @@ class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
                         child: Row(
                           children: <Widget>[
                             IconButton(
-                              icon: Icon(Icons.notifications),
-                              color: Colors.grey.shade500,
-                              iconSize: 35.0,
-                              onPressed: () {
-                                Navigator.push(
+                              icon: _activateNotifyAlert
+                                  ? FaIcon(FontAwesomeIcons.solidBell)
+                                  : FaIcon(FontAwesomeIcons.solidBellSlash),
+                              color: _activateNotifyAlert
+                                  ? Colors.yellow[700]
+                                  : Colors.grey.shade500,
+                              iconSize: 40.0,
+                              onPressed: () async {
+                                _activateNotifyAlert = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => new Activity(),

@@ -10,7 +10,7 @@ class PostTile extends StatelessWidget {
   final Post post;
   final bool realTimeInfo;
 
-  PostTile(this.post,this.realTimeInfo);
+  PostTile(this.post, this.realTimeInfo);
 
   showPost(context) {
     Navigator.push(
@@ -123,10 +123,13 @@ class PostTile extends StatelessWidget {
                             ),
                             Container(
                               width: MediaQuery.of(context).size.width * 0.4,
-                              child: AutoSizeText(
-                                post.difficulty,
-                                style: TextStyle(fontSize: 20),
-                                maxLines: 1,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 5.0),
+                                child: AutoSizeText(
+                                  post.difficulty,
+                                  style: TextStyle(fontSize: 20),
+                                  maxLines: 1,
+                                ),
                               ),
                             ),
                           ],
@@ -140,10 +143,13 @@ class PostTile extends StatelessWidget {
                             ),
                             Container(
                               width: MediaQuery.of(context).size.width * 0.4,
-                              child: AutoSizeText(
-                                checkEquipment(),
-                                style: TextStyle(fontSize: 20),
-                                maxLines: 1,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 5.0),
+                                child: AutoSizeText(
+                                  checkEquipment(),
+                                  style: TextStyle(fontSize: 20),
+                                  maxLines: 1,
+                                ),
                               ),
                             ),
                           ],
@@ -157,34 +163,45 @@ class PostTile extends StatelessWidget {
                             ),
                             Container(
                               width: MediaQuery.of(context).size.width * 0.4,
-                              child: AutoSizeText(
-                                post.group,
-                                style: TextStyle(fontSize: 20),
-                                maxLines: 1,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 5.0),
+                                child: AutoSizeText(
+                                  post.group,
+                                  style: TextStyle(fontSize: 20),
+                                  maxLines: 1,
+                                ),
                               ),
                             ),
                           ],
                         ),
                         Padding(padding: EdgeInsets.only(bottom: 4.0)),
-                        realTimeInfo ? Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            Icon(
-                              Icons.favorite,
-                              color: Colors.red,
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.4,
-                              child: AutoSizeText(
-                                post.getLikeCount(post.likes).toString() +
-                                    ' me gusta',
-                                style: TextStyle(fontSize: 20),
-                                maxLines: 1,
-                              ),
-                            ),
-                            Padding(padding: EdgeInsets.only(left: 5.0)),
-                          ],
-                        ) : SizedBox.shrink(),
+                        realTimeInfo
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.favorite,
+                                    color: Colors.red,
+                                  ),
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.4,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 5.0),
+                                      child: AutoSizeText(
+                                        post
+                                                .getLikeCount(post.likes)
+                                                .toString() +
+                                            ' me gusta',
+                                        style: TextStyle(fontSize: 20),
+                                        maxLines: 1,
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(padding: EdgeInsets.only(left: 5.0)),
+                                ],
+                              )
+                            : SizedBox.shrink(),
                       ],
                     ),
                   )

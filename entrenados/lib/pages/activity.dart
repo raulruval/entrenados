@@ -8,13 +8,14 @@ import 'package:entrenados/pages/home.dart';
 import 'package:entrenados/widgets/progress.dart';
 
 class Activity extends StatefulWidget {
+  Activity();
+
   @override
   _ActivityState createState() => _ActivityState();
 }
 
 class _ActivityState extends State<Activity> {
 
-  
 
   getActivityFeed() async {
     QuerySnapshot snapshot = await activityFeedRef
@@ -32,19 +33,21 @@ class _ActivityState extends State<Activity> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: header(context, titleText: "Actividad"),
-      body: Container(
-        child: FutureBuilder(
-          future: getActivityFeed(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return circularProgress();
-            }
-            return ListView(
-              children: snapshot.data,
-            );
-          },
+    return SafeArea(
+          child: Scaffold(
+        appBar: header(context, titleText: "Actividad"),
+        body: Container(
+          child: FutureBuilder(
+            future: getActivityFeed(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return circularProgress();
+              }
+              return ListView(
+                children: snapshot.data,
+              );
+            },
+          ),
         ),
       ),
     );

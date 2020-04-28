@@ -56,7 +56,6 @@ class _SearchState extends State<Search>
     setState(() {
       searchFutureResults = users;
     });
-    
   }
 
   clearSearch() {
@@ -83,7 +82,7 @@ class _SearchState extends State<Search>
             onPressed: () => clearSearch(),
           ),
         ),
-        onChanged:  handleSearchUser,
+        onChanged: handleSearchUser,
       ),
     );
   }
@@ -423,66 +422,69 @@ class _SearchState extends State<Search>
     super.build(context);
     return DefaultTabController(
       length: 2,
-      child: Scaffold(
-        key: _scaffoldKey,
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.grey[200],
-          title: Text(
-            "Buscar",
-            style: TextStyle(
-              color: Colors.teal,
+      child: SafeArea(
+        child: Scaffold(
+          key: _scaffoldKey,
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            elevation: 0,
+            backgroundColor: Colors.grey[200],
+            title: Text(
+              "Buscar",
+              style: TextStyle(
+                color: Colors.teal,
+              ),
             ),
-          ),
-          bottom: TabBar(
-            controller: _tabController,
-            unselectedLabelColor: Colors.teal,
-            indicatorSize: TabBarIndicatorSize.label,
-            indicator: BoxDecoration(
-              borderRadius: BorderRadius.circular(50),
-              color: Colors.teal[900],
-            ),
-            tabs: [
-              Tab(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    border: Border.all(
-                      color: Colors.teal[900],
-                      width: 1,
+            bottom: TabBar(
+              controller: _tabController,
+              unselectedLabelColor: Colors.teal,
+              indicatorSize: TabBarIndicatorSize.label,
+              indicator: BoxDecoration(
+                borderRadius: BorderRadius.circular(50),
+                color: Colors.teal[900],
+              ),
+              tabs: [
+                Tab(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      border: Border.all(
+                        color: Colors.teal[900],
+                        width: 1,
+                      ),
+                    ),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text("Entrenamientos"),
                     ),
                   ),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text("Entrenamientos"),
-                  ),
                 ),
-              ),
-              Tab(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    border: Border.all(
-                      color: Colors.teal[900],
-                      width: 1,
+                Tab(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      border: Border.all(
+                        color: Colors.teal[900],
+                        width: 1,
+                      ),
+                    ),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text("Entrenadores"),
                     ),
                   ),
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Text("Entrenadores"),
-                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
+          body: TabBarView(controller: _tabController, children: [
+            _getWorkouts(),
+            _getTrainers(),
+          ]),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: _getFab(),
         ),
-        body: TabBarView(controller: _tabController, children: [
-          _getWorkouts(),
-          _getTrainers(),
-        ]),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: _getFab(),
       ),
     );
   }

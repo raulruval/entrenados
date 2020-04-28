@@ -13,6 +13,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:entrenados/models/user.dart';
 import 'package:entrenados/models/searchModel.dart';
@@ -49,13 +50,14 @@ class _HomeState extends State<Home> {
   PageController pageController;
   int pageIndex = 0;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _scaffoldKeyNoValidation = GlobalKey<ScaffoldState>();
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-
+  bool _activateNotifyAlert = false;
   @override
   void initState() {
     super.initState();
     pageController = PageController();
-
+    _activateNotifyAlert = false;
     // Detecta cuando un usuario inicia sesión.
     googleSignIn.onCurrentUserChanged.listen((cuenta) {
       handleSignInGoogle(cuenta);
@@ -143,6 +145,10 @@ class _HomeState extends State<Home> {
         final String recipientId = message['data']['recipient'];
         final String body = message['notification']['body'];
         if (recipientId == user.id) {
+          // setState(() {
+          //   _activateNotifyAlert = true;
+          // });
+
           SnackBar snackBar = SnackBar(
             content: Text(
               body,
@@ -164,39 +170,16 @@ class _HomeState extends State<Home> {
     });
   }
 
-  Future<void> showAlertNoValid(String titulo, String texto) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(titulo),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(texto),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Volver a intentarlo'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   Future signIpUser() async {
     FirebaseUser fUser = await _auth
         .signInWithEmailAndPassword(email: _email, password: _pwd)
         .catchError((onError) => {
-              showAlertNoValid("Credenciales no validos",
-                  'El email y contraseña introducidos no coindicen con ninguno de nuestros usuarios')
+              _scaffoldKeyNoValidation.currentState.showSnackBar(SnackBar(
+                content: AutoSizeText(
+                  "El email y contraseña introducidos no coindicen con ninguno de nuestros usuarios.",
+                  maxLines: 2,
+                ),
+              ))
             });
     if (!fUser.isEmailVerified) {
       fUser.sendEmailVerification();
@@ -226,7 +209,7 @@ class _HomeState extends State<Home> {
     } catch (ex) {
       print(ex);
     }
-    if (currentUser != null && userVerify) {
+    if (currentUser != null /* && userVerify */) {
       if (currentUser.username == "") {
         final username = await Navigator.push(context,
             MaterialPageRoute(builder: (context) => CreateGoogleAccount()));
@@ -237,8 +220,12 @@ class _HomeState extends State<Home> {
       });
       configurePushNotification(false, currentUser);
     } else if (currentUser != null && !auto) {
-      showAlertNoValid("Email no verificado",
-          "Por favor, verifique su cuenta de correo electrónico para poder iniciar sesión.");
+      _scaffoldKeyNoValidation.currentState.showSnackBar(SnackBar(
+        content: AutoSizeText(
+          "Por favor, verifique su cuenta de correo electrónico para poder iniciar sesión.",
+          maxLines: 2,
+        ),
+      ));
       setState(() {
         isAuth = false;
       });
@@ -297,28 +284,33 @@ class _HomeState extends State<Home> {
   }
 
   Widget buildValiacionScreen() {
-    return Scaffold(
-      body: PageView(
-        children: <Widget>[
-          Timeline(currentUser: currentUser),
-          Search(searchModel: sm),
-          Share(currentUser: currentUser, searchModel: sm),
-          MyPage(profileId: currentUser?.id),
-        ],
-        controller: pageController,
-        onPageChanged: onPageChanged,
-        physics: NeverScrollableScrollPhysics(),
-      ),
-      bottomNavigationBar: CupertinoTabBar(
-        currentIndex: pageIndex,
-        onTap: onTap,
-        activeColor: Theme.of(context).primaryColor,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home)),
-          BottomNavigationBarItem(icon: Icon(Icons.search)),
-          BottomNavigationBarItem(icon: Icon(Icons.photo_camera)),
-          BottomNavigationBarItem(icon: Icon(Icons.account_circle))
-        ],
+    return SafeArea(
+      child: Scaffold(
+        body: PageView(
+          children: <Widget>[
+            Timeline(currentUser: currentUser),
+            Search(searchModel: sm),
+            Share(currentUser: currentUser, searchModel: sm),
+            MyPage(
+              profileId: currentUser?.id,
+              activateNotifyAlert: _activateNotifyAlert,
+            ),
+          ],
+          controller: pageController,
+          onPageChanged: onPageChanged,
+          physics: NeverScrollableScrollPhysics(),
+        ),
+        bottomNavigationBar: CupertinoTabBar(
+          currentIndex: pageIndex,
+          onTap: onTap,
+          activeColor: Theme.of(context).primaryColor,
+          items: [
+            BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.home)),
+            BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.search)),
+            BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.plusCircle)),
+            BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.userAlt))
+          ],
+        ),
       ),
     );
   }
@@ -414,13 +406,40 @@ class _HomeState extends State<Home> {
     );
   }
 
+  handleForgotPwd() async {
+    if (_email == null) {
+      _scaffoldKeyNoValidation.currentState.showSnackBar(SnackBar(
+        content: AutoSizeText(
+          "Por favor, introduce el correo electrónico y pulsa 'Cambiar contraseña'.",
+          maxLines: 2,
+        ),
+      ));
+    } else {
+      await _auth.sendPasswordResetEmail(email: _email).then((_) => {
+            _scaffoldKeyNoValidation.currentState.showSnackBar(SnackBar(
+              content: AutoSizeText(
+                "Se ha envíado un enlace para resetear la contraseña a $_email",
+                maxLines: 2,
+              ),
+            ))
+          }).catchError((error) {
+            _scaffoldKeyNoValidation.currentState.showSnackBar(SnackBar(
+              content: AutoSizeText(
+                "Lo sentimos, el email $_email no está registrado en la aplicación.",
+                maxLines: 2,
+              ),
+            ));
+          });
+    }
+  }
+
   Widget _buildForgotPasswordBtn() {
     return Container(
       alignment: Alignment.center,
       child: FlatButton(
-        onPressed: () => print('Botón has olvidado tu contraseña'),
+        onPressed: () => handleForgotPwd(),
         child: Text(
-          '¿Has olvidado tu contraseña?',
+          'Cambiar contraseña',
           style: kLabelStyle,
         ),
       ),
@@ -481,6 +500,7 @@ class _HomeState extends State<Home> {
 
   Scaffold buildNoValiacionScreen() {
     return Scaffold(
+      key: _scaffoldKeyNoValidation,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: GestureDetector(

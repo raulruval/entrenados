@@ -519,29 +519,31 @@ class _ShareState extends State<Share>
       ),
       // uploadResourceFab(),
     ];
-    return Scaffold(
-      floatingActionButton: fab(),
-      appBar: AppBar(
-          backgroundColor: Colors.teal,
-          title: Text(
-            "Compartir Post",
-            style: TextStyle(color: Colors.white),
-          ),
-          actions: [
-            FlatButton(
-              onPressed: isUploading ? null : () => handlesSubmit(),
-              child: Text(
-                "Publicar",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20.0,
+    return SafeArea(
+      child: Scaffold(
+        floatingActionButton: fab(),
+        appBar: AppBar(
+            backgroundColor: Colors.teal,
+            title: Text(
+              "Compartir Post",
+              style: TextStyle(color: Colors.white),
+            ),
+            actions: [
+              FlatButton(
+                onPressed: isUploading ? null : () => handlesSubmit(),
+                child: Text(
+                  "Publicar",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20.0,
+                  ),
                 ),
               ),
-            ),
-          ]),
-      body: ListView(
-        children: children2,
+            ]),
+        body: ListView(
+          children: children2,
+        ),
       ),
     );
   }
@@ -573,20 +575,19 @@ class _ShareState extends State<Share>
           offset: Offset.fromDirection(getRadiansFromDegree(225),
               _degOneTranslationAnimation.value * 90),
           child: Transform(
-            alignment: Alignment.center,
-            transform: Matrix4.rotationZ(
-                getRadiansFromDegree(_rotationAnimation.value))
-              ..scale(_degOneTranslationAnimation.value),
-            child: CircularFab(
-                color: Colors.purple,
-                width: 50,
-                height: 50,
-                icon: Icon(
-                  Icons.ondemand_video,
-                  color: Colors.white,
-                ),
-                onClick: () => print("hola"))
-          ),
+              alignment: Alignment.center,
+              transform: Matrix4.rotationZ(
+                  getRadiansFromDegree(_rotationAnimation.value))
+                ..scale(_degOneTranslationAnimation.value),
+              child: CircularFab(
+                  color: Colors.purple,
+                  width: 50,
+                  height: 50,
+                  icon: Icon(
+                    Icons.ondemand_video,
+                    color: Colors.white,
+                  ),
+                  onClick: () => print("hola"))),
         ),
         Transform.translate(
           offset: Offset.fromDirection(getRadiansFromDegree(180),
@@ -610,11 +611,11 @@ class _ShareState extends State<Share>
         ),
         Container(
           height: 60,
-          width: 60,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+          width: 60,
           child: Transform(
             alignment: Alignment.center,
-            transform:
-                Matrix4.rotationZ(getRadiansFromDegree(_rotationAnimation.value)),
+            transform: Matrix4.rotationZ(
+                getRadiansFromDegree(_rotationAnimation.value)),
             child: CircularFab(
               color: Colors.red,
               width: 60,

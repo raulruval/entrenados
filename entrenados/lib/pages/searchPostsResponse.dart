@@ -103,7 +103,7 @@ class _SearchPostsResponseState extends State<SearchPostsResponse> {
     } else {
       List<GridTile> gridTiles = [];
       posts.forEach((post) {
-        gridTiles.add(GridTile(child: PostTile(post,true)));
+        gridTiles.add(GridTile(child: PostTile(post, true)));
       });
       return ListView(
         shrinkWrap: true,
@@ -115,9 +115,14 @@ class _SearchPostsResponseState extends State<SearchPostsResponse> {
   @override
   Widget build(BuildContext context) {
     print(widget.selectedDifficulty[0]);
-    return Scaffold(
-      appBar: header(context,isAppTitle: false,removeBackButton: false,titleText: "Publicaciones"),
-      body: buildPostsResponse(),
+    return SafeArea(
+      child: Scaffold(
+        appBar: header(context,
+            isAppTitle: false,
+            removeBackButton: false,
+            titleText: "Publicaciones"),
+        body: buildPostsResponse(),
+      ),
     );
   }
 }
