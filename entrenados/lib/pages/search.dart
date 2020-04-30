@@ -98,7 +98,7 @@ class _SearchState extends State<Search>
               "Encontrar usuarios",
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.white,
+                color: Colors.teal,
                 fontStyle: FontStyle.italic,
                 fontWeight: FontWeight.w600,
                 fontSize: 60.0,

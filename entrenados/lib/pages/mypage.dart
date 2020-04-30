@@ -13,7 +13,7 @@ import 'home.dart';
 class MyPage extends StatefulWidget {
   final String profileId;
   final bool activateNotifyAlert;
-  MyPage({this.profileId, this.activateNotifyAlert});
+  MyPage({this.profileId,  this.activateNotifyAlert});
   @override
   _MyPageState createState() => _MyPageState();
 }

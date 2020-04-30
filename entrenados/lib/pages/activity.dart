@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:entrenados/pages/profile.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:entrenados/widgets/header.dart';
 import 'package:entrenados/pages/home.dart';
 import 'package:entrenados/widgets/progress.dart';
 
@@ -15,8 +14,6 @@ class Activity extends StatefulWidget {
 }
 
 class _ActivityState extends State<Activity> {
-
-
   getActivityFeed() async {
     QuerySnapshot snapshot = await activityFeedRef
         .document(currentUser.id)
@@ -34,8 +31,14 @@ class _ActivityState extends State<Activity> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-          child: Scaffold(
-        appBar: header(context, titleText: "Actividad"),
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () => {Navigator.pop(context, false)}),
+          title: Text("Actividad"),
+          centerTitle: true,
+        ),
         body: Container(
           child: FutureBuilder(
             future: getActivityFeed(),
