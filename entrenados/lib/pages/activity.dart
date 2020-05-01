@@ -93,23 +93,18 @@ class ActivityFeedItem extends StatelessWidget {
       mediaUrl: doc['mediaUrl'],
     );
   }
-  showPost(context) {
-    print("No funciona correctamente");
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => PostScreen(
-    //       postId: postId,
-    //       userId: userId,
-    //     ),
-    //   ),
-    // );
-  }
 
   configureMediaPreview(context) {
     if (type == 'like' || type == 'comment') {
       mediaPreview = GestureDetector(
-        onTap: () => showPost(context),
+        onTap: () => print('Ir al post'),
+        /*        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => PostScreen(
+                      userId: userId,
+                      postId: postId,
+                    ))), */
         child: Container(
           height: 50.0,
           width: 50.0,

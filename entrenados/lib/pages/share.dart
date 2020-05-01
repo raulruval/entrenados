@@ -6,11 +6,12 @@ import 'package:entrenados/models/searchModel.dart';
 import 'package:entrenados/models/user.dart';
 import 'package:entrenados/pages/equipment.dart';
 import 'package:entrenados/pages/musclesinvolved.dart';
-import 'package:entrenados/widgets/circularFab.dart';
 import 'package:entrenados/widgets/progress.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:entrenados/pages/home.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_video_compress/flutter_video_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -18,6 +19,7 @@ import 'package:responsive_builder/responsive_builder.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter_duration_picker/flutter_duration_picker.dart';
 import 'package:image/image.dart' as Im;
+import 'package:path/path.dart' as path;
 
 class Share extends StatefulWidget {
   final User currentUser;
@@ -43,9 +45,7 @@ class _ShareState extends State<Share>
   String _currentGroup;
   List<DropdownMenuItem<String>> _dropDownMenuItemsDifficulty;
   List<DropdownMenuItem<String>> _dropDownMenuItemsGroup;
-  AnimationController _animationController;
-  Animation _degOneTranslationAnimation;
-  Animation _rotationAnimation;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -53,20 +53,7 @@ class _ShareState extends State<Share>
     _dropDownMenuItemsGroup = getDropDownMenuItemsGroup();
     _currentDifficulty = _dropDownMenuItemsDifficulty[0].value;
     _currentGroup = _dropDownMenuItemsGroup[0].value;
-    _animationController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 250));
-    _degOneTranslationAnimation = TweenSequence(<TweenSequenceItem>[
-      TweenSequenceItem<double>(
-          tween: Tween<double>(begin: 0.0, end: 1.2), weight: 75.0),
-      TweenSequenceItem<double>(
-          tween: Tween<double>(begin: 1.2, end: 1.0), weight: 25.0),
-    ]).animate(_animationController);
-    _rotationAnimation = Tween<double>(begin: 180.0, end: 0.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
-    );
-    _animationController.addListener(() {
-      setState(() {});
-    });
+
     super.initState();
   }
 
@@ -105,52 +92,62 @@ class _ShareState extends State<Share>
   File docFile;
   bool isUploading = false;
   String postId = Uuid().v4();
+  TextEditingController linkPath = TextEditingController();
+  String linkUrl = '';
 
-  handleGaleria(String fileType) async {
+  handleGaleria(ResourceType fileType) async {
     Navigator.pop(context);
     switch (fileType) {
-      case "image":
+      case ResourceType.image:
         File file = await ImagePicker.pickImage(
             source: ImageSource.gallery, maxHeight: 675, maxWidth: 960);
         setState(() {
           this.imgFile = file;
         });
         break;
-      case "video":
+      case ResourceType.video:
         File file = await ImagePicker.pickVideo(source: ImageSource.gallery);
         setState(() {
           this.videoFile = file;
         });
         break;
-      case "document":
-        print("documento");
+      case ResourceType.document:
+        File file = await FilePicker.getFile();
+        setState(() {
+          this.docFile = file;
+        });
+        break;
+      case ResourceType.link:
         break;
     }
   }
 
-  handleCamara(String fileType) async {
+  handleCamara(ResourceType fileType) async {
     Navigator.pop(context);
     switch (fileType) {
-      case "image":
+      case ResourceType.image:
         File file = await ImagePicker.pickImage(
             source: ImageSource.camera, maxHeight: 675, maxWidth: 960);
         setState(() {
           this.imgFile = file;
         });
         break;
-      case "video":
+      case ResourceType.video:
         File file = await ImagePicker.pickVideo(source: ImageSource.camera);
         setState(() {
           this.videoFile = file;
         });
         break;
-      case "document":
+      case ResourceType.document:
         print("documento");
+        break;
+      case ResourceType.link:
+        print('link');
         break;
     }
   }
 
-  selectFile(parentContext, bool withCamera, String fileType) {
+  selectFile(parentContext, bool withCamera, ResourceType fileType) {
     return showDialog(
         context: parentContext,
         builder: (context) {
@@ -162,14 +159,10 @@ class _ShareState extends State<Share>
                       child: Text("Recurso desde cámara"),
                       onPressed: () => handleCamara(fileType),
                     )
-                  : "",
+                  : SizedBox.shrink(),
               SimpleDialogOption(
                 child: Text("Recurso desde documentos"),
                 onPressed: () => handleGaleria(fileType),
-              ),
-              SimpleDialogOption(
-                child: Text("Limpiar recursos"),
-                onPressed: () => {clearFiles(), Navigator.pop(context)},
               ),
               SimpleDialogOption(
                 child: Text("Cancelar"),
@@ -178,12 +171,6 @@ class _ShareState extends State<Share>
             ],
           );
         });
-  }
-
-  clearFiles() {
-    setState(() {
-      imgFile = null;
-    });
   }
 
   buildItemSequence(List<Item> itemList) {
@@ -242,16 +229,16 @@ class _ShareState extends State<Share>
     });
   }
 
-  Future<String> uploadResource(file, String typeFile) async {
+  Future<String> uploadResource(file, ResourceType typeFile) async {
     StorageUploadTask uploadTask;
-    if (typeFile == "image") {
+    if (typeFile == ResourceType.image) {
       uploadTask = storageRef.child("post_$postId.jpg").putFile(file);
-    } else if (typeFile == "video") {
+    } else if (typeFile == ResourceType.video) {
       uploadTask = storageRef.child("post_$postId.mp4").putFile(file);
-      mainResource = "video";
-    } else if (typeFile == "pdf") {
+      mainResource = ResourceType.video.toString();
+    } else if (typeFile == ResourceType.document) {
       uploadTask = storageRef.child("post_$postId.pdf").putFile(file);
-      mainResource = "pdf";
+      mainResource = ResourceType.document.toString();
     } else {
       return null;
     }
@@ -263,6 +250,7 @@ class _ShareState extends State<Share>
   createPostInFirestore(
       {String photoUrl,
       String videoUrl,
+      String linkUrl,
       String documentUrl,
       String title,
       int duration,
@@ -282,6 +270,7 @@ class _ShareState extends State<Share>
       "username": widget.currentUser.username,
       "photoUrl": photoUrl,
       "videoUrl": videoUrl,
+      "linkUrl": linkUrl,
       "documentUrl": documentUrl,
       "title": title,
       "duration": duration,
@@ -309,16 +298,19 @@ class _ShareState extends State<Share>
       });
       await compressImage();
 
-      String photoUrl = await uploadResource(imgFile, "image");
+      String photoUrl = await uploadResource(imgFile, ResourceType.image);
       String videoUrl = "", documentUrl = "";
       if (videoFile != null) {
         await compressVideo();
-        videoUrl = await uploadResource(videoFile, "video");
+        videoUrl = await uploadResource(videoFile, ResourceType.video);
       }
-      if (docFile != null) documentUrl = await uploadResource(docFile, "doc");
+      if (docFile != null)
+        documentUrl = await uploadResource(docFile, ResourceType.document);
+
       createPostInFirestore(
           photoUrl: photoUrl,
           videoUrl: videoUrl,
+          linkUrl: linkUrl,
           documentUrl: documentUrl,
           title: titleController.text,
           duration: resultingDuration.inMinutes,
@@ -341,6 +333,9 @@ class _ShareState extends State<Share>
         imgFile = null;
         isUploading = false;
         postId = Uuid().v4();
+        linkUrl = '';
+        linkPath.text = '';
+        docFile = null;
       });
       Scaffold.of(context).showSnackBar(new SnackBar(
           content: new AutoSizeText(
@@ -350,32 +345,54 @@ class _ShareState extends State<Share>
     }
   }
 
-  // uploadResourceFab() {
-  //   return Container(
-  //     width: 200.0,
-  //     height: 100.0,
-  //     alignment: Alignment.center,
-  //     child: RaisedButton.icon(
-  //       label: Text(
-  //         "Subir recurso",
-  //         style: TextStyle(color: Colors.white),
-  //       ),
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.circular(30.0),
-  //       ),
-  //       color: Colors.teal,
-  //       onPressed: () => selectFile(context, true, "video"),
-  //       icon: Icon(
-  //         Icons.file_upload,
-  //         color: Colors.white,
-  //       ),
-  //     ),
-  //   );
-  // }
-
   double getRadiansFromDegree(double degree) {
     double unitRadian = 57.295779513;
     return degree / unitRadian;
+  }
+
+  showAlertDeleteResource(
+      BuildContext parentContext, ResourceType resourceType) {
+    return showDialog(
+        context: parentContext,
+        builder: (context) {
+          return SimpleDialog(
+            title: Text("¿Seguro que quieres eliminar este recurso?"),
+            children: <Widget>[
+              SimpleDialogOption(
+                onPressed: () {
+                  Navigator.pop(context);
+                  if (resourceType == ResourceType.video) {
+                    setState(() {
+                      videoFile = null;
+                    });
+                  }
+                  if (resourceType == ResourceType.document) {
+                    setState(() {
+                      docFile = null;
+                    });
+                  }
+                  if (resourceType == ResourceType.link) {
+                    setState(() {
+                      linkUrl = '';
+                    });
+                  }
+                },
+                child: Text(
+                  'Borrar',
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
+                ),
+              ),
+              SimpleDialogOption(
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  'Cancelar',
+                ),
+              )
+            ],
+          );
+        });
   }
 
   buildFormularioCompartir() {
@@ -388,7 +405,7 @@ class _ShareState extends State<Share>
           child: AspectRatio(
             aspectRatio: 16 / 9,
             child: GestureDetector(
-              onTap: () => selectFile(context, true, "image"),
+              onTap: () => selectFile(context, true, ResourceType.image),
               child: Container(
                 decoration: BoxDecoration(
                     image: DecorationImage(
@@ -404,6 +421,55 @@ class _ShareState extends State<Share>
       ),
       Padding(
         padding: EdgeInsets.only(top: 10.0),
+      ),
+      videoFile != null
+          ? ListTile(
+              leading: Icon(
+                Icons.ondemand_video,
+                color: Colors.orange,
+                size: 35.0,
+              ),
+              title: AutoSizeText(
+                path.basename(videoFile.path),
+                maxLines: 1,
+              ),
+              trailing: Icon(Icons.delete, color: Colors.red.shade300),
+              onTap: () => showAlertDeleteResource(context, ResourceType.video),
+            )
+          : SizedBox.shrink(),
+      docFile != null
+          ? ListTile(
+              leading: Icon(
+                Icons.insert_drive_file,
+                color: Colors.orange,
+                size: 35.0,
+              ),
+              title: AutoSizeText(
+                path.basename(docFile.path),
+                maxLines: 1,
+              ),
+              trailing: Icon(Icons.delete, color: Colors.red.shade300),
+              onTap: () =>
+                  showAlertDeleteResource(context, ResourceType.document),
+            )
+          : SizedBox.shrink(),
+      linkUrl != ''
+          ? ListTile(
+              leading: Icon(
+                Icons.insert_link,
+                color: Colors.orange,
+                size: 35.0,
+              ),
+              title: AutoSizeText(
+                linkPath.text,
+                maxLines: 1,
+              ),
+              trailing: Icon(Icons.delete, color: Colors.red.shade300),
+              onTap: () => showAlertDeleteResource(context, ResourceType.link),
+            )
+          : SizedBox.shrink(),
+      Padding(
+        padding: EdgeInsets.only(bottom: 15),
       ),
       ListTile(
         leading: CircleAvatar(
@@ -517,11 +583,11 @@ class _ShareState extends State<Share>
           ),
         ),
       ),
-      // uploadResourceFab(),
     ];
     return SafeArea(
+      key: _formKey,
       child: Scaffold(
-        floatingActionButton: fab(),
+        floatingActionButton: fabResources(),
         appBar: AppBar(
             backgroundColor: Colors.teal,
             title: Text(
@@ -548,94 +614,80 @@ class _ShareState extends State<Share>
     );
   }
 
-  fab() {
-    return Stack(
-      children: <Widget>[
-        Transform.translate(
-          offset: Offset.fromDirection(getRadiansFromDegree(270),
-              _degOneTranslationAnimation.value * 90),
-          child: Transform(
-            alignment: Alignment.center,
-            transform: Matrix4.rotationZ(
-                getRadiansFromDegree(_rotationAnimation.value))
-              ..scale(_degOneTranslationAnimation.value),
-            child: CircularFab(
-              color: Colors.blue,
-              width: 50,
-              height: 50,
-              icon: Icon(
-                Icons.insert_link,
-                color: Colors.white,
-              ),
-              onClick: () => selectFile(context, true, "enlace"),
+  displayInputDialogLink(BuildContext context) async {
+    return await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              'Introduce el enlace al recurso',
             ),
-          ),
-        ),
-        Transform.translate(
-          offset: Offset.fromDirection(getRadiansFromDegree(225),
-              _degOneTranslationAnimation.value * 90),
-          child: Transform(
-              alignment: Alignment.center,
-              transform: Matrix4.rotationZ(
-                  getRadiansFromDegree(_rotationAnimation.value))
-                ..scale(_degOneTranslationAnimation.value),
-              child: CircularFab(
-                  color: Colors.purple,
-                  width: 50,
-                  height: 50,
-                  icon: Icon(
-                    Icons.ondemand_video,
-                    color: Colors.white,
-                  ),
-                  onClick: () => print("hola"))),
-        ),
-        Transform.translate(
-          offset: Offset.fromDirection(getRadiansFromDegree(180),
-              _degOneTranslationAnimation.value * 90),
-          child: Transform(
-            alignment: Alignment.center,
-            transform: Matrix4.rotationZ(
-                getRadiansFromDegree(_rotationAnimation.value))
-              ..scale(_degOneTranslationAnimation.value),
-            child: CircularFab(
-              color: Colors.orangeAccent,
-              width: 50,
-              height: 50,
-              icon: Icon(
-                Icons.picture_as_pdf,
-                color: Colors.white,
+            content: Form(
+              key: _formKey,
+              child: TextFormField(
+                validator: (String val) {
+                  if (!RegExp(
+                          r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$")
+                      .hasMatch(val)) {
+                    return 'Por favor, introduce una URL válida';
+                  } else {
+                    return null;
+                  }
+                },
+                onSaved: (String value) {
+                  setState(() {
+                    linkUrl = linkPath.text;
+                  });
+                },
+                controller: linkPath,
+                decoration:
+                    InputDecoration(hintText: "Dirección url de youtube..."),
               ),
-              onClick: () => print("hola"),
             ),
-          ),
-        ),
-        Container(
-          height: 60,
-          width: 60,
-          child: Transform(
-            alignment: Alignment.center,
-            transform: Matrix4.rotationZ(
-                getRadiansFromDegree(_rotationAnimation.value)),
-            child: CircularFab(
-              color: Colors.red,
-              width: 60,
-              height: 60,
-              icon: Icon(
-                Icons.menu,
-                color: Colors.white,
+            actions: <Widget>[
+              FlatButton(
+                child: new Text('Aceptar'),
+                onPressed: () async {
+                  if (!_formKey.currentState.validate()) {
+                    return;
+                  }
+                  _formKey.currentState.save();
+                  Navigator.of(context).pop();
+                },
               ),
-              onClick: () {
-                if (_animationController.isCompleted) {
-                  _animationController.reverse();
-                } else {
-                  _animationController.forward();
-                }
-              },
-            ),
-          ),
-        ),
-      ],
-    );
+              FlatButton(
+                child: new Text('Cancelar'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  fabResources() {
+    return SpeedDial(
+        animatedIcon: AnimatedIcons.menu_close,
+        curve: Curves.bounceIn,
+        backgroundColor: Colors.red,
+        children: [
+          SpeedDialChild(
+              child: Icon(Icons.ondemand_video),
+              label: 'Subir un vídeo',
+              onTap: () => selectFile(context, true, ResourceType.video),
+              backgroundColor: Colors.blue[600]),
+          SpeedDialChild(
+              child: Icon(Icons.insert_drive_file),
+              label: 'Subir un documento',
+              onTap: () => selectFile(context, false, ResourceType.document),
+              backgroundColor: Colors.purple[600]),
+          SpeedDialChild(
+              child: Icon(Icons.insert_link),
+              label: 'Enlazar un vídeo de Youtube',
+              onTap: () => displayInputDialogLink(context),
+              backgroundColor: Colors.orange),
+        ]);
   }
 
   bool get wantKeepAlive => true;
@@ -649,3 +701,5 @@ class _ShareState extends State<Share>
     );
   }
 }
+
+enum ResourceType { image, video, document, link }

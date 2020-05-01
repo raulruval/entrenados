@@ -41,6 +41,8 @@ dependencies:
   font_awesome_flutter: ^8.8.1
   chewie: ^0.9.7
   flutter_video_compress: ^0.3.7+8
+  flutter_speed_dial: ^1.2.5
+  file_picker: ^1.8.0+2
   
 dev_dependencies:
   flutter_test:

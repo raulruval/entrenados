@@ -30,7 +30,7 @@ class _CreateAccountState extends State<CreateAccount> {
       "id": user.id,
       "username": "",
       "photoUrl":
-          "https://firebasestorage.googleapis.com/v0/b/entrenados-4621b.appspot.com/o/profile.jpg?alt=media&token=26e5503d-53d7-4b3e-8d3a-43a9e4c9f479",
+          "https://firebasestorage.googleapis.com/v0/b/entrenados-4621b.appspot.com/o/male.svg?alt=media&token=08fb96de-51d5-4e3a-b04a-aa52e6d21f9d",
       "email": user.email,
       "displayName": user.displayName,
       "bio": "",

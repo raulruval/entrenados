@@ -8,8 +8,8 @@ class PostScreen extends StatelessWidget {
   final String userId;
   final String postId;
   PostScreen({
-    this.postId,
-    this.userId,
+    @required this.postId,
+    @required this.userId,
   });
 
   @override
@@ -26,7 +26,7 @@ class PostScreen extends StatelessWidget {
         }
         Post post = Post.fromDocument(snapshot.data);
         return SafeArea(
-                  child: Center(
+          child: Center(
             child: Scaffold(
               backgroundColor: Colors.teal,
               appBar: AppBar(

@@ -286,6 +286,7 @@ class _HomeState extends State<Home> {
   Widget buildValiacionScreen() {
     return SafeArea(
       child: Scaffold(
+        key: _scaffoldKey,
         body: PageView(
           children: <Widget>[
             Timeline(currentUser: currentUser),

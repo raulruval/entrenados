@@ -197,7 +197,7 @@ class _MyPageState extends State<MyPage> with TickerProviderStateMixin {
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0),
                           child: Text(
-                            'ENTRENAMIENTOS SUGERIDOS',
+                            'CONSEJOS',
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 15.0,
