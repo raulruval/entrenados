@@ -43,6 +43,7 @@ dependencies:
   flutter_video_compress: ^0.3.7+8
   flutter_speed_dial: ^1.2.5
   file_picker: ^1.8.0+2
+  flutter_snake_navigationbar: ^0.4.0+1
   
 dev_dependencies:
   flutter_test:

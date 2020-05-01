@@ -584,32 +584,38 @@ class _ShareState extends State<Share>
         ),
       ),
     ];
-    return SafeArea(
-      key: _formKey,
-      child: Scaffold(
-        floatingActionButton: fabResources(),
-        appBar: AppBar(
-            backgroundColor: Colors.teal,
-            title: Text(
-              "Compartir Post",
-              style: TextStyle(color: Colors.white),
-            ),
-            actions: [
-              FlatButton(
-                onPressed: isUploading ? null : () => handlesSubmit(),
-                child: Text(
-                  "Publicar",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20.0,
-                  ),
+    return Scaffold(
+      backgroundColor:  Colors.grey[200],
+      floatingActionButton: fabResources(),
+      appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          centerTitle: false,
+          title: Text(
+            "Compartir Post",
+            style: TextStyle(color: Colors.white),
+          ),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.topRight,
+                    colors: <Color>[Colors.teal[600], Colors.deepPurple[400]])),
+          ),
+          actions: [
+            FlatButton(
+              onPressed: isUploading ? null : () => handlesSubmit(),
+              child: Text(
+                "Publicar",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20.0,
                 ),
               ),
-            ]),
-        body: ListView(
-          children: children2,
-        ),
+            ),
+          ]),
+      body: ListView(
+        children: children2,
       ),
     );
   }
@@ -670,7 +676,7 @@ class _ShareState extends State<Share>
     return SpeedDial(
         animatedIcon: AnimatedIcons.menu_close,
         curve: Curves.bounceIn,
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.redAccent[200],
         children: [
           SpeedDialChild(
               child: Icon(Icons.ondemand_video),

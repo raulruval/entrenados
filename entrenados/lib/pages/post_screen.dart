@@ -1,3 +1,4 @@
+import 'package:entrenados/widgets/header.dart';
 import 'package:flutter/material.dart';
 import 'package:entrenados/pages/home.dart';
 
@@ -25,44 +26,32 @@ class PostScreen extends StatelessWidget {
           return circularProgress();
         }
         Post post = Post.fromDocument(snapshot.data);
-        return SafeArea(
-          child: Center(
-            child: Scaffold(
-              backgroundColor: Colors.teal,
-              appBar: AppBar(
-                backgroundColor: Theme.of(context).primaryColor,
-                elevation: 0.0,
-                leading: IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  color: Colors.white,
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-              body: Column(
-                children: <Widget>[
-                  Expanded(
-                    child: Container(
-                      margin: EdgeInsets.only(top: 15.0, left: 6.0, right: 6.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(34.0),
-                        ),
+        return Center(
+          child: Scaffold(
+            backgroundColor: Colors.grey[300],
+            appBar: (header(context, titleText: '', removeBackButton: false)),
+            body: Column(
+              children: <Widget>[
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.only(top: 15.0, left: 6.0, right: 6.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(34.0),
                       ),
-                      child: Hero(
-                        transitionOnUserGestures: true,
-                        tag: 'card',
-                        child: Material(
-                          type: MaterialType.transparency,
-                          child: post,
-                        ),
+                    ),
+                    child: Hero(
+                      transitionOnUserGestures: true,
+                      tag: 'card',
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: post,
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         );

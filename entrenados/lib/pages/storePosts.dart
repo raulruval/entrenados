@@ -82,14 +82,12 @@ class _StorePostsState extends State<StorePosts> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: header(context,
-            isAppTitle: false,
-            removeBackButton: false,
-            titleText: "Publicaciones guardadas"),
-        body: buildStoredPosts(),
-      ),
+    return Scaffold(
+      appBar: header(context,
+          isAppTitle: false,
+          removeBackButton: false,
+          titleText: "Publicaciones guardadas"),
+      body: buildStoredPosts(),
     );
   }
 }

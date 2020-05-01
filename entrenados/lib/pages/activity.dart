@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:entrenados/widgets/header.dart';
 import 'package:flutter/material.dart';
 import 'package:entrenados/pages/profile.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -30,27 +31,20 @@ class _ActivityState extends State<Activity> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: () => {Navigator.pop(context, false)}),
-          title: Text("Actividad"),
-          centerTitle: true,
-        ),
-        body: Container(
-          child: FutureBuilder(
-            future: getActivityFeed(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return circularProgress();
-              }
-              return ListView(
-                children: snapshot.data,
-              );
-            },
-          ),
+    return Scaffold(
+      backgroundColor:  Colors.grey[200],
+      appBar: header(context,titleText: 'Actividad',removeBackButton: true),
+      body: Container(
+        child: FutureBuilder(
+          future: getActivityFeed(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return circularProgress();
+            }
+            return ListView(
+              children: snapshot.data,
+            );
+          },
         ),
       ),
     );

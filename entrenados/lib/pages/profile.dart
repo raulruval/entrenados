@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entrenados/models/user.dart';
 import 'package:entrenados/pages/edit_profile.dart';
 import 'package:entrenados/pages/home.dart';
+import 'package:entrenados/pages/storePosts.dart';
 import 'package:entrenados/widgets/post_tile.dart';
 import 'package:entrenados/widgets/progress.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,7 @@ class _ProfileState extends State<Profile> {
   List<Post> posts = [];
   int followerCount = 0;
   int followingCount = 0;
+  bool isProfileOwner = false;
 
   @override
   void initState() {
@@ -35,6 +37,7 @@ class _ProfileState extends State<Profile> {
     getFollowers();
     getFollowing();
     checkIfFollowing();
+    isProfileOwner = currentUserId == widget.profileId;
   }
 
   checkIfFollowing() async {
@@ -128,15 +131,19 @@ class _ProfileState extends State<Profile> {
           child: Text(
             text,
             style: TextStyle(
-              color: isFollowing ? Colors.teal[200] : Colors.white,
+              color:
+                  !isFollowing && !isProfileOwner ? Colors.white : Colors.teal,
               fontWeight: FontWeight.bold,
             ),
           ),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: isFollowing ? Colors.white : Colors.teal[800],
+            color: !isFollowing && !isProfileOwner
+                ? Colors.redAccent
+                : Colors.white,
             border: Border.all(
-              color: isFollowing ? Colors.grey : Colors.teal[800],
+              color:
+                  !isFollowing && !isProfileOwner ? Colors.grey : Colors.white,
             ),
             borderRadius: BorderRadius.all(Radius.circular(33)),
           ),
@@ -218,7 +225,6 @@ class _ProfileState extends State<Profile> {
   }
 
   buildProfileButton() {
-    bool isProfileOwner = currentUserId == widget.profileId;
     if (isProfileOwner) {
       return Container(
         child: buildButton(
@@ -237,20 +243,6 @@ class _ProfileState extends State<Profile> {
         function: handleFollow,
       );
     }
-  }
-
-  buildAppBarProfile() {
-    return AppBar(
-      backgroundColor: Theme.of(context).primaryColor,
-      elevation: 0.0,
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back),
-        color: Colors.white,
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-      ),
-    );
   }
 
   buildMobileProfile() {
@@ -361,6 +353,11 @@ class _ProfileState extends State<Profile> {
                   ),
                 ),
               ),
+              isProfileOwner
+                  ? Padding(
+                      padding: EdgeInsets.only(bottom: 15),
+                      child: buildFavoritePosts())
+                  : SizedBox.shrink(),
               // BuildPosts
               Flexible(
                 flex: 4,
@@ -370,6 +367,64 @@ class _ProfileState extends State<Profile> {
             ],
           );
         });
+  }
+
+  buildFavoritePosts() {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => StorePosts(
+            currentUser: currentUser,
+          ),
+        ),
+      ),
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.1,
+        width: MediaQuery.of(context).size.width * 0.95,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0),
+            color: Colors.grey.shade100),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Icon(
+                Icons.favorite,
+                color: Colors.redAccent,
+                size: 60.0,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'ALMACÉN DE ENTRENAMIENTOS',
+                    style:
+                        TextStyle(color: Colors.grey.shade500, fontSize: 14.0),
+                  ),
+                  SizedBox(height: 4.0),
+                  Text(
+                    'Tus Favoritos',
+                    style: TextStyle(
+                        fontFamily: 'Montserrat',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.0),
+                  )
+                ],
+              ),
+              Icon(
+                Icons.arrow_forward_ios,
+                color: Colors.redAccent,
+                size: 50.0,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   buildCard() {
@@ -457,7 +512,7 @@ class _ProfileState extends State<Profile> {
       if (postsCount == 1) {
         return Expanded(
           child: Container(
-            height: MediaQuery.of(context).size.height  * 0.51,
+            height: MediaQuery.of(context).size.height * 0.51,
             child: ListView(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
@@ -466,7 +521,7 @@ class _ProfileState extends State<Profile> {
           ),
         );
       } else {
-         return Expanded(
+        return Expanded(
           child: ListView(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
@@ -479,16 +534,33 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-          appBar: buildAppBarProfile(),
-          body: Container(
-            color: Theme.of(context).primaryColor,
-            child: OrientationLayoutBuilder(
-              portrait: (context) => buildMobileProfile(),
-              landscape: (context) => buildCard(),
-            ),
-          )),
-    );
+    return Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: isProfileOwner
+              ? Text('EXPLORAR TU PERFÍL')
+              : Text('EXPLORAR PERFÍL'),
+          elevation: 0.0,
+          bottomOpacity: 0.0,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.topRight,
+                    colors: <Color>[Colors.teal[600], Colors.deepPurple[400]])),
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        body: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.topRight,
+                  colors: <Color>[Colors.teal[600], Colors.deepPurple[400]])),
+          child: OrientationLayoutBuilder(
+            portrait: (context) => buildMobileProfile(),
+            landscape: (context) => buildCard(),
+          ),
+        ));
   }
 }

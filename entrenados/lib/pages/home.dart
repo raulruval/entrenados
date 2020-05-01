@@ -1,24 +1,24 @@
 import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:entrenados/pages/activity.dart';
+import 'package:entrenados/pages/profile.dart';
 import 'package:entrenados/pages/search.dart';
 import 'package:entrenados/pages/share.dart';
 import 'package:entrenados/pages/create_account.dart';
 import 'package:entrenados/pages/create_google_account.dart';
 import 'package:entrenados/pages/timeline.dart';
-import 'package:entrenados/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:entrenados/models/user.dart';
 import 'package:entrenados/models/searchModel.dart';
-
-import 'mypage.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -52,12 +52,10 @@ class _HomeState extends State<Home> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _scaffoldKeyNoValidation = GlobalKey<ScaffoldState>();
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-  bool _activateNotifyAlert = false;
   @override
   void initState() {
     super.initState();
     pageController = PageController();
-    _activateNotifyAlert = false;
     // Detecta cuando un usuario inicia sesión.
     googleSignIn.onCurrentUserChanged.listen((cuenta) {
       handleSignInGoogle(cuenta);
@@ -145,10 +143,6 @@ class _HomeState extends State<Home> {
         final String recipientId = message['data']['recipient'];
         final String body = message['notification']['body'];
         if (recipientId == user.id) {
-          // setState(() {
-          //   _activateNotifyAlert = true;
-          // });
-
           SnackBar snackBar = SnackBar(
             content: Text(
               body,
@@ -276,45 +270,72 @@ class _HomeState extends State<Home> {
   }
 
   onTap(int pageIndex) {
-    pageController.animateToPage(
-      pageIndex,
-      duration: Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
+    /*    pageController.jumpToPage(pageIndex);
+ */
+    pageController.animateToPage(pageIndex,
+        duration: Duration(milliseconds: 10), curve: Curves.easeIn);
   }
 
   Widget buildValiacionScreen() {
-    return SafeArea(
-      child: Scaffold(
-        key: _scaffoldKey,
-        body: PageView(
-          children: <Widget>[
-            Timeline(currentUser: currentUser),
-            Search(searchModel: sm),
-            Share(currentUser: currentUser, searchModel: sm),
-            MyPage(
-              profileId: currentUser?.id,
-              activateNotifyAlert: _activateNotifyAlert,
-            ),
-          ],
-          controller: pageController,
-          onPageChanged: onPageChanged,
-          physics: NeverScrollableScrollPhysics(),
-        ),
-        bottomNavigationBar: CupertinoTabBar(
-          currentIndex: pageIndex,
-          onTap: onTap,
-          activeColor: Theme.of(context).primaryColor,
-          items: [
-            BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.home)),
-            BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.search)),
-            BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.plusCircle)),
-            BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.userAlt))
-          ],
-        ),
+    return Scaffold(
+      body: PageView(
+        children: <Widget>[
+          Timeline(currentUser: currentUser),
+          Search(searchModel: sm),
+          Share(currentUser: currentUser, searchModel: sm),
+          Activity(),
+          Profile(
+            profileId: currentUser.id,
+          ),
+        ],
+        controller: pageController,
+        onPageChanged: onPageChanged,
+        physics: NeverScrollableScrollPhysics(),
+      ),
+      bottomNavigationBar: SnakeNavigationBar(
+        snakeShape: SnakeShape.circle,
+        style: SnakeBarStyle.pinned,
+        currentIndex: pageIndex,
+        padding: EdgeInsets.all(4),
+        onPositionChanged: onTap,
+        snakeGradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: <Color>[Colors.teal[400], Colors.deepPurple[400]]),
+        items: [
+          BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.home)),
+          BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.search)),
+          BottomNavigationBarItem(
+              icon: FaIcon(FontAwesomeIcons.plus, size: 30)),
+          BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.solidBell)),
+          BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.userAlt))
+        ],
       ),
     );
   }
+
+  final kHintTextStyle = TextStyle(
+  color: Colors.white,
+  fontFamily: 'OpenSans',
+);
+
+final kLabelStyle = TextStyle(
+  color: Colors.black,
+  fontWeight: FontWeight.bold,
+  fontFamily: 'OpenSans',
+);
+
+final kBoxDecorationStyle = BoxDecoration(
+  color: Colors.teal[600],
+  borderRadius: BorderRadius.circular(10.0),
+  boxShadow: [
+    BoxShadow(
+      color: Colors.black12,
+      blurRadius: 6.0,
+      offset: Offset(0, 2),
+    ),
+  ],
+);
 
   Widget _buildForm() {
     return Form(
@@ -416,21 +437,24 @@ class _HomeState extends State<Home> {
         ),
       ));
     } else {
-      await _auth.sendPasswordResetEmail(email: _email).then((_) => {
-            _scaffoldKeyNoValidation.currentState.showSnackBar(SnackBar(
-              content: AutoSizeText(
-                "Se ha envíado un enlace para resetear la contraseña a $_email",
-                maxLines: 2,
-              ),
-            ))
-          }).catchError((error) {
-            _scaffoldKeyNoValidation.currentState.showSnackBar(SnackBar(
-              content: AutoSizeText(
-                "Lo sentimos, el email $_email no está registrado en la aplicación.",
-                maxLines: 2,
-              ),
-            ));
-          });
+      await _auth
+          .sendPasswordResetEmail(email: _email)
+          .then((_) => {
+                _scaffoldKeyNoValidation.currentState.showSnackBar(SnackBar(
+                  content: AutoSizeText(
+                    "Se ha envíado un enlace para resetear la contraseña a $_email",
+                    maxLines: 2,
+                  ),
+                ))
+              })
+          .catchError((error) {
+        _scaffoldKeyNoValidation.currentState.showSnackBar(SnackBar(
+          content: AutoSizeText(
+            "Lo sentimos, el email $_email no está registrado en la aplicación.",
+            maxLines: 2,
+          ),
+        ));
+      });
     }
   }
 
@@ -513,13 +537,12 @@ class _HomeState extends State<Home> {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.grey[200],
-                      Colors.teal[200],
-                    ],
-                  ),
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: <Color>[
+                        Colors.teal[400],
+                        Colors.deepPurple[200]
+                      ]),
                 ),
               ),
               Container(
@@ -542,9 +565,9 @@ class _HomeState extends State<Home> {
                       Text(
                         'Entrenados',
                         style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: 'Open Sans',
-                          fontSize: 30.0,
+                          color: Colors.black87,
+                          fontFamily: 'Manrope',
+                          fontSize: 40.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

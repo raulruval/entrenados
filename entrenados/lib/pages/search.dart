@@ -412,6 +412,7 @@ class _SearchState extends State<Search>
             onPressed: () => handleSearchPostTiles(),
             label: Text("Buscar"),
             icon: Icon(Icons.search),
+            backgroundColor: Colors.redAccent[200],
           )
         : Container();
   }
@@ -422,69 +423,67 @@ class _SearchState extends State<Search>
     super.build(context);
     return DefaultTabController(
       length: 2,
-      child: SafeArea(
-        child: Scaffold(
-          key: _scaffoldKey,
-          backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            elevation: 0,
-            backgroundColor: Colors.grey[200],
-            title: Text(
-              "Buscar",
-              style: TextStyle(
-                color: Colors.teal,
-              ),
-            ),
-            bottom: TabBar(
-              controller: _tabController,
-              unselectedLabelColor: Colors.teal,
-              indicatorSize: TabBarIndicatorSize.label,
-              indicator: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: Colors.teal[900],
-              ),
-              tabs: [
-                Tab(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      border: Border.all(
-                        color: Colors.teal[900],
-                        width: 1,
-                      ),
-                    ),
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text("Entrenamientos"),
-                    ),
-                  ),
-                ),
-                Tab(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      border: Border.all(
-                        color: Colors.teal[900],
-                        width: 1,
-                      ),
-                    ),
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text("Entrenadores"),
-                    ),
-                  ),
-                ),
-              ],
+      child: Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.grey[200],
+          title: Text(
+            "Buscar",
+            style: TextStyle(
+              color: Colors.teal,
             ),
           ),
-          body: TabBarView(controller: _tabController, children: [
-            _getWorkouts(),
-            _getTrainers(),
-          ]),
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: _getFab(),
+          bottom: TabBar(
+            controller: _tabController,
+            unselectedLabelColor: Colors.teal,
+            indicatorSize: TabBarIndicatorSize.label,
+            indicator: BoxDecoration(
+              borderRadius: BorderRadius.circular(50),
+              color: Colors.teal[900],
+            ),
+            tabs: [
+              Tab(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(
+                      color: Colors.teal[900],
+                      width: 1,
+                    ),
+                  ),
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text("Entrenamientos"),
+                  ),
+                ),
+              ),
+              Tab(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(
+                      color: Colors.teal[900],
+                      width: 1,
+                    ),
+                  ),
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text("Entrenadores"),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
+        body: TabBarView(controller: _tabController, children: [
+          _getWorkouts(),
+          _getTrainers(),
+        ]),
+        floatingActionButtonLocation:
+            FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: _getFab(),
       ),
     );
   }
@@ -529,7 +528,7 @@ class UserResult extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).primaryColor.withOpacity(0.7),
+      color: Colors.grey[300],
       child: Column(
         children: <Widget>[
           GestureDetector(
@@ -542,21 +541,21 @@ class UserResult extends StatelessWidget {
               title: Text(
                 user.displayName,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Colors.teal,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               subtitle: Text(
                 user.username,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Colors.deepPurple,
                 ),
               ),
             ),
           ),
           Divider(
             height: 2.0,
-            color: Colors.white54,
+            color: Colors.black26,
           ),
         ],
       ),

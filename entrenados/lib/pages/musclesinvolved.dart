@@ -29,54 +29,52 @@ class _MusclesinvolvedState extends State<Musclesinvolved> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-          child: Scaffold(
+    return Scaffold(
         appBar: getAppBar(),
         body: GridView.builder(
-            itemCount: itemMusclesList.length,
-            padding: const EdgeInsets.all(30),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 1,
-              crossAxisSpacing: 1,
-              mainAxisSpacing: 20,
-            ),
-            itemBuilder: (context, index) {
-              return GridItem(
-                item: itemMusclesList[index],
-                isSelected: (isSelected) {
-                  setState(() {
-                    if (isSelected) {
-                      print("En el bucle");
-                      if (widget.selectedMusclesList.length > 1) {
-                        for (var i = 0; i < widget.selectedMusclesList.length; i++) {
-                          if (itemMusclesList[index].isSelected ==
-                              widget.selectedMusclesList[i].isSelected) {
-                          } else {
-                            itemMusclesList[index].isSelected = true;
-                            widget.selectedMusclesList.add(itemMusclesList[index]);
-                          }
-                        }
-                      } else {
-                        itemMusclesList[index].isSelected = true;
-                        widget.selectedMusclesList.add(itemMusclesList[index]);
-                      }
-                      for (var i = 0; i < widget.selectedMusclesList.length; i++)
-                        widget.selectedMusclesList[i].isSelected = true;
-                    } else {
-                      itemMusclesList[index].isSelected = false;
-                      widget.selectedMusclesList.remove(itemMusclesList[index]);
-                    }
-                  });
-                  print("$index : $isSelected");
-                },
-                key: Key(
-                  itemMusclesList[index].index.toString(),
-                ),
-              );
-            }),
+      itemCount: itemMusclesList.length,
+      padding: const EdgeInsets.all(30),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 1,
+        crossAxisSpacing: 1,
+        mainAxisSpacing: 20,
       ),
-    );
+      itemBuilder: (context, index) {
+        return GridItem(
+          item: itemMusclesList[index],
+          isSelected: (isSelected) {
+            setState(() {
+              if (isSelected) {
+                print("En el bucle");
+                if (widget.selectedMusclesList.length > 1) {
+                  for (var i = 0; i < widget.selectedMusclesList.length; i++) {
+                    if (itemMusclesList[index].isSelected ==
+                        widget.selectedMusclesList[i].isSelected) {
+                    } else {
+                      itemMusclesList[index].isSelected = true;
+                      widget.selectedMusclesList.add(itemMusclesList[index]);
+                    }
+                  }
+                } else {
+                  itemMusclesList[index].isSelected = true;
+                  widget.selectedMusclesList.add(itemMusclesList[index]);
+                }
+                for (var i = 0; i < widget.selectedMusclesList.length; i++)
+                  widget.selectedMusclesList[i].isSelected = true;
+              } else {
+                itemMusclesList[index].isSelected = false;
+                widget.selectedMusclesList.remove(itemMusclesList[index]);
+              }
+            });
+            print("$index : $isSelected");
+          },
+          key: Key(
+            itemMusclesList[index].index.toString(),
+          ),
+        );
+      }),
+      );
   }
 
   getAppBar() {

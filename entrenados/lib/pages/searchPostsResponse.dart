@@ -115,14 +115,12 @@ class _SearchPostsResponseState extends State<SearchPostsResponse> {
   @override
   Widget build(BuildContext context) {
     print(widget.selectedDifficulty[0]);
-    return SafeArea(
-      child: Scaffold(
-        appBar: header(context,
-            isAppTitle: false,
-            removeBackButton: false,
-            titleText: "Publicaciones"),
-        body: buildPostsResponse(),
-      ),
+    return Scaffold(
+      appBar: header(context,
+          isAppTitle: false,
+          removeBackButton: false,
+          titleText: "Publicaciones"),
+      body: buildPostsResponse(),
     );
   }
 }
