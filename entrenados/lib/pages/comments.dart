@@ -103,6 +103,7 @@ class CommentsState extends State<Comments> {
       Divider(),
       ListTile(
         title: TextFormField(
+          
           controller: commentController,
           decoration: InputDecoration(
             labelText: ("Escribe un comentario..."),

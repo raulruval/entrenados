@@ -41,13 +41,9 @@ class PostScreen extends StatelessWidget {
                         top: Radius.circular(34.0),
                       ),
                     ),
-                    child: Hero(
-                      transitionOnUserGestures: true,
-                      tag: 'card',
-                      child: Material(
-                        type: MaterialType.transparency,
-                        child: post,
-                      ),
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: post,
                     ),
                   ),
                 ),

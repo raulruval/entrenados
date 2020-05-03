@@ -11,6 +11,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:entrenados/pages/home.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_video_compress/flutter_video_compress.dart';
 import 'package:image_picker/image_picker.dart';
@@ -46,6 +47,8 @@ class _ShareState extends State<Share>
   List<DropdownMenuItem<String>> _dropDownMenuItemsDifficulty;
   List<DropdownMenuItem<String>> _dropDownMenuItemsGroup;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _titleKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _notesKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -148,7 +151,10 @@ class _ShareState extends State<Share>
   }
 
   selectFile(parentContext, bool withCamera, ResourceType fileType) {
-    return showDialog(
+    return showAnimatedDialog(
+        animationType: DialogTransitionType.size,
+        curve: Curves.fastOutSlowIn,
+        duration: Duration(seconds: 1),
         context: parentContext,
         builder: (context) {
           return SimpleDialog(
@@ -286,6 +292,11 @@ class _ShareState extends State<Share>
   }
 
   handlesSubmit() async {
+    if (!_notesKey.currentState.validate() &&
+        !_titleKey.currentState.validate()) {
+      return;
+    }
+
     if (imgFile == null) {
       Scaffold.of(context).showSnackBar(new SnackBar(
           content: new AutoSizeText(
@@ -352,8 +363,12 @@ class _ShareState extends State<Share>
 
   showAlertDeleteResource(
       BuildContext parentContext, ResourceType resourceType) {
-    return showDialog(
+    return showAnimatedDialog(
+        animationType: DialogTransitionType.size,
+        curve: Curves.fastOutSlowIn,
+        duration: Duration(seconds: 1),
         context: parentContext,
+        barrierDismissible: true,
         builder: (context) {
           return SimpleDialog(
             title: Text("¿Seguro que quieres eliminar este recurso?"),
@@ -478,10 +493,25 @@ class _ShareState extends State<Share>
         ),
         title: Container(
           width: 250.0,
-          child: TextField(
-            controller: titleController,
-            decoration: InputDecoration(
-                hintText: "Titulo del entrenamiento", border: InputBorder.none),
+          child: Form(
+            key: _titleKey,
+            child: TextFormField(
+            
+              controller: titleController,
+              decoration: InputDecoration(
+                  hintText: "Titulo del entrenamiento *",
+                  border: InputBorder.none),
+              onSaved: (val) => titleController.text = val.trim(),
+              validator: (String title) {
+                if (title.isEmpty || title.trim().length < 3) {
+                  return "Titulo demasiado corto";
+                } else if (title.trim().length > 25) {
+                  return "Titulo demasido largo";
+                } else {
+                  return null;
+                }
+              },
+            ),
           ),
         ),
       ),
@@ -502,8 +532,11 @@ class _ShareState extends State<Share>
                     initialTime: resultingDuration ?? new Duration(minutes: 30),
                   ) ??
                   resultingDuration;
+
+              int durationInMinutes = resultingDuration.inMinutes;
               Scaffold.of(context).showSnackBar(new SnackBar(
-                  content: new Text("Duración escogida: $resultingDuration")));
+                  content: new Text(
+                      "Duración escogida: $durationInMinutes minutos")));
             },
           ),
         ),
@@ -568,24 +601,43 @@ class _ShareState extends State<Share>
         ),
       ),
       Divider(),
-      ListTile(
-        leading: Icon(
-          Icons.note,
-          color: Colors.teal,
-          size: 35.0,
-        ),
-        title: Container(
-          width: 250.0,
-          child: TextField(
-            controller: notesController,
-            decoration:
-                InputDecoration(hintText: "Notas", border: InputBorder.none),
+      Padding(
+        padding: const EdgeInsets.only(top: 3, right: 15, left: 15),
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.2,
+          decoration: BoxDecoration(color: Colors.grey[300],
+          borderRadius: BorderRadius.circular(10)),
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(top: 4.0,left: 8.0),
+                child: Form(
+                  key: _notesKey,
+                  child: TextFormField(
+            
+                    controller: notesController,
+                    onSaved: (val) => notesController.text = val.trim(),
+                    decoration: InputDecoration(
+                        hintText: "Descripción del entrenamiento *",
+                        border: InputBorder.none),
+                    maxLines: 5,
+                    validator: (String notes) {
+                      if (notes.isEmpty) {
+                        return "Debes escribir alguna descripción del ejercicio.";
+                      } else {
+                        return null;
+                      }
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
     ];
     return Scaffold(
-      backgroundColor:  Colors.grey[200],
+      backgroundColor: Colors.grey[200],
       floatingActionButton: fabResources(),
       appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -621,8 +673,12 @@ class _ShareState extends State<Share>
   }
 
   displayInputDialogLink(BuildContext context) async {
-    return await showDialog(
+    return await showAnimatedDialog(
+        animationType: DialogTransitionType.size,
+        curve: Curves.fastOutSlowIn,
+        duration: Duration(seconds: 1),
         context: context,
+        barrierDismissible: true,
         builder: (context) {
           return AlertDialog(
             title: Text(
@@ -631,6 +687,7 @@ class _ShareState extends State<Share>
             content: Form(
               key: _formKey,
               child: TextFormField(
+             
                 validator: (String val) {
                   if (!RegExp(
                           r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$")

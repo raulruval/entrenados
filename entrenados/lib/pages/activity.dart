@@ -32,8 +32,8 @@ class _ActivityState extends State<Activity> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:  Colors.grey[200],
-      appBar: header(context,titleText: 'Actividad',removeBackButton: true),
+      backgroundColor: Colors.grey[200],
+      appBar: header(context, titleText: 'Actividad', removeBackButton: true),
       body: Container(
         child: FutureBuilder(
           future: getActivityFeed(),
@@ -92,13 +92,6 @@ class ActivityFeedItem extends StatelessWidget {
     if (type == 'like' || type == 'comment') {
       mediaPreview = GestureDetector(
         onTap: () => print('Ir al post'),
-        /*        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => PostScreen(
-                      userId: userId,
-                      postId: postId,
-                    ))), */
         child: Container(
           height: 50.0,
           width: 50.0,

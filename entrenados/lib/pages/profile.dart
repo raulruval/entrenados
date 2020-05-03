@@ -360,7 +360,7 @@ class _ProfileState extends State<Profile> {
                   : SizedBox.shrink(),
               // BuildPosts
               Flexible(
-                flex: 4,
+                flex: 3,
                 fit: FlexFit.tight,
                 child: buildCard(),
               )
@@ -386,39 +386,47 @@ class _ProfileState extends State<Profile> {
             borderRadius: BorderRadius.circular(10.0),
             color: Colors.grey.shade100),
         child: Padding(
-          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+          padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Icon(
-                Icons.favorite,
-                color: Colors.redAccent,
-                size: 60.0,
+              Flexible(
+                child: Icon(
+                  Icons.favorite,
+                  color: Colors.redAccent,
+                  size: 60.0,
+                ),
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    'ALMACÉN DE ENTRENAMIENTOS',
-                    style:
-                        TextStyle(color: Colors.grey.shade500, fontSize: 14.0),
-                  ),
-                  SizedBox(height: 4.0),
-                  Text(
-                    'Tus Favoritos',
-                    style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16.0),
-                  )
-                ],
+              Flexible(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    AutoSizeText(
+                      'ALMACÉN',
+                      style: TextStyle(
+                          color: Colors.grey.shade500),
+                      maxLines: 1,
+                    ),
+                    SizedBox(height: 4.0),
+                    AutoSizeText(
+                      'Tus Favoritos',
+                      style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0),
+                      maxLines: 1,
+                    )
+                  ],
+                ),
               ),
-              Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.redAccent,
-                size: 50.0,
+              Flexible(
+                child: Icon(
+                  Icons.arrow_forward_ios,
+                  color: Colors.redAccent,
+                  size: 50.0,
+                ),
               ),
             ],
           ),
@@ -538,8 +546,8 @@ class _ProfileState extends State<Profile> {
         appBar: AppBar(
           centerTitle: true,
           title: isProfileOwner
-              ? Text('EXPLORAR TU PERFÍL')
-              : Text('EXPLORAR PERFÍL'),
+              ? Text('EXPLORAR TU PERFIL')
+              : Text('EXPLORAR PERFIL'),
           elevation: 0.0,
           bottomOpacity: 0.0,
           flexibleSpace: Container(

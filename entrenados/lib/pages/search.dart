@@ -70,6 +70,7 @@ class _SearchState extends State<Search>
         ),
       ),
       child: TextFormField(
+     
         controller: searchController,
         decoration: InputDecoration(
           hintText: "Buscar un instructor...",
@@ -175,8 +176,16 @@ class _SearchState extends State<Search>
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 24.0),
-                    child: Text("Dificultad",
-                        style: TextStyle(fontWeight: FontWeight.w800)),
+                    child: Row(
+                      children: <Widget>[
+                        Text("Dificultad",
+                            style: TextStyle(fontWeight: FontWeight.w800)),
+                        Text("*",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w800,
+                                color: Colors.redAccent)),
+                      ],
+                    ),
                   ),
                   Padding(
                     padding:
@@ -207,8 +216,16 @@ class _SearchState extends State<Search>
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 24.0),
-                    child: Text("Duración aproximada",
-                        style: TextStyle(fontWeight: FontWeight.w800)),
+                    child: Row(
+                      children: <Widget>[
+                        Text("Duración",
+                            style: TextStyle(fontWeight: FontWeight.w800)),
+                        Text("*",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w800,
+                                color: Colors.redAccent)),
+                      ],
+                    ),
                   ),
                   Padding(
                     padding:
@@ -239,8 +256,18 @@ class _SearchState extends State<Search>
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 24.0),
-                    child: Text("Grupo",
-                        style: TextStyle(fontWeight: FontWeight.w800)),
+                    child: Row(
+                      children: <Widget>[
+                        Text("Grupo",
+                            style: TextStyle(fontWeight: FontWeight.w800)),
+                        Text("*",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w800,
+                                color: Colors.redAccent)),
+                        Text("  ( Selección múltiple )",
+                            style: TextStyle(fontWeight: FontWeight.w100)),
+                      ],
+                    ),
                   ),
                   Padding(
                     padding:
@@ -271,8 +298,14 @@ class _SearchState extends State<Search>
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 24.0),
-                    child: Text("Músculos involucrados",
-                        style: TextStyle(fontWeight: FontWeight.w800)),
+                    child: Row(
+                      children: <Widget>[
+                        Text("Músculos involucrados",
+                            style: TextStyle(fontWeight: FontWeight.w800)),
+                        Text("  ( Selección múltiple )",
+                            style: TextStyle(fontWeight: FontWeight.w100)),
+                      ],
+                    ),
                   ),
                   Padding(
                     padding:
@@ -303,8 +336,14 @@ class _SearchState extends State<Search>
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 24.0),
-                    child: Text("Material necesario",
-                        style: TextStyle(fontWeight: FontWeight.w800)),
+                    child: Row(
+                      children: <Widget>[
+                        Text("Material necesario",
+                            style: TextStyle(fontWeight: FontWeight.w800)),
+                        Text("  ( Selección múltiple )",
+                            style: TextStyle(fontWeight: FontWeight.w100)),
+                      ],
+                    ),
                   ),
                   Padding(
                     padding:
@@ -481,8 +520,7 @@ class _SearchState extends State<Search>
           _getWorkouts(),
           _getTrainers(),
         ]),
-        floatingActionButtonLocation:
-            FloatingActionButtonLocation.centerFloat,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: _getFab(),
       ),
     );
@@ -546,7 +584,7 @@ class UserResult extends StatelessWidget {
                 ),
               ),
               subtitle: Text(
-                user.username,
+                "@"+ user.username,
                 style: TextStyle(
                   color: Colors.deepPurple,
                 ),

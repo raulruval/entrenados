@@ -83,29 +83,7 @@ class PostTile extends StatelessWidget {
                                 ),
                                 borderRadius: BorderRadius.circular(20.0),
                               ),
-                              post.mainResource == "video"
-                                  ? Icon(
-                                      Icons.videocam,
-                                      size: 40.0,
-                                      color: Colors.teal,
-                                    )
-                                  : post.mainResource == "pdf"
-                                      ? Icon(
-                                          Icons.picture_as_pdf,
-                                          size: 40.0,
-                                          color: Colors.teal,
-                                        )
-                                      : post.mainResource == "link"
-                                          ? Icon(
-                                              Icons.link,
-                                              size: 40.0,
-                                              color: Colors.teal,
-                                            )
-                                          : Icon(
-                                              Icons.not_listed_location,
-                                              size: 40.0,
-                                              color: Colors.teal,
-                                            )
+                              Text(" "+post.duration.toString() + "'", style: TextStyle(fontSize: 30,color: Colors.teal[600],fontWeight: FontWeight.bold),),
                             ],
                           ),
                         ),

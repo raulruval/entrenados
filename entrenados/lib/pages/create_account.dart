@@ -4,6 +4,7 @@ import 'package:entrenados/pages/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:entrenados/widgets/header.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_svg/svg.dart';
 
 class CreateAccount extends StatefulWidget {
@@ -22,6 +23,7 @@ class _CreateAccountState extends State<CreateAccount> {
   Future signUpUser() async {
     FirebaseUser fUser = await _auth.createUserWithEmailAndPassword(
         email: user.email, password: _pwd);
+    fUser.sendEmailVerification();
     return fUser.uid;
   }
 
@@ -45,7 +47,10 @@ class _CreateAccountState extends State<CreateAccount> {
   }
 
   Future<void> showAlertRegister(String texto) async {
-    return showDialog<void>(
+    return showAnimatedDialog<void>(
+      animationType: DialogTransitionType.size,
+      curve: Curves.fastOutSlowIn,
+      duration: Duration(seconds: 1),
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
@@ -79,7 +84,8 @@ class _CreateAccountState extends State<CreateAccount> {
           .then((_) => saveUserOnDb())
           .then((_) {
         SnackBar snackbar = SnackBar(
-          content: Text("¡Bienvenido! Por favor, verifique su cuenta de correo electrónico para poder iniciar sesión."),
+          content: Text(
+              "¡Bienvenido! Por favor, verifique su cuenta de correo electrónico para poder iniciar sesión."),
         );
         _scaffoldKey.currentState.showSnackBar(snackbar);
         Timer(Duration(seconds: 3), () {
@@ -107,7 +113,6 @@ class _CreateAccountState extends State<CreateAccount> {
             margin: EdgeInsets.all(24),
             child: Form(
               key: _formKey,
-              autovalidate: true,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -120,8 +125,7 @@ class _CreateAccountState extends State<CreateAccount> {
                         )
                       : SizedBox.shrink(),
                   Padding(
-                    padding:
-                        EdgeInsets.only(left: 30.0, right: 30, top: 50.0),
+                    padding: EdgeInsets.only(left: 30.0, right: 30, top: 50.0),
                     child: Container(
                       child: TextFormField(
                         validator: (val) {
@@ -143,8 +147,7 @@ class _CreateAccountState extends State<CreateAccount> {
                     ),
                   ),
                   Padding(
-                    padding:
-                        EdgeInsets.only(left: 30.0, right: 30, top: 10.0),
+                    padding: EdgeInsets.only(left: 30.0, right: 30, top: 10.0),
                     child: Container(
                       child: TextFormField(
                         validator: (val) {
@@ -167,10 +170,10 @@ class _CreateAccountState extends State<CreateAccount> {
                     ),
                   ),
                   Padding(
-                    padding:
-                        EdgeInsets.only(left: 30.0, right: 30, top: 10.0),
+                    padding: EdgeInsets.only(left: 30.0, right: 30, top: 10.0),
                     child: Container(
                       child: TextFormField(
+                        obscureText: true,
                         keyboardType: TextInputType.visiblePassword,
                         validator: (val) {
                           if (val.trim().length < 6 || val.isEmpty) {

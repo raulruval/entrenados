@@ -44,6 +44,12 @@ dependencies:
   flutter_speed_dial: ^1.2.5
   file_picker: ^1.8.0+2
   flutter_snake_navigationbar: ^0.4.0+1
+  flutter_animated_dialog: ^1.0.3
+  gradient_text: ^1.0.2
+  youtube_player_flutter: ^6.1.0+7
+  http: ^0.12.0+4
+  flutter_pdfview: ^1.0.1
+
   
 dev_dependencies:
   flutter_test:

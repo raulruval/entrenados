@@ -5,6 +5,7 @@ import 'package:entrenados/pages/activity.dart';
 import 'package:entrenados/pages/home.dart';
 import 'package:entrenados/widgets/progress.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 
 Widget buildHeader(
     ownerId, currentUserId, postId, bool showLocation, String title) {
@@ -71,7 +72,10 @@ Widget buildHeader(
 }
 
 handleDeletePost(BuildContext parentContext, ownerId, postId) {
-  return showDialog(
+  return showAnimatedDialog(
+      animationType: DialogTransitionType.size,
+      curve: Curves.fastOutSlowIn,
+      duration: Duration(seconds: 1),
       context: parentContext,
       builder: (context) {
         return SimpleDialog(

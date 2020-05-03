@@ -4,12 +4,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entrenados/models/item.dart';
 import 'package:entrenados/models/searchModel.dart';
 import 'package:entrenados/pages/comments.dart';
+import 'package:entrenados/pages/documentViewPage.dart';
 import 'package:entrenados/pages/home.dart';
 import 'package:entrenados/widgets/chewei_list_item.dart';
 import 'package:entrenados/widgets/custom_image.dart';
 import 'package:entrenados/widgets/profileHeader.dart';
+import 'package:entrenados/widgets/yt_list_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:gradient_text/gradient_text.dart';
 import 'package:video_player/video_player.dart';
 
 class Post extends StatefulWidget {
@@ -24,6 +28,7 @@ class Post extends StatefulWidget {
   final String description;
   final String photoUrl;
   final String videoUrl;
+  final String linkUrl;
   final String documentUrl;
   final String notes;
   final dynamic likes;
@@ -46,6 +51,7 @@ class Post extends StatefulWidget {
       this.description,
       this.photoUrl,
       this.videoUrl,
+      this.linkUrl,
       this.documentUrl,
       this.notes,
       this.likes,
@@ -68,6 +74,7 @@ class Post extends StatefulWidget {
         description: doc['description'],
         photoUrl: doc['photoUrl'],
         videoUrl: doc['videoUrl'],
+        linkUrl: doc['linkUrl'],
         documentUrl: doc['documentUrl'],
         notes: doc['notes'],
         likes: doc['likes'],
@@ -128,6 +135,7 @@ class Post extends StatefulWidget {
         description: this.description,
         photoUrl: this.photoUrl,
         videoUrl: this.videoUrl,
+        linkUrl: this.linkUrl,
         documentUrl: this.documentUrl,
         notes: this.notes,
         likeCount: getLikeCount(likes),
@@ -152,9 +160,11 @@ class PostState extends State<Post> {
   final String description;
   final String photoUrl;
   final String videoUrl;
+  final String linkUrl;
   final String documentUrl;
   final String notes;
   Map likes;
+  int commentsCount;
   int likeCount;
   String equipment;
   String muscles;
@@ -175,9 +185,11 @@ class PostState extends State<Post> {
     this.description,
     this.photoUrl,
     this.videoUrl,
+    this.linkUrl,
     this.documentUrl,
     this.notes,
     this.likes,
+    this.commentsCount,
     this.equipment,
     this.muscles,
     this.likeCount,
@@ -185,6 +197,12 @@ class PostState extends State<Post> {
     this.selectedMuscles,
     this.mainResource,
   });
+
+  @override
+  void initState() {
+    getCommentsCount();
+    super.initState();
+  }
 
   addLikeToActivityFeed() {
     bool isNotPostOwner = currentUserId != ownerId;
@@ -276,6 +294,7 @@ class PostState extends State<Post> {
         "username": username,
         "photoUrl": photoUrl,
         "videoUrl": videoUrl,
+        "linkUrl": linkUrl,
         "documentUrl": documentUrl,
         "title": title,
         "duration": duration,
@@ -330,182 +349,143 @@ class PostState extends State<Post> {
     );
   }
 
+  buildItems(List<Item> selected) {
+    return selected.isNotEmpty
+        ? Column(
+            children: <Widget>[
+              for (var item in selected)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text("- " + item.name, style: TextStyle(fontSize: 20.0)),
+                  ],
+                ),
+            ],
+          )
+        : Text("Ninguno", style: TextStyle(fontSize: 20.0));
+  }
+
   buildPostInfo() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 25.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            "$title",
-            style: TextStyle(fontSize: 30.0),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: <Widget>[
-                Icon(
-                  Icons.arrow_upward,
-                  size: 30.0,
-                  color: Colors.teal[900],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: Text(
-                    "Dificultad: $difficulty",
-                    style: TextStyle(fontSize: 20.0),
-                  ),
-                ),
-              ],
+    return Column(
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Icon(
+              Icons.timer,
+              size: 40.0,
+              color: Colors.teal[900],
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: <Widget>[
-                Icon(
-                  Icons.rowing,
-                  size: 30.0,
-                  color: Colors.teal[900],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: Text(
-                    "Grupo: $group",
-                    style: TextStyle(fontSize: 20.0),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: <Widget>[
-                Icon(
-                  Icons.directions_run,
-                  size: 30.0,
-                  color: Colors.teal[900],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: Text(
-                    "Músculos involucrados: ",
-                    style: TextStyle(fontSize: 20.0),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              for (var item in selectedMuscles)
-                Row(
-                  children: <Widget>[
-                    Text("- " + item.name + " ",
-                        style: TextStyle(fontSize: 20.0)),
-                  ],
-                ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: <Widget>[
-                Icon(
-                  Icons.fitness_center,
-                  size: 30.0,
-                  color: Colors.teal[900],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: Text(
-                    "Equipamiento necesario: ",
-                    style: TextStyle(fontSize: 20.0),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              for (var item in selectedEquipment)
-                Row(
-                  children: <Widget>[
-                    Text("- " + item.name + " ",
-                        style: TextStyle(fontSize: 20.0)),
-                  ],
-                ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: <Widget>[
-                Icon(
-                  Icons.note,
-                  size: 30.0,
-                  color: Colors.teal[900],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: Text(
-                    "Notas: ",
-                    style: TextStyle(fontSize: 20.0),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(left: 47.0),
-                child: Container(
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    child: Text(
-                      "$notes",
-                      style: TextStyle(fontSize: 15.0),
-                      overflow: TextOverflow.clip,
-                      softWrap: true,
-                    )),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(
+                "Duración: ",
+                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
               ),
-            ],
-          ),
-        ],
-      ),
+            ),
+            Text(
+              "$duration minutos",
+              style: TextStyle(fontSize: 20.0),
+            ),
+          ],
+        ),
+        Divider(),
+        Row(
+          children: <Widget>[
+            Icon(
+              Icons.arrow_upward,
+              size: 40.0,
+              color: Colors.teal[900],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(
+                "Dificultad: ",
+                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Text(
+              "$difficulty",
+              style: TextStyle(fontSize: 20.0),
+            ),
+          ],
+        ),
+        Divider(),
+        Row(
+          children: <Widget>[
+            Icon(
+              Icons.rowing,
+              size: 40.0,
+              color: Colors.teal[900],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(
+                "Grupo: ",
+                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Text(
+              "$group",
+              style: TextStyle(fontSize: 20.0),
+            ),
+          ],
+        ),
+        Divider(),
+        Row(
+          children: <Widget>[
+            Icon(
+              Icons.directions_run,
+              size: 40.0,
+              color: Colors.teal[900],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(
+                "Músculos involucrados: ",
+                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+        buildItems(selectedMuscles),
+        Divider(),
+        Row(
+          children: <Widget>[
+            Icon(
+              Icons.fitness_center,
+              size: 30.0,
+              color: Colors.teal[900],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(
+                "Equipamiento necesario: ",
+                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+        buildItems(selectedEquipment),
+      ],
     );
+  }
+
+  void getCommentsCount() async {
+    QuerySnapshot snapshot = await commentsRef
+        .document(postId)
+        .collection('comments')
+        .getDocuments();
+    if (snapshot != null) {
+      setState(() {
+        commentsCount = snapshot.documents.length;
+      });
+    }
   }
 
   buildPostSocial() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Row(children: <Widget>[
-          Icon(
-            Icons.link,
-            size: 38.0,
-            color: Colors.blue[600],
-          ),
-          Padding(padding: EdgeInsets.only(right: 15.0)),
-          Icon(
-            Icons.picture_as_pdf,
-            size: 38.0,
-            color: Colors.blue[600],
-          ),
-          Padding(padding: EdgeInsets.only(right: 15.0)),
-          Icon(
-            Icons.videocam,
-            size: 38.0,
-            color: Colors.grey,
-          ),
-        ]),
-        Padding(
-          padding: EdgeInsets.only(bottom: 5.0),
-        ),
         Row(children: <Widget>[
           GestureDetector(
             onTap: handleLikePost,
@@ -544,7 +524,7 @@ class PostState extends State<Post> {
             Container(
               margin: EdgeInsets.only(left: 20),
               child: Text(
-                "0",
+                commentsCount != null ? "$commentsCount" : 0,
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
@@ -556,26 +536,6 @@ class PostState extends State<Post> {
         ),
         Padding(
           padding: EdgeInsets.only(bottom: 5.0),
-        ),
-        Row(
-          children: <Widget>[
-            Icon(
-              Icons.timer,
-              color: Colors.teal[900],
-              size: 38.0,
-            ),
-            Container(
-              margin: EdgeInsets.only(left: 20),
-              child: Text(
-                duration.toString() + "'",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20.0,
-                ),
-              ),
-            ),
-          ],
         ),
       ],
     );
@@ -595,8 +555,17 @@ class PostState extends State<Post> {
   buildVideoResource() {
     return Flexible(
       child: ExpansionTile(
-          title: Text("Recursos de la publicación"),
-          leading: Icon(Icons.ondemand_video),
+          title: GradientText(
+            "Vídeo de la publicación",
+            gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: <Color>[Colors.teal[400], Colors.deepPurple[400]]),
+          ),
+          leading: Icon(
+            Icons.ondemand_video,
+            color: Colors.deepPurple,
+          ),
           children: <Widget>[
             ChewieListItem(
               videoPlayerController:
@@ -604,6 +573,104 @@ class PostState extends State<Post> {
               looping: true,
             ),
           ]),
+    );
+  }
+
+  buildLinkResource() {
+    return Flexible(
+      child: ExpansionTile(
+          title: GradientText(
+            "Vídeo de youtube enlazado",
+            gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: <Color>[Colors.teal[400], Colors.deepPurple[400]]),
+          ),
+          leading: FaIcon(
+            FontAwesomeIcons.youtube,
+            color: Colors.redAccent,
+          ),
+          children: <Widget>[
+            YtListItem(
+              url: linkUrl,
+            ),
+          ]),
+    );
+  }
+
+  buildNotes() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(left: 15.0),
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.80,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                  child: Text(
+                    "$notes",
+                    style: TextStyle(fontSize: 15.0),
+                    textAlign: TextAlign.justify,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  buildNamePost() {
+    String upperTitle = title.toUpperCase();
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: GradientText(
+          upperTitle,
+          textAlign: TextAlign.center,
+          gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: <Color>[Colors.teal[400], Colors.deepPurple[400]]),
+          style: TextStyle(
+            fontSize: 30.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  buildDocumentResource() {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  DocumentViewPage(documentUrl: documentUrl))),
+      child: ListTile(
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 3.0),
+          child: FaIcon(
+            FontAwesomeIcons.fileAlt,
+            color: Colors.redAccent,
+          ),
+        ),
+        title: GradientText(
+          'Visualiza la documentación',
+          textAlign: TextAlign.start,
+          gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: <Color>[Colors.teal[400], Colors.deepPurple[400]]),
+        ),
+      ),
     );
   }
 
@@ -619,27 +686,61 @@ class PostState extends State<Post> {
                 this.ownerId,
                 this.currentUserId,
                 this.postId,
-                true,
+                false,
                 null,
               ),
               Divider(
                 height: 0.8,
               ),
+              buildNamePost(),
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   buildPostImage(),
                   buildPostSocial(),
                 ],
               ),
-              Row(
-                children: <Widget>[
-                  buildPostInfo(),
-                ],
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  child: buildNotes(),
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: <Color>[
+                            Colors.teal[100],
+                            Colors.deepPurple[100]
+                          ]),
+                      borderRadius: BorderRadius.circular(10)),
+                ),
               ),
-              this.videoUrl != null
+              Padding(
+                padding: EdgeInsets.all(10),
+                child: buildPostInfo(),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Divider(
+                  height: 20,
+                  thickness: 5,
+                  color: Colors.deepPurple[100],
+                ),
+              ),
+              this.documentUrl != ''
+                  ? buildDocumentResource()
+                  : SizedBox.shrink(),
+              this.videoUrl != ''
                   ? Row(
                       children: <Widget>[
                         buildVideoResource(),
+                      ],
+                    )
+                  : SizedBox.shrink(),
+              this.linkUrl != ''
+                  ? Row(
+                      children: <Widget>[
+                        buildLinkResource(),
                       ],
                     )
                   : SizedBox.shrink()

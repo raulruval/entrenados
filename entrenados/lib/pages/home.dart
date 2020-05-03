@@ -203,7 +203,7 @@ class _HomeState extends State<Home> {
     } catch (ex) {
       print(ex);
     }
-    if (currentUser != null /* && userVerify */) {
+    if (currentUser != null  && userVerify ) {
       if (currentUser.username == "") {
         final username = await Navigator.push(context,
             MaterialPageRoute(builder: (context) => CreateGoogleAccount()));
@@ -267,6 +267,7 @@ class _HomeState extends State<Home> {
     DocumentSnapshot doc = await usersRef.document(user.id).get();
     doc = await usersRef.document(user.id).get();
     currentUser = User.fromDocument(doc);
+    
   }
 
   onTap(int pageIndex) {
@@ -315,27 +316,27 @@ class _HomeState extends State<Home> {
   }
 
   final kHintTextStyle = TextStyle(
-  color: Colors.white,
-  fontFamily: 'OpenSans',
-);
+    color: Colors.white,
+    fontFamily: 'OpenSans',
+  );
 
-final kLabelStyle = TextStyle(
-  color: Colors.black,
-  fontWeight: FontWeight.bold,
-  fontFamily: 'OpenSans',
-);
+  final kLabelStyle = TextStyle(
+    color: Colors.black,
+    fontWeight: FontWeight.bold,
+    fontFamily: 'OpenSans',
+  );
 
-final kBoxDecorationStyle = BoxDecoration(
-  color: Colors.teal[600],
-  borderRadius: BorderRadius.circular(10.0),
-  boxShadow: [
-    BoxShadow(
-      color: Colors.black12,
-      blurRadius: 6.0,
-      offset: Offset(0, 2),
-    ),
-  ],
-);
+  final kBoxDecorationStyle = BoxDecoration(
+    color: Colors.teal[600],
+    borderRadius: BorderRadius.circular(10.0),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black12,
+        blurRadius: 6.0,
+        offset: Offset(0, 2),
+      ),
+    ],
+  );
 
   Widget _buildForm() {
     return Form(
