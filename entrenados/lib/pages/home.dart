@@ -203,7 +203,7 @@ class _HomeState extends State<Home> {
     } catch (ex) {
       print(ex);
     }
-    if (currentUser != null  && userVerify ) {
+    if (currentUser != null && userVerify) {
       if (currentUser.username == "") {
         final username = await Navigator.push(context,
             MaterialPageRoute(builder: (context) => CreateGoogleAccount()));
@@ -267,7 +267,6 @@ class _HomeState extends State<Home> {
     DocumentSnapshot doc = await usersRef.document(user.id).get();
     doc = await usersRef.document(user.id).get();
     currentUser = User.fromDocument(doc);
-    
   }
 
   onTap(int pageIndex) {
@@ -277,7 +276,7 @@ class _HomeState extends State<Home> {
         duration: Duration(milliseconds: 10), curve: Curves.easeIn);
   }
 
-  Widget buildValiacionScreen() {
+  Widget buildValidationScreen() {
     return Scaffold(
       body: PageView(
         children: <Widget>[
@@ -477,10 +476,15 @@ class _HomeState extends State<Home> {
       alignment: Alignment.center,
       child: FlatButton(
         onPressed: () => createUserInFirestore(),
-        child: Text(
-          '¿No tienes una cuenta? Regístrate',
-          style: kLabelStyle,
-        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+          Text('¿No tienes una cuenta? '),
+          Text(
+            ' ¡Regístrate!',
+            style: kLabelStyle,
+          ),
+        ]),
       ),
     );
   }
@@ -524,7 +528,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Scaffold buildNoValiacionScreen() {
+  Scaffold buildNoValidationScreen() {
     return Scaffold(
       key: _scaffoldKeyNoValidation,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -606,6 +610,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return isAuth ? buildValiacionScreen() : buildNoValiacionScreen();
+    return isAuth ? buildValidationScreen() : buildNoValidationScreen();
   }
 }
