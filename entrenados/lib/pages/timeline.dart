@@ -75,7 +75,7 @@ class _TimelineState extends State<Timeline> {
           }
         });
         return Container(
-          color: Theme.of(context).accentColor.withOpacity(0.2),
+          color: Theme.of(context).accentColor.withOpacity(0.1),
           child: Column(
             children: <Widget>[
               Container(
@@ -116,7 +116,7 @@ class _TimelineState extends State<Timeline> {
     } else {
       List<GridTile> gridTiles = [];
       posts.forEach((post) {
-        gridTiles.add(GridTile(child: PostTile(post)));
+        gridTiles.add(GridTile(child: PostTile(post,true)));
       });
       return ListView(
         children: gridTiles,
@@ -126,14 +126,12 @@ class _TimelineState extends State<Timeline> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-          child: Scaffold(
-          backgroundColor: Theme.of(context).accentColor.withOpacity(0.2),
-          appBar: header(context, isAppTitle: true, removeBackButton: true),
-          body: RefreshIndicator(
-            onRefresh: () => getTimeline(),
-            child: buildTimeLine(),
-          )),
-    );
+    return Scaffold(
+    backgroundColor: Colors.grey[300],
+    appBar: header(context, isAppTitle: true, removeBackButton: true),
+    body: RefreshIndicator(
+      onRefresh: () => getTimeline(),
+      child: buildTimeLine(),
+    ));
   }
 }

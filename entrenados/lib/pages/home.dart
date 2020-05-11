@@ -1,22 +1,24 @@
 import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:entrenados/pages/activity.dart';
+import 'package:entrenados/pages/profile.dart';
 import 'package:entrenados/pages/search.dart';
 import 'package:entrenados/pages/share.dart';
 import 'package:entrenados/pages/create_account.dart';
 import 'package:entrenados/pages/create_google_account.dart';
 import 'package:entrenados/pages/timeline.dart';
-import 'package:entrenados/utils/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:entrenados/models/user.dart';
-
-import 'mypage.dart';
+import 'package:entrenados/models/searchModel.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -28,6 +30,7 @@ final activityFeedRef = Firestore.instance.collection("feed");
 final followersRef = Firestore.instance.collection("followers");
 final followingRef = Firestore.instance.collection("following");
 final timelineRef = Firestore.instance.collection("timeline");
+final storedPostsRef = Firestore.instance.collection("storedPosts");
 
 final DateTime timestamp = DateTime.now();
 
@@ -42,17 +45,17 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  SearchModel sm = new SearchModel();
   bool isAuth = false;
   PageController pageController;
   int pageIndex = 0;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _scaffoldKeyNoValidation = GlobalKey<ScaffoldState>();
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-
   @override
   void initState() {
     super.initState();
     pageController = PageController();
-
     // Detecta cuando un usuario inicia sesión.
     googleSignIn.onCurrentUserChanged.listen((cuenta) {
       handleSignInGoogle(cuenta);
@@ -161,47 +164,30 @@ class _HomeState extends State<Home> {
     });
   }
 
-  Future<void> showAlertNoValid() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Credenciales incorrectos'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(
-                    'El email y contraseña introducidos no coindicen con ninguno de nuestros usuarios'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Volver a intentarlo'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   Future signIpUser() async {
     FirebaseUser fUser = await _auth
         .signInWithEmailAndPassword(email: _email, password: _pwd)
-        .catchError((onError) => {showAlertNoValid()});
-
-    return fUser.uid;
+        .catchError((onError) => {
+              _scaffoldKeyNoValidation.currentState.showSnackBar(SnackBar(
+                content: AutoSizeText(
+                  "El email y contraseña introducidos no coindicen con ninguno de nuestros usuarios.",
+                  maxLines: 2,
+                ),
+              ))
+            });
+    if (!fUser.isEmailVerified) {
+      fUser.sendEmailVerification();
+    }
+    return fUser;
   }
 
   handleSignIn(bool auto, String uidAuto) async {
+    FirebaseUser fUser;
+    bool userVerify = false;
     if (!auto) {
-      String uid = await signIpUser();
+      fUser = await signIpUser();
       await usersRef
-          .document(uid)
+          .document(fUser.uid)
           .get()
           .then((doc) => currentUser = User.fromDocument(doc))
           .catchError((onError) => print(onError));
@@ -212,12 +198,31 @@ class _HomeState extends State<Home> {
           .then((doc) => currentUser = User.fromDocument(doc))
           .catchError((onError) => print(onError));
     }
-
-    if (currentUser != null) {
+    try {
+      userVerify = fUser.isEmailVerified;
+    } catch (ex) {
+      print(ex);
+    }
+    if (currentUser != null && userVerify) {
+      if (currentUser.username == "") {
+        final username = await Navigator.push(context,
+            MaterialPageRoute(builder: (context) => CreateGoogleAccount()));
+        usersRef.document(currentUser.id).updateData({'username': username});
+      }
       setState(() {
         isAuth = true;
       });
       configurePushNotification(false, currentUser);
+    } else if (currentUser != null && !auto) {
+      _scaffoldKeyNoValidation.currentState.showSnackBar(SnackBar(
+        content: AutoSizeText(
+          "Por favor, verifique su cuenta de correo electrónico para poder iniciar sesión.",
+          maxLines: 2,
+        ),
+      ));
+      setState(() {
+        isAuth = false;
+      });
     } else {
       setState(() {
         isAuth = false;
@@ -228,7 +233,14 @@ class _HomeState extends State<Home> {
   createGoogleUserInFirestore() async {
     // 1) Comprueba si el usuario existe en la colección de firebase.
     final GoogleSignInAccount user = googleSignIn.currentUser;
+    final GoogleSignInAuthentication googleAuth = await user.authentication;
+
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+        idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
+    await _auth.signInWithCredential(credential);
+
     DocumentSnapshot doc = await usersRef.document(user.id).get();
+
     // 2) Si el usuario no existe, lo llevamos a la página de crear cuenta(google).
     if (!doc.exists) {
       final username = await Navigator.push(context,
@@ -239,7 +251,7 @@ class _HomeState extends State<Home> {
         "username": username,
         "photoUrl": user.photoUrl,
         "email": user.email,
-        "displayName": user.displayName,
+        "displayName": user.displayName.toUpperCase(),
         "bio": "",
         "timestamp": timestamp,
       });
@@ -258,39 +270,72 @@ class _HomeState extends State<Home> {
   }
 
   onTap(int pageIndex) {
-    pageController.animateToPage(
-      pageIndex,
-      duration: Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
+    /*    pageController.jumpToPage(pageIndex);
+ */
+    pageController.animateToPage(pageIndex,
+        duration: Duration(milliseconds: 10), curve: Curves.easeIn);
   }
 
-  Widget buildValiacionScreen() {
+  Widget buildValidationScreen() {
     return Scaffold(
       body: PageView(
         children: <Widget>[
           Timeline(currentUser: currentUser),
-          Search(),
-          Share(currentUser: currentUser),
-          MyPage(profileId: currentUser?.id),
+          Search(searchModel: sm),
+          Share(currentUser: currentUser, searchModel: sm),
+          Activity(),
+          Profile(
+            profileId: currentUser.id,
+          ),
         ],
         controller: pageController,
         onPageChanged: onPageChanged,
         physics: NeverScrollableScrollPhysics(),
       ),
-      bottomNavigationBar: CupertinoTabBar(
+      bottomNavigationBar: SnakeNavigationBar(
+        snakeShape: SnakeShape.circle,
+        style: SnakeBarStyle.pinned,
         currentIndex: pageIndex,
-        onTap: onTap,
-        activeColor: Theme.of(context).primaryColor,
+        padding: EdgeInsets.all(4),
+        onPositionChanged: onTap,
+        snakeGradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: <Color>[Colors.teal[400], Colors.deepPurple[400]]),
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home)),
-          BottomNavigationBarItem(icon: Icon(Icons.search)),
-          BottomNavigationBarItem(icon: Icon(Icons.photo_camera)),
-          BottomNavigationBarItem(icon: Icon(Icons.account_circle))
+          BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.home)),
+          BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.search)),
+          BottomNavigationBarItem(
+              icon: FaIcon(FontAwesomeIcons.plus, size: 30)),
+          BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.solidBell)),
+          BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.userAlt))
         ],
       ),
     );
   }
+
+  final kHintTextStyle = TextStyle(
+    color: Colors.white,
+    fontFamily: 'OpenSans',
+  );
+
+  final kLabelStyle = TextStyle(
+    color: Colors.black,
+    fontWeight: FontWeight.bold,
+    fontFamily: 'OpenSans',
+  );
+
+  final kBoxDecorationStyle = BoxDecoration(
+    color: Colors.teal[600],
+    borderRadius: BorderRadius.circular(10.0),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black12,
+        blurRadius: 6.0,
+        offset: Offset(0, 2),
+      ),
+    ],
+  );
 
   Widget _buildForm() {
     return Form(
@@ -383,13 +428,43 @@ class _HomeState extends State<Home> {
     );
   }
 
+  handleForgotPwd() async {
+    if (_email == null) {
+      _scaffoldKeyNoValidation.currentState.showSnackBar(SnackBar(
+        content: AutoSizeText(
+          "Por favor, introduce el correo electrónico y pulsa 'Cambiar contraseña'.",
+          maxLines: 2,
+        ),
+      ));
+    } else {
+      await _auth
+          .sendPasswordResetEmail(email: _email)
+          .then((_) => {
+                _scaffoldKeyNoValidation.currentState.showSnackBar(SnackBar(
+                  content: AutoSizeText(
+                    "Se ha envíado un enlace para resetear la contraseña a $_email",
+                    maxLines: 2,
+                  ),
+                ))
+              })
+          .catchError((error) {
+        _scaffoldKeyNoValidation.currentState.showSnackBar(SnackBar(
+          content: AutoSizeText(
+            "Lo sentimos, el email $_email no está registrado en la aplicación.",
+            maxLines: 2,
+          ),
+        ));
+      });
+    }
+  }
+
   Widget _buildForgotPasswordBtn() {
     return Container(
       alignment: Alignment.center,
       child: FlatButton(
-        onPressed: () => print('Botón has olvidado tu contraseña'),
+        onPressed: () => handleForgotPwd(),
         child: Text(
-          '¿Has olvidado tu contraseña?',
+          'Cambiar contraseña',
           style: kLabelStyle,
         ),
       ),
@@ -401,10 +476,15 @@ class _HomeState extends State<Home> {
       alignment: Alignment.center,
       child: FlatButton(
         onPressed: () => createUserInFirestore(),
-        child: Text(
-          '¿No tienes una cuenta? Regístrate',
-          style: kLabelStyle,
-        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+          Text('¿No tienes una cuenta? '),
+          Text(
+            ' ¡Regístrate!',
+            style: kLabelStyle,
+          ),
+        ]),
       ),
     );
   }
@@ -448,8 +528,9 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Scaffold buildNoValiacionScreen() {
+  Scaffold buildNoValidationScreen() {
     return Scaffold(
+      key: _scaffoldKeyNoValidation,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: GestureDetector(
@@ -461,13 +542,12 @@ class _HomeState extends State<Home> {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.grey[200],
-                      Colors.teal[200],
-                    ],
-                  ),
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: <Color>[
+                        Colors.teal[400],
+                        Colors.deepPurple[200]
+                      ]),
                 ),
               ),
               Container(
@@ -490,9 +570,9 @@ class _HomeState extends State<Home> {
                       Text(
                         'Entrenados',
                         style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: 'Open Sans',
-                          fontSize: 30.0,
+                          color: Colors.black87,
+                          fontFamily: 'Manrope',
+                          fontSize: 40.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -530,6 +610,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return isAuth ? buildValiacionScreen() : buildNoValiacionScreen();
+    return isAuth ? buildValidationScreen() : buildNoValidationScreen();
   }
 }

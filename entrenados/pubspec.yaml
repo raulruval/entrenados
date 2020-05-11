@@ -36,6 +36,19 @@ dependencies:
   flutter_svg:
   flutter_duration_picker: ^1.0.4
   auto_size_text: ^2.1.0
+  device_preview: ^0.4.4
+  responsive_builder: ^0.1.5
+  font_awesome_flutter: ^8.8.1
+  chewie: ^0.9.7
+  flutter_video_compress: ^0.3.7+8
+  flutter_speed_dial: ^1.2.5
+  file_picker: ^1.8.0+2
+  flutter_snake_navigationbar: ^0.4.0+1
+  flutter_animated_dialog: ^1.0.3
+  gradient_text: ^1.0.2
+  youtube_player_flutter: ^6.1.0+7
+  http: ^0.12.0+4
+  flutter_pdfview: ^1.0.1
 
   
 dev_dependencies:
@@ -49,16 +62,29 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   fonts:
-    - family: Open Sans
-      fonts:
-        - asset: assets/fonts/OpenSans-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/OpenSans-ExtraBold.ttf
-          weight: 800
-        - asset: assets/fonts/OpenSans-Light.ttf
-          weight: 300
-        - asset: assets/fonts/OpenSans-Regular.ttf
-          weight: 400
+        - family: Open Sans
+          fonts:
+            - asset: assets/fonts/OpenSans-Bold.ttf
+              weight: 700
+            - asset: assets/fonts/OpenSans-ExtraBold.ttf
+              weight: 800
+            - asset: assets/fonts/OpenSans-Light.ttf
+              weight: 300
+            - asset: assets/fonts/OpenSans-Regular.ttf
+              weight: 400
+        - family: Manrope
+          fonts:
+            - asset: assets/fonts/Manrope-Bold.ttf
+              weight: 700
+            - asset: assets/fonts/Manrope-Light.ttf
+              weight: 300
+            - asset: assets/fonts/Manrope-Regular.ttf
+              weight: 400
+        - family: Viga
+          fonts:
+            - asset: assets/fonts/Viga-Regular.ttf
+              weight: 300
+
 
   assets:
     - assets/img/Google.png
@@ -83,3 +109,8 @@ flutter:
     - assets/img/sack.jpg
     - assets/img/yoga.jpg
     - assets/img/empty.svg
+    - assets/img/addPhoto.png
+    - videos/KettlebellTraining.mp4
+    - assets/img/nofavPosts.svg
+    - assets/img/start.svg
+    - assets/img/username.svg

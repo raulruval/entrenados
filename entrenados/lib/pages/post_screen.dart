@@ -1,3 +1,4 @@
+import 'package:entrenados/widgets/header.dart';
 import 'package:flutter/material.dart';
 import 'package:entrenados/pages/home.dart';
 
@@ -8,8 +9,8 @@ class PostScreen extends StatelessWidget {
   final String userId;
   final String postId;
   PostScreen({
-    this.postId,
-    this.userId,
+    @required this.postId,
+    @required this.userId,
   });
 
   @override
@@ -27,18 +28,8 @@ class PostScreen extends StatelessWidget {
         Post post = Post.fromDocument(snapshot.data);
         return Center(
           child: Scaffold(
-            backgroundColor: Colors.teal,
-            appBar: AppBar(
-              backgroundColor: Theme.of(context).primaryColor,
-              elevation: 0.0,
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back),
-                color: Colors.white,
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ),
+            backgroundColor: Colors.grey[300],
+            appBar: (header(context, titleText: '', removeBackButton: false)),
             body: Column(
               children: <Widget>[
                 Expanded(
@@ -50,13 +41,9 @@ class PostScreen extends StatelessWidget {
                         top: Radius.circular(34.0),
                       ),
                     ),
-                    child: Hero(
-                      transitionOnUserGestures: true,
-                      tag: 'card',
-                      child: Material(
-                        type: MaterialType.transparency,
-                        child: post,
-                      ),
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: post,
                     ),
                   ),
                 ),

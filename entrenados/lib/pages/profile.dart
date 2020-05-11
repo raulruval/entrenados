@@ -4,11 +4,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entrenados/models/user.dart';
 import 'package:entrenados/pages/edit_profile.dart';
 import 'package:entrenados/pages/home.dart';
+import 'package:entrenados/pages/storePosts.dart';
 import 'package:entrenados/widgets/post_tile.dart';
 import 'package:entrenados/widgets/progress.dart';
 import 'package:flutter/material.dart';
 import 'package:entrenados/widgets/post.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:responsive_builder/responsive_builder.dart';
 
 class Profile extends StatefulWidget {
   final String profileId;
@@ -26,6 +28,7 @@ class _ProfileState extends State<Profile> {
   List<Post> posts = [];
   int followerCount = 0;
   int followingCount = 0;
+  bool isProfileOwner = false;
 
   @override
   void initState() {
@@ -34,6 +37,7 @@ class _ProfileState extends State<Profile> {
     getFollowers();
     getFollowing();
     checkIfFollowing();
+    isProfileOwner = currentUserId == widget.profileId;
   }
 
   checkIfFollowing() async {
@@ -127,15 +131,19 @@ class _ProfileState extends State<Profile> {
           child: Text(
             text,
             style: TextStyle(
-              color: isFollowing ? Colors.teal[200] : Colors.white,
+              color:
+                  !isFollowing && !isProfileOwner ? Colors.white : Colors.teal,
               fontWeight: FontWeight.bold,
             ),
           ),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: isFollowing ? Colors.white : Colors.teal[800],
+            color: !isFollowing && !isProfileOwner
+                ? Colors.redAccent
+                : Colors.white,
             border: Border.all(
-              color: isFollowing ? Colors.grey : Colors.teal[800],
+              color:
+                  !isFollowing && !isProfileOwner ? Colors.grey : Colors.white,
             ),
             borderRadius: BorderRadius.all(Radius.circular(33)),
           ),
@@ -217,7 +225,6 @@ class _ProfileState extends State<Profile> {
   }
 
   buildProfileButton() {
-    bool isProfileOwner = currentUserId == widget.profileId;
     if (isProfileOwner) {
       return Container(
         child: buildButton(
@@ -238,28 +245,7 @@ class _ProfileState extends State<Profile> {
     }
   }
 
-  buildAppBarProfile() {
-    return AppBar(
-      backgroundColor: Theme.of(context).primaryColor,
-      elevation: 0.0,
-      leading: IconButton(
-        icon: Icon(Icons.arrow_back),
-        color: Colors.white,
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-      ),
-      actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.more_vert),
-          color: Colors.white,
-          onPressed: (() {}),
-        )
-      ],
-    );
-  }
-
-  buildContentProfile() {
+  buildMobileProfile() {
     return FutureBuilder(
         future: usersRef.document(widget.profileId).get(),
         builder: (context, snapshot) {
@@ -267,60 +253,73 @@ class _ProfileState extends State<Profile> {
             return circularProgress();
           }
           User user = User.fromDocument(snapshot.data);
+
           return Column(
             children: <Widget>[
-              Container(
-                height: MediaQuery.of(context).size.height * 0.15,
+              Flexible(
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(left: 25.0, top: 5.0),
-                      child: Hero(
-                        transitionOnUserGestures: true,
-                        tag: "fotoPerfil",
-                        child: CircleAvatar(
-                          radius:   MediaQuery.of(context).orientation == Orientation.portrait ?  45.0 : 25.0,
-                          backgroundImage:
-                              CachedNetworkImageProvider(user.photoUrl),
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          left: 10.0,
+                          right: 10.0,
+                        ),
+                        child: Hero(
+                          transitionOnUserGestures: true,
+                          tag: "fotoPerfil",
+                          child: SizedBox(
+                            height: 90.0,
+                            width: 90.0,
+                            child: CircleAvatar(
+                              radius: 45.0,
+                              backgroundImage:
+                                  CachedNetworkImageProvider(user.photoUrl),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 30.0, top: 18.0),
+                    Flexible(
+                      flex: 2,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Text(
-                            user.displayName,
-                            style: TextStyle(
-                              fontFamily: 'Monserrat',
-                              fontSize: 30.0,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                          Flexible(
+                            child: AutoSizeText(
+                              user.displayName,
+                              style: TextStyle(
+                                fontFamily: 'Monserrat',
+                                fontSize: 30.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                              maxLines: 1,
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 5.0),
+                          Flexible(
                             child: Row(
                               children: <Widget>[
-                                MediaQuery.of(context).orientation == Orientation.portrait ? Icon(
+                                Icon(
                                   Icons.location_on,
                                   color: Colors.white,
-                                ) : SizedBox.shrink(),
-                                 MediaQuery.of(context).orientation == Orientation.portrait ? Text(
+                                ),
+                                AutoSizeText(
                                   user.bio,
                                   style: TextStyle(
-                                      fontFamily: 'Monserrat',
-                                      color: Colors.white,
-                                      wordSpacing: 2,
-                                      letterSpacing: 2,
-                                      fontSize: 17),
-                                ) : SizedBox.shrink() ,
+                                    fontFamily: 'Monserrat',
+                                    color: Colors.white,
+                                    wordSpacing: 2,
+                                    letterSpacing: 2,
+                                  ),
+                                  maxLines: 1,
+                                ),
                               ],
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -328,135 +327,248 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
               // Parte de seguidores
-              Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
+              Flexible(
+                fit: FlexFit.tight,
+                child: Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                          width: MediaQuery.of(context).size.width * 0.28,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 12.0),
+                            child:
+                                buildCountColumn("seguidores", followerCount),
+                          )),
+                      Container(
                         width: MediaQuery.of(context).size.width * 0.28,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 12.0),
-                          child: buildCountColumn("seguidores", followerCount),
-                        )),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.28,
-                      child: buildCountColumn("seguidos", followingCount),
-                    ),
-                    Container(
-                        width: MediaQuery.of(context).size.width * 0.44,
-                        child: Padding(
-                            padding: const EdgeInsets.only(right: 5.0),
-                            child: buildProfileButton())),
-                  ],
+                        child: buildCountColumn("seguidos", followingCount),
+                      ),
+                      Container(
+                          width: MediaQuery.of(context).size.width * 0.44,
+                          child: Padding(
+                              padding: const EdgeInsets.only(right: 5.0),
+                              child: buildProfileButton())),
+                    ],
+                  ),
                 ),
               ),
+              isProfileOwner
+                  ? Padding(
+                      padding: EdgeInsets.only(bottom: 15),
+                      child: buildFavoritePosts())
+                  : SizedBox.shrink(),
               // BuildPosts
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.only(top: 15.0, left: 4.0, right: 4.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(34.0),
-                    ),
-                  ),
-                  child: Hero(
-                    transitionOnUserGestures: true,
-                    tag: 'card',
-                    child: buildCard(),
-                  ),
-                ),
+              Flexible(
+                flex: 3,
+                fit: FlexFit.tight,
+                child: buildCard(),
               )
             ],
           );
         });
   }
 
-  buildCard() {
-    return ListView(
-      shrinkWrap: true,
-      children: <Widget>[
-        Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 25.0,
-                left: 25.0,
-                right: 25.0,
-              ),
-              child: Text(
-                'Publicaciones ($postCount)',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 25,
-                  fontFamily: 'Monserrat',
+  buildFavoritePosts() {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => StorePosts(
+            currentUser: currentUser,
+          ),
+        ),
+      ),
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.1,
+        width: MediaQuery.of(context).size.width * 0.95,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.0),
+            color: Colors.grey.shade100),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 2.0, bottom: 2.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Flexible(
+                child: Icon(
+                  Icons.favorite,
+                  color: Colors.redAccent,
+                  size: 60.0,
                 ),
               ),
+              Flexible(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    AutoSizeText(
+                      'ALMACÉN',
+                      style: TextStyle(
+                          color: Colors.grey.shade500),
+                      maxLines: 1,
+                    ),
+                    SizedBox(height: 4.0),
+                    AutoSizeText(
+                      'Tus Favoritos',
+                      style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0),
+                      maxLines: 1,
+                    )
+                  ],
+                ),
+              ),
+              Flexible(
+                child: Icon(
+                  Icons.arrow_forward_ios,
+                  color: Colors.redAccent,
+                  size: 50.0,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  buildCard() {
+    return ListView(
+      children: <Widget>[
+        Container(
+          margin: EdgeInsets.only(top: 15.0, left: 4.0, right: 4.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(34.0),
             ),
-            Padding(
-              padding: EdgeInsets.all(5.0),
-              child: buildProfilePost(),
-            )
-          ],
+          ),
+          child: Hero(
+            transitionOnUserGestures: true,
+            tag: 'card',
+            child: Column(
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 25.0,
+                        left: 25.0,
+                        right: 25.0,
+                      ),
+                      child: Text(
+                        'Publicaciones ($postCount)',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 25,
+                          fontFamily: 'Monserrat',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    buildProfilePosts(),
+                  ],
+                )
+              ],
+            ),
+          ),
         ),
       ],
     );
   }
 
-  buildProfilePost() {
+  buildProfilePosts() {
     if (isLoading) {
       return circularProgress();
     } else if (posts.isEmpty) {
-      return Container(
+      return Expanded(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SvgPicture.asset(
               'assets/img/empty.svg',
-              height: 260.0,
+              height: MediaQuery.of(context).size.height / 2,
+              width: MediaQuery.of(context).size.width / 1.5,
             ),
-            Padding(
-              padding: EdgeInsets.only(top: 20.0, bottom: 60),
-              child: Text(
-                "No existen publicaciones",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 40.0,
-                    fontWeight: FontWeight.bold),
-              ),
+            AutoSizeText(
+              "No existen publicaciones",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 40.0,
+                  fontWeight: FontWeight.bold),
+              maxLines: 2,
             ),
           ],
         ),
       );
     } else {
+      int postsCount = 0;
       List<GridTile> gridTiles = [];
       posts.forEach((post) {
-        gridTiles.add(GridTile(child: PostTile(post)));
+        gridTiles.add(GridTile(child: PostTile(post, true)));
+        postsCount++;
       });
-      return GridView.count(
-        crossAxisCount: 1,
-        childAspectRatio: 1.6,
-        crossAxisSpacing: 5,
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        children: gridTiles,
-      );
+
+      if (postsCount == 1) {
+        return Expanded(
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.51,
+            child: ListView(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              children: gridTiles,
+            ),
+          ),
+        );
+      } else {
+        return Expanded(
+          child: ListView(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            children: gridTiles,
+          ),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: buildAppBarProfile(),
+        appBar: AppBar(
+          centerTitle: true,
+          title: isProfileOwner
+              ? Text('EXPLORAR TU PERFIL')
+              : Text('EXPLORAR PERFIL'),
+          elevation: 0.0,
+          bottomOpacity: 0.0,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.topRight,
+                    colors: <Color>[Colors.teal[600], Colors.deepPurple[400]])),
+          ),
+        ),
+        backgroundColor: Colors.transparent,
         body: Container(
-          color: Theme.of(context).primaryColor,
-          child: buildContentProfile(),
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.topRight,
+                  colors: <Color>[Colors.teal[600], Colors.deepPurple[400]])),
+          child: OrientationLayoutBuilder(
+            portrait: (context) => buildMobileProfile(),
+            landscape: (context) => buildCard(),
+          ),
         ));
   }
 }

@@ -1,22 +1,20 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:entrenados/widgets/header.dart';
 import 'package:flutter/material.dart';
-import 'package:entrenados/pages/post_screen.dart';
 import 'package:entrenados/pages/profile.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:entrenados/widgets/header.dart';
 import 'package:entrenados/pages/home.dart';
 import 'package:entrenados/widgets/progress.dart';
 
 class Activity extends StatefulWidget {
+  Activity();
+
   @override
   _ActivityState createState() => _ActivityState();
 }
 
 class _ActivityState extends State<Activity> {
-
-  
-
   getActivityFeed() async {
     QuerySnapshot snapshot = await activityFeedRef
         .document(currentUser.id)
@@ -34,7 +32,8 @@ class _ActivityState extends State<Activity> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: header(context, titleText: "Actividad"),
+      backgroundColor: Colors.grey[200],
+      appBar: header(context, titleText: 'Actividad', removeBackButton: true),
       body: Container(
         child: FutureBuilder(
           future: getActivityFeed(),
@@ -88,22 +87,11 @@ class ActivityFeedItem extends StatelessWidget {
       mediaUrl: doc['mediaUrl'],
     );
   }
-  showPost(context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => PostScreen(
-          postId: postId,
-          userId: userId,
-        ),
-      ),
-    );
-  }
 
   configureMediaPreview(context) {
     if (type == 'like' || type == 'comment') {
       mediaPreview = GestureDetector(
-        onTap: () => showPost(context),
+        onTap: () => print('Ir al post'),
         child: Container(
           height: 50.0,
           width: 50.0,

@@ -5,6 +5,7 @@ import 'package:entrenados/pages/activity.dart';
 import 'package:entrenados/pages/home.dart';
 import 'package:entrenados/widgets/progress.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 
 Widget buildHeader(
     ownerId, currentUserId, postId, bool showLocation, String title) {
@@ -16,60 +17,65 @@ Widget buildHeader(
       }
       User user = User.fromDocument(snapshot.data);
       bool isPostOwner = currentUserId == ownerId;
-      return ListTile(
-        leading: GestureDetector(
-          onTap: () => showProfile(context, profileId: ownerId),
-          child: CircleAvatar(
-            backgroundImage: CachedNetworkImageProvider(user.photoUrl),
-            backgroundColor: Colors.grey,
+      return Center(
+        child: ListTile(
+          leading: GestureDetector(
+            onTap: () => showProfile(context, profileId: ownerId),
+            child: CircleAvatar(
+              backgroundImage: CachedNetworkImageProvider(user.photoUrl),
+              backgroundColor: Colors.grey,
+            ),
           ),
-        ),
-        title: title == null
-            ? GestureDetector(
-                onTap: () => showProfile(context, profileId: ownerId),
-                child: Text(
-                  user.username,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
+          title: title == null
+              ? GestureDetector(
+                  onTap: () => showProfile(context, profileId: ownerId),
+                  child: Text(
+                    user.username,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () => showProfile(context, profileId: ownerId),
-                    child: Text(
-                      user.username,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () => showProfile(context, profileId: ownerId),
+                      child: Text(
+                        user.username,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      title,
-                      textAlign: TextAlign.right,
+                    Expanded(
+                      child: Text(
+                        title,
+                        textAlign: TextAlign.right,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-        subtitle: showLocation ? Text("location") : null,
-        trailing: isPostOwner
-            ? IconButton(
-                onPressed: () => handleDeletePost(context, ownerId, postId),
-                icon: Icon(Icons.more_vert),
-              )
-            : Text(''),
+                  ],
+                ),
+          subtitle: showLocation ? Text("location") : null,
+          trailing: isPostOwner
+              ? IconButton(
+                  onPressed: () => handleDeletePost(context, ownerId, postId),
+                  icon: Icon(Icons.more_vert),
+                )
+              : Text(''),
+        ),
       );
     },
   );
 }
 
 handleDeletePost(BuildContext parentContext, ownerId, postId) {
-  return showDialog(
+  return showAnimatedDialog(
+      animationType: DialogTransitionType.size,
+      curve: Curves.fastOutSlowIn,
+      duration: Duration(seconds: 1),
       context: parentContext,
       builder: (context) {
         return SimpleDialog(

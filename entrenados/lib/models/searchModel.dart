@@ -1,23 +1,27 @@
+import 'package:entrenados/models/item.dart';
+
 class SearchModel {
-  List<String> selectedDifficulty = [];
-  List<String> selectedDuration = [];
-    List<String> selectedGroup = [];
+  String selectedDifficulty = "";
+  String selectedDuration = "";
+  List<String> selectedGroup = [];
+  List<Item> selectedMuscles = [];
+  List<Item> selectedEquipment = [];
 
   List<String> difficulty = [
     Difficulty.pricipiante,
     Difficulty.intermedio,
     Difficulty.avanzado,
   ];
-  List<String> duration = [
-    Duration.five,
-    Duration.ten,
-    Duration.twenty,
-    Duration.thirty,
-    Duration.fortyfive,
-    Duration.sixty,
+  List<String> durationWorkout = [
+    DurationWorkout.five,
+    DurationWorkout.ten,
+    DurationWorkout.twenty,
+    DurationWorkout.thirty,
+    DurationWorkout.fortyfive,
+    DurationWorkout.sixty,
   ];
 
-    List<String> group = [
+  List<String> group = [
     Group.resistence,
     Group.mobility,
     Group.strength,
@@ -25,6 +29,36 @@ class SearchModel {
     Group.pilates,
     Group.hiit,
   ];
+
+  List<Item> muscles = [
+    Item("assets/img/arm.jpg", Muscles.biceps, 1, false),
+    Item("assets/img/leg.jpg", Muscles.twins, 2, false),
+    Item("assets/img/espalda.jpg", Muscles.back, 3, false),
+    Item("assets/img/abs.jpg", Muscles.abs, 4, false),
+    Item("assets/img/triceps.jpg", Muscles.triceps, 5, false),
+    Item("assets/img/shoulder.jpg", Muscles.shoulders, 6, false),
+    Item("assets/img/quadriceps.jpg", Muscles.quadriceps, 7, false),
+    Item("assets/img/forearm.jpg", Muscles.forearm, 8, false),
+  ];
+
+  List<Item> equipment = [
+    Item("assets/img/ball.jpg", EquipmentList.ball, 1, false),
+    Item("assets/img/bank.jpg", EquipmentList.bench, 2, false),
+    Item("assets/img/dumbell.jpg", EquipmentList.dumbbells, 3, false),
+    Item("assets/img/rope.jpg", EquipmentList.rope, 4, false),
+    Item("assets/img/sack.jpg", EquipmentList.boxing, 5, false),
+    Item("assets/img/yoga.jpg", EquipmentList.mat, 6, false),
+  ];
+
+  getMuscles(){
+  return this.muscles;
+}
+
+
+  getEquipment(){
+  return this.equipment;
+}
+
 }
 
 class Difficulty {
@@ -33,13 +67,13 @@ class Difficulty {
   static const String avanzado = "Avanzado";
 }
 
-class Duration {
-  static const String five = "<   5 min";
-  static const String ten = "< 10 min";
-  static const String twenty = "< 20 min";
-  static const String thirty = "< 30 min";
-  static const String fortyfive = "< 45 min";
-  static const String sixty = "> 60 min";
+class DurationWorkout {
+  static const String five = "≈   5 min";
+  static const String ten = "≈ 10 min";
+  static const String twenty = "≈ 20 min";
+  static const String thirty = "≈ 30 min";
+  static const String fortyfive = "≈ 45 min";
+  static const String sixty = "≈ 60 min";
 }
 
 class Group {
@@ -50,3 +84,25 @@ class Group {
   static const String pilates = "Pilates";
   static const String hiit = "HIIT";
 }
+
+class Muscles {
+  static const String biceps = "Bíceps";
+  static const String twins = "Gemelos";
+  static const String back = "Espalda";
+  static const String abs = "Abdominales";
+  static const String triceps = "Tríceps";
+  static const String shoulders = "Hombros";
+  static const String quadriceps = "Cuádriceps";
+  static const String forearm = "Antebrazo";
+}
+
+class EquipmentList {
+  static const String ball = "Balón";
+  static const String bench = "Banco";
+  static const String dumbbells = "Mancuernas";
+  static const String rope = "Comba";
+  static const String boxing = "Saco de boxeo";
+  static const String mat = "Estera";
+}
+
+
