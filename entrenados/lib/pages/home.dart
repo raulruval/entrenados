@@ -38,6 +38,7 @@ User currentUser;
 String _email;
 String _pwd;
 bool _log = false;
+bool _newAlert = false;
 
 class Home extends StatefulWidget {
   @override
@@ -140,6 +141,9 @@ class _HomeState extends State<Home> {
       // onLaunch: (Map<String, dynamic> message) async{}, // When the app is off.
       // onResume: (Map<String, dynamic> message) async{}, // App Launch but in the background
       onMessage: (Map<String, dynamic> message) async {
+        setState(() {
+          _newAlert = true;
+        });
         final String recipientId = message['data']['recipient'];
         final String body = message['notification']['body'];
         if (recipientId == user.id) {
@@ -274,10 +278,14 @@ class _HomeState extends State<Home> {
  */
     pageController.animateToPage(pageIndex,
         duration: Duration(milliseconds: 10), curve: Curves.easeIn);
+        if (pageIndex == 3){
+          _newAlert = false;
+        }
   }
 
   Widget buildValidationScreen() {
     return Scaffold(
+      key: _scaffoldKey,
       body: PageView(
         children: <Widget>[
           Timeline(currentUser: currentUser),
@@ -307,7 +315,9 @@ class _HomeState extends State<Home> {
           BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.search)),
           BottomNavigationBarItem(
               icon: FaIcon(FontAwesomeIcons.plus, size: 30)),
-          BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.solidBell)),
+          BottomNavigationBarItem(
+            icon: _newAlert ? FaIcon(FontAwesomeIcons.solidBell) : FaIcon(FontAwesomeIcons.bellSlash) ,
+          ),
           BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.userAlt))
         ],
       ),
@@ -476,9 +486,7 @@ class _HomeState extends State<Home> {
       alignment: Alignment.center,
       child: FlatButton(
         onPressed: () => createUserInFirestore(),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text('¿No tienes una cuenta? '),
           Text(
             ' ¡Regístrate!',

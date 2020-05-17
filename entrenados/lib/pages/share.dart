@@ -158,20 +158,32 @@ class _ShareState extends State<Share>
         context: parentContext,
         builder: (context) {
           return SimpleDialog(
-            title: Text("Subir recurso"),
+            title: Text(
+              " Subir recurso",
+              textAlign: TextAlign.start,
+              style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1),
+            ),
             children: <Widget>[
               withCamera
                   ? SimpleDialogOption(
-                      child: Text("Recurso desde cámara"),
+                      child: Text(
+                        "- Recurso desde cámara",
+                      ),
                       onPressed: () => handleCamara(fileType),
                     )
                   : SizedBox.shrink(),
               SimpleDialogOption(
-                child: Text("Recurso desde documentos"),
+                child: Text(
+                  "- Recurso desde documentos",
+                ),
                 onPressed: () => handleGaleria(fileType),
               ),
               SimpleDialogOption(
-                child: Text("Cancelar"),
+                child: Text(
+                  "Cancelar",
+                  textAlign: TextAlign.end,
+                  style: TextStyle(color: Colors.red),
+                ),
                 onPressed: () => Navigator.pop(context),
               ),
             ],
@@ -496,7 +508,6 @@ class _ShareState extends State<Share>
           child: Form(
             key: _titleKey,
             child: TextFormField(
-            
               controller: titleController,
               decoration: InputDecoration(
                   hintText: "Titulo del entrenamiento *",
@@ -515,7 +526,6 @@ class _ShareState extends State<Share>
           ),
         ),
       ),
-      Divider(),
       ListTile(
         leading: Icon(
           Icons.timer,
@@ -541,7 +551,6 @@ class _ShareState extends State<Share>
           ),
         ),
       ),
-      Divider(),
       ListTile(
         leading: Icon(
           Icons.arrow_upward,
@@ -551,13 +560,14 @@ class _ShareState extends State<Share>
         title: Container(
           width: 250.0,
           child: DropdownButton(
+            
+            underline: SizedBox(),
             value: _currentDifficulty,
             items: _dropDownMenuItemsDifficulty,
             onChanged: changedDropDownItemDifficulty,
           ),
         ),
       ),
-      Divider(),
       ListTile(
         leading: Icon(
           Icons.rowing,
@@ -567,13 +577,13 @@ class _ShareState extends State<Share>
         title: Container(
           width: 250.0,
           child: DropdownButton(
+            underline: SizedBox(),
             value: _currentGroup,
             items: _dropDownMenuItemsGroup,
             onChanged: changedDropDownItemGroup,
           ),
         ),
       ),
-      Divider(),
       ListTile(
         leading: Icon(
           Icons.directions_run,
@@ -587,7 +597,6 @@ class _ShareState extends State<Share>
               onTap: () => _getMusclesInvolved(context)),
         ),
       ),
-      Divider(),
       ListTile(
         leading: Icon(
           Icons.fitness_center,
@@ -600,21 +609,19 @@ class _ShareState extends State<Share>
               child: Text("Equipamiento"), onTap: () => _getEquipment(context)),
         ),
       ),
-      Divider(),
       Padding(
         padding: const EdgeInsets.only(top: 3, right: 15, left: 15),
         child: Container(
           height: MediaQuery.of(context).size.height * 0.2,
-          decoration: BoxDecoration(color: Colors.grey[300],
-          borderRadius: BorderRadius.circular(10)),
+          decoration: BoxDecoration(
+              color: Colors.grey[300], borderRadius: BorderRadius.circular(10)),
           child: Column(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(top: 4.0,left: 8.0),
+                padding: const EdgeInsets.only(top: 4.0, left: 8.0),
                 child: Form(
                   key: _notesKey,
                   child: TextFormField(
-            
                     controller: notesController,
                     onSaved: (val) => notesController.text = val.trim(),
                     decoration: InputDecoration(
@@ -683,11 +690,11 @@ class _ShareState extends State<Share>
           return AlertDialog(
             title: Text(
               'Introduce el enlace al recurso',
+              style: TextStyle(fontFamily: 'Viga'),
             ),
             content: Form(
               key: _formKey,
               child: TextFormField(
-             
                 validator: (String val) {
                   if (!RegExp(
                           r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$")
@@ -719,7 +726,10 @@ class _ShareState extends State<Share>
                 },
               ),
               FlatButton(
-                child: new Text('Cancelar'),
+                child: new Text(
+                  'Cancelar',
+                  style: TextStyle(color: Colors.red),
+                ),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
