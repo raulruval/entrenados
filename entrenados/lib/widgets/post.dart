@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:animator/animator.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entrenados/models/item.dart';
 import 'package:entrenados/models/searchModel.dart';
@@ -373,6 +374,48 @@ class PostState extends State<Post> {
         Row(
           children: <Widget>[
             Icon(
+              Icons.arrow_upward,
+              size: 40.0,
+              color: Colors.teal[900],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(
+                "Dificultad: ",
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Text(
+              "$difficulty",
+              style: TextStyle(fontSize: 16.0),
+            ),
+          ],
+        ),
+           Divider(),
+        Row(
+          children: <Widget>[
+            Icon(
+              Icons.timer,
+              size: 40.0,
+              color: Colors.teal[900],
+            ),
+Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(
+                "Duración: ",
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Text(
+              "$duration minutos",
+              style: TextStyle(fontSize: 16.0),
+            ),
+          ],
+        ),
+        Divider(),
+        Row(
+          children: <Widget>[
+            Icon(
               Icons.rowing,
               size: 40.0,
               color: Colors.teal[900],
@@ -443,89 +486,25 @@ class PostState extends State<Post> {
   }
 
   buildPostSocial() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            Icon(
-              Icons.arrow_upward,
-              size: 40.0,
-              color: Colors.teal[900],
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 14.0),
-              child: Text(
-                "$difficulty",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20.0,
-                ),
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: <Widget>[
-            Icon(
-              Icons.timer,
-              size: 40.0,
-              color: Colors.teal[900],
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 14.0),
-              child: Text(
-                "$duration '",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20.0,
-                ),
-              ),
-            ),
-          ],
-        ),
-        Divider(),
-        Row(children: <Widget>[
-          GestureDetector(
-            onTap: handleLikePost,
-            child: Icon(
-              isLiked ? Icons.favorite : Icons.favorite_border,
-              size: 38.0,
-              color: Colors.pink,
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(left: 20),
-            child: Text(
-              "$likeCount",
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 20.0,
-              ),
-            ),
-          ),
-        ]),
-        Padding(
-          padding: EdgeInsets.only(bottom: 5.0),
-        ),
-        Row(
-          children: <Widget>[
+    return Flexible(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
             GestureDetector(
-              onTap: () => showComments(context,
-                  postId: postId, ownerId: ownerId, photoUrl: photoUrl),
+              onTap: handleLikePost,
               child: Icon(
-                Icons.chat,
+                isLiked ? Icons.favorite : Icons.favorite_border,
                 size: 38.0,
-                color: Colors.blue[900],
+                color: Colors.pink,
               ),
             ),
             Container(
               margin: EdgeInsets.only(left: 20),
               child: Text(
-                commentsCount != null ? "$commentsCount" : "0",
+                "$likeCount",
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
@@ -533,12 +512,39 @@ class PostState extends State<Post> {
                 ),
               ),
             ),
-          ],
-        ),
-        Padding(
-          padding: EdgeInsets.only(bottom: 5.0),
-        ),
-      ],
+          ]),
+          Padding(
+            padding: EdgeInsets.only(bottom: 5.0),
+          ),
+          Row(
+            children: <Widget>[
+              GestureDetector(
+                onTap: () => showComments(context,
+                    postId: postId, ownerId: ownerId, photoUrl: photoUrl),
+                child: Icon(
+                  Icons.chat,
+                  size: 38.0,
+                  color: Colors.blue[900],
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 20),
+                child: Text(
+                  commentsCount != null ? "$commentsCount" : "0",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20.0,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: EdgeInsets.only(bottom: 5.0),
+          ),
+        ],
+      ),
     );
   }
 
@@ -693,7 +699,8 @@ class PostState extends State<Post> {
               ),
               buildNamePost(),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+           
                 children: <Widget>[
                   buildPostImage(),
                   buildPostSocial(),

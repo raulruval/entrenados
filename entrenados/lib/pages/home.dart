@@ -39,6 +39,7 @@ String _email;
 String _pwd;
 bool _log = false;
 bool _newAlert = false;
+int _alertCount = 0;
 
 class Home extends StatefulWidget {
   @override
@@ -142,6 +143,7 @@ class _HomeState extends State<Home> {
       // onResume: (Map<String, dynamic> message) async{}, // App Launch but in the background
       onMessage: (Map<String, dynamic> message) async {
         setState(() {
+          _alertCount++;
           _newAlert = true;
         });
         final String recipientId = message['data']['recipient'];
@@ -278,9 +280,10 @@ class _HomeState extends State<Home> {
  */
     pageController.animateToPage(pageIndex,
         duration: Duration(milliseconds: 10), curve: Curves.easeIn);
-        if (pageIndex == 3){
-          _newAlert = false;
-        }
+    if (pageIndex == 3) {
+      _newAlert = false;
+      _alertCount = 0;
+    }
   }
 
   Widget buildValidationScreen() {
@@ -316,7 +319,29 @@ class _HomeState extends State<Home> {
           BottomNavigationBarItem(
               icon: FaIcon(FontAwesomeIcons.plus, size: 30)),
           BottomNavigationBarItem(
-            icon: _newAlert ? FaIcon(FontAwesomeIcons.solidBell) : FaIcon(FontAwesomeIcons.bellSlash) ,
+            icon: Stack(
+              children: <Widget>[
+                _newAlert
+                    ? Icon(
+                        Icons.notifications,
+                        size: 30,
+                      )
+                    : Icon(
+                        Icons.notifications_none,
+                        size: 30,
+                      ),
+                _newAlert
+                    ? Positioned(
+                        top: -3.0,
+                        right: -1.0,
+                        child: new Text(
+                          "$_alertCount",
+                          style: new TextStyle(
+                              fontSize: 9.0, fontWeight: FontWeight.bold),
+                        ))
+                    : SizedBox.shrink(),
+              ],
+            ),
           ),
           BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.userAlt))
         ],
@@ -486,7 +511,7 @@ class _HomeState extends State<Home> {
       alignment: Alignment.center,
       child: FlatButton(
         onPressed: () => createUserInFirestore(),
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text('¿No tienes una cuenta? '),
           Text(
             ' ¡Regístrate!',
