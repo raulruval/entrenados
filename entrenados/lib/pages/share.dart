@@ -115,7 +115,7 @@ class _ShareState extends State<Share>
         });
         break;
       case ResourceType.document:
-        File file = await FilePicker.getFile();
+        File file = await FilePicker.getFile(type: FileType.custom , allowedExtensions:['pdf'],);
         setState(() {
           this.docFile = file;
         });

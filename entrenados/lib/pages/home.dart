@@ -513,6 +513,7 @@ class _HomeState extends State<Home> {
         onPressed: () => createUserInFirestore(),
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text('¿No tienes una cuenta? '),
+          Padding(padding: EdgeInsets.all(8),),
           Text(
             ' ¡Regístrate!',
             style: kLabelStyle,
@@ -589,7 +590,7 @@ class _HomeState extends State<Home> {
                   physics: AlwaysScrollableScrollPhysics(),
                   padding: EdgeInsets.symmetric(
                     horizontal: 40.0,
-                    vertical: 120.0,
+                    vertical: 80.0,
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -597,8 +598,8 @@ class _HomeState extends State<Home> {
                       SizedBox(
                           child: new Image.asset(
                         'assets/img/run.png',
-                        height: 125.0,
-                        width: 125.0,
+                        height: 200.0,
+                        width: 200.0,
                       )),
                       Text(
                         'Entrenados',

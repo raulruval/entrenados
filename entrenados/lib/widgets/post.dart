@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:animator/animator.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entrenados/models/item.dart';
 import 'package:entrenados/models/searchModel.dart';
@@ -486,25 +485,50 @@ Padding(
   }
 
   buildPostSocial() {
-    return Flexible(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+          GestureDetector(
+            onTap: handleLikePost,
+            child: Icon(
+              isLiked ? Icons.favorite : Icons.favorite_border,
+              size: 38.0,
+              color: Colors.pink,
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 20),
+            child: Text(
+              "$likeCount",
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 20.0,
+              ),
+            ),
+          ),
+        ]),
+        Padding(
+          padding: EdgeInsets.only(bottom: 5.0),
+        ),
+        Row(
+          children: <Widget>[
             GestureDetector(
-              onTap: handleLikePost,
+              onTap: () => showComments(context,
+                  postId: postId, ownerId: ownerId, photoUrl: photoUrl),
               child: Icon(
-                isLiked ? Icons.favorite : Icons.favorite_border,
+                Icons.chat,
                 size: 38.0,
-                color: Colors.pink,
+                color: Colors.blue[900],
               ),
             ),
             Container(
               margin: EdgeInsets.only(left: 20),
               child: Text(
-                "$likeCount",
+                commentsCount != null ? "$commentsCount" : "0",
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
@@ -512,39 +536,12 @@ Padding(
                 ),
               ),
             ),
-          ]),
-          Padding(
-            padding: EdgeInsets.only(bottom: 5.0),
-          ),
-          Row(
-            children: <Widget>[
-              GestureDetector(
-                onTap: () => showComments(context,
-                    postId: postId, ownerId: ownerId, photoUrl: photoUrl),
-                child: Icon(
-                  Icons.chat,
-                  size: 38.0,
-                  color: Colors.blue[900],
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(left: 20),
-                child: Text(
-                  commentsCount != null ? "$commentsCount" : "0",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20.0,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.only(bottom: 5.0),
-          ),
-        ],
-      ),
+          ],
+        ),
+        Padding(
+          padding: EdgeInsets.only(bottom: 5.0),
+        ),
+      ],
     );
   }
 
@@ -686,6 +683,7 @@ Padding(
       children: <Widget>[
         Expanded(
           child: ListView(
+            
             children: <Widget>[
               buildHeader(
                 this.ownerId,
@@ -700,7 +698,6 @@ Padding(
               buildNamePost(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-           
                 children: <Widget>[
                   buildPostImage(),
                   buildPostSocial(),

@@ -49,11 +49,21 @@ dependencies:
   youtube_player_flutter: ^6.1.0+7
   http: ^0.12.0+4
   flutter_pdfview: ^1.0.1
+  flutter_launcher_icons: "^0.7.3"
 
-  
+flutter_icons:
+  image_path: 'assets/img/run.png'
+  android: true
+  ios: true
+    
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  
+    
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -91,7 +101,6 @@ flutter:
     - assets/img/GoogleIcon.png
     - assets/img/run.png
     - assets/img/compartir.svg
-    - assets/img/share.jpg
     - assets/img/abs.jpg
     - assets/img/espalda.jpg
     - assets/img/leg.jpg
@@ -102,15 +111,24 @@ flutter:
     - assets/img/quadriceps.jpg
     - assets/img/triceps.jpg
     - assets/img/chest.jpg
+    - assets/img/dorsales.jpg
+    - assets/img/gluteos.jpg
+    - assets/img/isquios.jpg
     - assets/img/ball.jpg
     - assets/img/bank.jpg
     - assets/img/dumbell.jpg
     - assets/img/rope.jpg
     - assets/img/sack.jpg
     - assets/img/yoga.jpg
+    - assets/img/box.jpg
+    - assets/img/resistenceband.jpg
     - assets/img/empty.svg
     - assets/img/addPhoto.png
     - videos/KettlebellTraining.mp4
     - assets/img/nofavPosts.svg
     - assets/img/start.svg
     - assets/img/username.svg
+    - assets/img/noActivity.svg
+    - assets/img/launchIcon.png
+    
+    

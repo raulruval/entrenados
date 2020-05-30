@@ -35,7 +35,7 @@ class _GridItemState extends State<GridItem> {
               borderRadius: BorderRadius.all(Radius.circular(10)),
               child: Image.asset(
                 widget.item.imgURL,
-                color: Colors.black.withOpacity(isSelected ? 0.9 : 0),
+                color: Colors.black.withOpacity(!isSelected ? 0.9 : 0),
                 colorBlendMode: BlendMode.color,
                 fit: BoxFit.cover,
               ),

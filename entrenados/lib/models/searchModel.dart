@@ -31,13 +31,17 @@ class SearchModel {
   ];
 
   List<Item> muscles = [
-    Item("assets/img/arm.jpg", Muscles.biceps, 1, false),
-    Item("assets/img/leg.jpg", Muscles.twins, 2, false),
+    Item("assets/img/chest.jpg", Muscles.chest, 9, false),
+    Item("assets/img/dorsales.jpg", Muscles.dorsal, 10, false),
+    Item("assets/img/quadriceps.jpg", Muscles.quadriceps, 7, false),
     Item("assets/img/espalda.jpg", Muscles.back, 3, false),
-    Item("assets/img/abs.jpg", Muscles.abs, 4, false),
+    Item("assets/img/arm.jpg", Muscles.biceps, 1, false),
     Item("assets/img/triceps.jpg", Muscles.triceps, 5, false),
     Item("assets/img/shoulder.jpg", Muscles.shoulders, 6, false),
-    Item("assets/img/quadriceps.jpg", Muscles.quadriceps, 7, false),
+    Item("assets/img/isquios.jpg", Muscles.ischia, 12, false),
+    Item("assets/img/gluteos.jpg", Muscles.glutes, 11, false),
+    Item("assets/img/abs.jpg", Muscles.abs, 4, false),
+    Item("assets/img/leg.jpg", Muscles.twins, 2, false),
     Item("assets/img/forearm.jpg", Muscles.forearm, 8, false),
   ];
 
@@ -48,17 +52,18 @@ class SearchModel {
     Item("assets/img/rope.jpg", EquipmentList.rope, 4, false),
     Item("assets/img/sack.jpg", EquipmentList.boxing, 5, false),
     Item("assets/img/yoga.jpg", EquipmentList.mat, 6, false),
+    Item("assets/img/box.jpg", EquipmentList.box, 7, false),
+    Item("assets/img/resistenceband.jpg", EquipmentList.resistenceband, 8,
+        false),
   ];
 
-  getMuscles(){
-  return this.muscles;
-}
+  getMuscles() {
+    return this.muscles;
+  }
 
-
-  getEquipment(){
-  return this.equipment;
-}
-
+  getEquipment() {
+    return this.equipment;
+  }
 }
 
 class Difficulty {
@@ -94,6 +99,10 @@ class Muscles {
   static const String shoulders = "Hombros";
   static const String quadriceps = "Cuádriceps";
   static const String forearm = "Antebrazo";
+  static const String chest = "Pectoral";
+  static const String dorsal = "Dorsal";
+  static const String glutes = "Gluteos";
+  static const String ischia = "Isquiotibiales";
 }
 
 class EquipmentList {
@@ -103,6 +112,6 @@ class EquipmentList {
   static const String rope = "Comba";
   static const String boxing = "Saco de boxeo";
   static const String mat = "Estera";
+  static const String resistenceband = "Bandas elásticas";
+  static const String box = "Caja pliométrica";
 }
-
-
