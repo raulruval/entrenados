@@ -142,10 +142,10 @@ class _ShareState extends State<Share>
         });
         break;
       case ResourceType.document:
-        print("documento");
+      
         break;
       case ResourceType.link:
-        print('link');
+   
         break;
     }
   }

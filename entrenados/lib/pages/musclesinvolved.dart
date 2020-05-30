@@ -19,8 +19,6 @@ class _MusclesinvolvedState extends State<Musclesinvolved> {
   @override
   void initState() {
     super.initState();
-    print("Musculos involucrados guardados en equipamiento");
-    print(widget.selectedMusclesList);
     if (widget.selectedMusclesList.length < 1) {
       itemMusclesList = widget.searchModel.muscles;
     }
@@ -46,7 +44,7 @@ class _MusclesinvolvedState extends State<Musclesinvolved> {
           isSelected: (isSelected) {
             setState(() {
               if (isSelected) {
-                print("En el bucle");
+        
                 if (widget.selectedMusclesList.length > 1) {
                   for (var i = 0; i < widget.selectedMusclesList.length; i++) {
                     if (itemMusclesList[index].isSelected ==
@@ -67,7 +65,7 @@ class _MusclesinvolvedState extends State<Musclesinvolved> {
                 widget.selectedMusclesList.remove(itemMusclesList[index]);
               }
             });
-            print("$index : $isSelected");
+        
           },
           key: Key(
             itemMusclesList[index].index.toString(),

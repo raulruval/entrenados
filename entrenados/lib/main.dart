@@ -3,6 +3,8 @@ import 'package:device_preview/device_preview.dart';
 import 'package:entrenados/pages/home.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'generated/l10n.dart';
 
 void main() {
   runApp(DevicePreview(enabled: kReleaseMode, builder: (context) => MyApp()));
@@ -21,6 +23,13 @@ class MyApp extends StatelessWidget {
       title: 'Entrenados',
       theme: ThemeData(fontFamily: 'Manrope', primarySwatch: Colors.teal),
       home: Home(),
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        S.delegate,
+      ],
+      supportedLocales: S.delegate.supportedLocales,
     );
   }
 }

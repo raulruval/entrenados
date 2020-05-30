@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:entrenados/pages/post_screen.dart';
 import 'package:entrenados/widgets/header.dart';
 import 'package:flutter/material.dart';
 import 'package:entrenados/pages/profile.dart';
@@ -118,11 +119,24 @@ class ActivityFeedItem extends StatelessWidget {
       mediaUrl: doc['mediaUrl'],
     );
   }
+  
+  showPost(context) {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        transitionDuration: Duration(milliseconds: 160),
+        pageBuilder: (_, __, ___) => PostScreen(
+          postId: postId,
+          userId: currentUser.id,
+        ),
+      ),
+    );
+  }
 
   configureMediaPreview(context) {
     if (type == 'like' || type == 'comment') {
       mediaPreview = GestureDetector(
-        onTap: () => print('Ir al post'),
+        onTap: () => showPost(context),
         child: Container(
           height: 50.0,
           width: 50.0,

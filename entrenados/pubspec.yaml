@@ -33,7 +33,7 @@ dependencies:
   firebase_messaging: ^4.0.0+1
   timeago: 2.0.17
   cached_network_image: 2.0.0-rc
-  flutter_svg:
+  flutter_svg: null
   flutter_duration_picker: ^1.0.4
   auto_size_text: ^2.1.0
   device_preview: ^0.4.4
@@ -55,46 +55,41 @@ flutter_icons:
   image_path: 'assets/img/run.png'
   android: true
   ios: true
-    
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  
-    
-
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-
 # The following section is specific to Flutter.
 flutter:
   uses-material-design: true
   fonts:
-        - family: Open Sans
-          fonts:
-            - asset: assets/fonts/OpenSans-Bold.ttf
-              weight: 700
-            - asset: assets/fonts/OpenSans-ExtraBold.ttf
-              weight: 800
-            - asset: assets/fonts/OpenSans-Light.ttf
-              weight: 300
-            - asset: assets/fonts/OpenSans-Regular.ttf
-              weight: 400
-        - family: Manrope
-          fonts:
-            - asset: assets/fonts/Manrope-Bold.ttf
-              weight: 700
-            - asset: assets/fonts/Manrope-Light.ttf
-              weight: 300
-            - asset: assets/fonts/Manrope-Regular.ttf
-              weight: 400
-        - family: Viga
-          fonts:
-            - asset: assets/fonts/Viga-Regular.ttf
-              weight: 300
-
+    - family: Open Sans
+      fonts:
+        - asset: assets/fonts/OpenSans-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/OpenSans-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/OpenSans-Light.ttf
+          weight: 300
+        - asset: assets/fonts/OpenSans-Regular.ttf
+          weight: 400
+    - family: Manrope
+      fonts:
+        - asset: assets/fonts/Manrope-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Manrope-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Manrope-Regular.ttf
+          weight: 400
+    - family: Viga
+      fonts:
+        - asset: assets/fonts/Viga-Regular.ttf
+          weight: 300
 
   assets:
     - assets/img/Google.png
@@ -130,5 +125,7 @@ flutter:
     - assets/img/username.svg
     - assets/img/noActivity.svg
     - assets/img/launchIcon.png
-    
-    
+flutter_intl:
+  enabled: true
+  main_locale: es_ES
+  class_name: S

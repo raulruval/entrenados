@@ -513,7 +513,9 @@ class _HomeState extends State<Home> {
         onPressed: () => createUserInFirestore(),
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text('¿No tienes una cuenta? '),
-          Padding(padding: EdgeInsets.all(8),),
+          Padding(
+            padding: EdgeInsets.all(8),
+          ),
           Text(
             ' ¡Regístrate!',
             style: kLabelStyle,
@@ -536,14 +538,12 @@ class _HomeState extends State<Home> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Container(
-            width: MediaQuery.of(context).size.width * 0.1,
             child: new Image.asset(
               'assets/img/GoogleIcon.png',
               height: 35.0,
             ),
           ),
           Container(
-            width: MediaQuery.of(context).size.width * 0.5,
             child: Padding(
               padding: EdgeInsets.only(left: 3.0),
               child: AutoSizeText(

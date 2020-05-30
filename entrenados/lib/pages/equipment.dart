@@ -20,8 +20,6 @@ class _EquipmentState extends State<Equipment> {
   @override
   void initState() {
     super.initState();
-    print("Equipamiento guardado en equipamiento");
-    print(widget.selectedEquipmentList);
     if (widget.selectedEquipmentList.length < 1) {
       itemEquipmentList = widget.searchModel.equipment;
     }
@@ -73,7 +71,6 @@ class _EquipmentState extends State<Equipment> {
                     .remove(itemEquipmentList[index]);
               }
             });
-            print("$index : $isSelected");
           },
           key: Key(
             itemEquipmentList[index].index.toString(),
