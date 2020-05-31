@@ -126,6 +126,6 @@ flutter:
     - assets/img/noActivity.svg
     - assets/img/launchIcon.png
 flutter_intl:
-  enabled: true
+  enabled: false
   main_locale: es_ES
   class_name: S

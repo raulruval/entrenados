@@ -62,7 +62,7 @@ class _HomeState extends State<Home> {
     googleSignIn.onCurrentUserChanged.listen((cuenta) {
       handleSignInGoogle(cuenta);
     }, onError: (err) {
-      print('Error al iniciar session: $err');
+      // print('Error al iniciar session: $err');
     });
     // Reautenticar usuario cuando vuelve a reabrir la app y es de Google
 
@@ -70,7 +70,7 @@ class _HomeState extends State<Home> {
         .signInSilently(suppressErrors: false)
         .then((cuenta) {})
         .catchError((err) {
-      print('Error al iniciar session automáticamente: $err');
+      // print('Error al iniciar session automáticamente: $err');
     });
 
     // Reautenticar usuario cuando vuelve a reabrir la app y ya está autenticado con el correo
@@ -132,7 +132,7 @@ class _HomeState extends State<Home> {
     }
 
     _firebaseMessaging.getToken().then((token) {
-      print("Firebase Messaging token: $token\n");
+      // print("Firebase Messaging token: $token\n");
       usersRef
           .document(user.id)
           .updateData({"androidNotificationToken": token});
@@ -195,19 +195,19 @@ class _HomeState extends State<Home> {
       await usersRef
           .document(fUser.uid)
           .get()
-          .then((doc) => currentUser = User.fromDocument(doc))
-          .catchError((onError) => print(onError));
+          .then((doc) => currentUser = User.fromDocument(doc));
+          // .catchError((onError) => print(onError));
     } else {
       await usersRef
           .document(uidAuto)
           .get()
-          .then((doc) => currentUser = User.fromDocument(doc))
-          .catchError((onError) => print(onError));
+          .then((doc) => currentUser = User.fromDocument(doc));
+          // .catchError((onError) => print(onError));
     }
     try {
       userVerify = fUser.isEmailVerified;
     } catch (ex) {
-      print(ex);
+      // print(ex);
     }
     if (currentUser != null && userVerify) {
       if (currentUser.username == "") {

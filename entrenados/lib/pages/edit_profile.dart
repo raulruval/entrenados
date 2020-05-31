@@ -134,7 +134,7 @@ class _EditProfileState extends State<EditProfile> {
             .child(fileName)
             .getDownloadURL();
       } catch (err) {
-        print("Error subiendo la foto");
+        // print("Error subiendo la foto");
       }
     }
 

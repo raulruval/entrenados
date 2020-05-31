@@ -9,9 +9,9 @@ import 'generated/l10n.dart';
 void main() {
   runApp(DevicePreview(enabled: kReleaseMode, builder: (context) => MyApp()));
   Firestore.instance.settings(timestampsInSnapshotsEnabled: true).then((_) {
-    print("Timestamps funcionando");
+    // print("Timestamps funcionando");
   }, onError: (_) {
-    print("Timestamps no funcionan");
+    // print("Timestamps no funcionan");
   });
 }
 

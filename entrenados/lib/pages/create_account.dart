@@ -92,7 +92,7 @@ class _CreateAccountState extends State<CreateAccount> {
           Navigator.pop(context, user);
         });
       }).catchError((onError) {
-        print(onError);
+        // print(onError);
         showAlertRegister(
             'El email introducido ya existe, por favor, intentelo de nuevo con uno distinto.');
       });
