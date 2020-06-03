@@ -601,14 +601,16 @@ class _HomeState extends State<Home> {
                         height: 200.0,
                         width: 200.0,
                       )),
-                      Text(
+                      AutoSizeText(
                         'Entrenados',
                         style: TextStyle(
                           color: Colors.black87,
                           fontFamily: 'Manrope',
                           fontSize: 40.0,
                           fontWeight: FontWeight.bold,
+                        
                         ),
+                        maxLines: 1,
                       ),
                       Padding(
                         padding: EdgeInsets.only(bottom: 20),

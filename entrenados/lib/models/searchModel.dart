@@ -101,7 +101,7 @@ class Muscles {
   static const String forearm = "Antebrazo";
   static const String chest = "Pectoral";
   static const String dorsal = "Dorsal";
-  static const String glutes = "Gluteos";
+  static const String glutes = "Glúteos";
   static const String ischia = "Isquiotibiales";
 }
 

@@ -156,7 +156,7 @@ class ActivityFeedItem extends StatelessWidget {
     }
 
     if (type == 'like') {
-      activityItemText = "dió me gusta a tu publicación";
+      activityItemText = "dio me gusta a tu publicación";
     } else if (type == 'follow') {
       activityItemText = "te está siguiendo";
     } else if (type == 'comment') {

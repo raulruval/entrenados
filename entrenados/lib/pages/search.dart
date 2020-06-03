@@ -70,7 +70,6 @@ class _SearchState extends State<Search>
         ),
       ),
       child: TextFormField(
-     
         controller: searchController,
         decoration: InputDecoration(
           hintText: "Buscar un instructor...",
@@ -372,6 +371,8 @@ class _SearchState extends State<Search>
                       ],
                     ),
                   ),
+                  Padding(padding: EdgeInsets.only(top: 30.0)),
+                  Text(""),
                 ],
               ),
             ),
@@ -494,7 +495,7 @@ class _SearchState extends State<Search>
                   ),
                   child: Align(
                     alignment: Alignment.center,
-                    child: Text("Entrenamientos"),
+                    child: AutoSizeText("Entrenamientos", maxLines: 1,),
                   ),
                 ),
               ),
@@ -509,7 +510,7 @@ class _SearchState extends State<Search>
                   ),
                   child: Align(
                     alignment: Alignment.center,
-                    child: Text("Entrenadores"),
+                    child: AutoSizeText("Instructores",maxLines: 1,),
                   ),
                 ),
               ),
@@ -584,7 +585,7 @@ class UserResult extends StatelessWidget {
                 ),
               ),
               subtitle: Text(
-                "@"+ user.username,
+                "@" + user.username,
                 style: TextStyle(
                   color: Colors.deepPurple,
                 ),

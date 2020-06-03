@@ -128,13 +128,14 @@ class _ProfileState extends State<Profile> {
         child: Container(
           width: 150.0,
           height: 50.0,
-          child: Text(
+          child: AutoSizeText(
             text,
             style: TextStyle(
               color:
                   !isFollowing && !isProfileOwner ? Colors.white : Colors.teal,
               fontWeight: FontWeight.bold,
             ),
+            maxLines: 1,
           ),
           alignment: Alignment.center,
           decoration: BoxDecoration(

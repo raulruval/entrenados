@@ -7,7 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/l10n.dart';
 
 void main() {
-  runApp(DevicePreview(enabled: kReleaseMode, builder: (context) => MyApp()));
+  runApp(DevicePreview(enabled: !kReleaseMode, builder: (context) => MyApp()));
   Firestore.instance.settings(timestampsInSnapshotsEnabled: true).then((_) {
     // print("Timestamps funcionando");
   }, onError: (_) {
