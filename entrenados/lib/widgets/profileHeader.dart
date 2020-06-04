@@ -79,12 +79,13 @@ handleDeletePost(BuildContext parentContext, ownerId, postId) {
       context: parentContext,
       builder: (context) {
         return SimpleDialog(
-          title: Text("¿Seguro que quieres eliminar este post?"),
+          title: Text("¿Seguro que quieres eliminar esta publicación?"),
           children: <Widget>[
             SimpleDialogOption(
               onPressed: () {
                 Navigator.pop(context);
                 deletePost(ownerId, postId);
+                Navigator.pop(context);
               },
               child: Text(
                 'Borrar',

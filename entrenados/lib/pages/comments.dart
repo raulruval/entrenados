@@ -38,7 +38,7 @@ class CommentsState extends State<Comments> {
     this.postMediaUrl,
   });
 
- 
+
 
   buildComments() {
       return StreamBuilder(
@@ -155,7 +155,7 @@ class Comment extends StatelessWidget {
           leading: CircleAvatar(
             backgroundImage: CachedNetworkImageProvider(avatarUrl),
           ),
-          subtitle: Text(timeago.format(timestamp.toDate())),
+          subtitle: Text(username + " " + timeago.format(timestamp.toDate(),locale: 'es')),
         ),
         Divider(),
       ],

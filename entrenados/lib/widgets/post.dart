@@ -695,7 +695,7 @@ Padding(
               Divider(
                 height: 0.8,
               ),
-              buildNamePost(),
+              title != "" ? buildNamePost() : SizedBox.shrink(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -732,7 +732,7 @@ Padding(
                       ],
                     )
                   : SizedBox.shrink(),
-              Padding(
+              notes!= "" ? Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
                   child: buildNotes(),
@@ -746,7 +746,7 @@ Padding(
                           ]),
                       borderRadius: BorderRadius.circular(10)),
                 ),
-              ),
+              ) : SizedBox.shrink(),
             ],
           ),
         ),

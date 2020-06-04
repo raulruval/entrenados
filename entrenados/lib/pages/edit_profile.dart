@@ -169,10 +169,11 @@ class _EditProfileState extends State<EditProfile> {
     await FirebaseAuth.instance
         .signOut()
         .catchError((onError) => print(onError));
+
     googleSignIn.signOut();
 
     Navigator.push(
-        this.context, MaterialPageRoute(builder: (context) => Home()));
+        this.context, MaterialPageRoute(builder: (context) => Home(true)));
   }
 
   Future getImage() async {

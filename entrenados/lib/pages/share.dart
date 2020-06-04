@@ -115,7 +115,10 @@ class _ShareState extends State<Share>
         });
         break;
       case ResourceType.document:
-        File file = await FilePicker.getFile(type: FileType.custom , allowedExtensions:['pdf'],);
+        File file = await FilePicker.getFile(
+          type: FileType.custom,
+          allowedExtensions: ['pdf'],
+        );
         setState(() {
           this.docFile = file;
         });
@@ -142,10 +145,8 @@ class _ShareState extends State<Share>
         });
         break;
       case ResourceType.document:
-      
         break;
       case ResourceType.link:
-   
         break;
     }
   }
@@ -313,6 +314,13 @@ class _ShareState extends State<Share>
       Scaffold.of(context).showSnackBar(new SnackBar(
           content: new AutoSizeText(
         "Debes incluir una foto para subir tu entrenamiento.",
+        maxLines: 1,
+      )));
+    }
+    if (titleController.text == "") {
+      Scaffold.of(context).showSnackBar(new SnackBar(
+          content: new AutoSizeText(
+        "Debes incluir un titulo para subir tu entrenamiento.",
         maxLines: 1,
       )));
     } else {
@@ -560,7 +568,6 @@ class _ShareState extends State<Share>
         title: Container(
           width: 250.0,
           child: DropdownButton(
-            
             underline: SizedBox(),
             value: _currentDifficulty,
             items: _dropDownMenuItemsDifficulty,
@@ -617,24 +624,19 @@ class _ShareState extends State<Share>
               color: Colors.grey[300], borderRadius: BorderRadius.circular(10)),
           child: Column(
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(top: 4.0, left: 8.0),
-                child: Form(
-                  key: _notesKey,
-                  child: TextFormField(
-                    controller: notesController,
-                    onSaved: (val) => notesController.text = val.trim(),
-                    decoration: InputDecoration(
-                        hintText: "Descripción del entrenamiento *",
-                        border: InputBorder.none),
-                    maxLines: 5,
-                    validator: (String notes) {
-                      if (notes.isEmpty) {
-                        return "Debes escribir alguna descripción del ejercicio.";
-                      } else {
-                        return null;
-                      }
-                    },
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 4.0, left: 8.0),
+                  child: Form(
+                    key: _notesKey,
+                    child: TextFormField(
+                      controller: notesController,
+                      onSaved: (val) => notesController.text = val.trim(),
+                      decoration: InputDecoration(
+                          hintText: "Descripción del entrenamiento",
+                          border: InputBorder.none),
+                      maxLines: 5,
+                    ),
                   ),
                 ),
               ),

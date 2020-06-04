@@ -299,10 +299,16 @@ class _SearchState extends State<Search>
                     padding: const EdgeInsets.only(top: 24.0),
                     child: Row(
                       children: <Widget>[
-                        Text("Músculos involucrados",
-                            style: TextStyle(fontWeight: FontWeight.w800)),
-                        Text("  ( Selección múltiple )",
-                            style: TextStyle(fontWeight: FontWeight.w100)),
+                        Flexible(
+                          child: AutoSizeText("Músculos involucrados",
+                              maxLines: 1,
+                              style: TextStyle(fontWeight: FontWeight.w800)),
+                        ),
+                        Flexible(
+                          child: AutoSizeText("  ( Selección múltiple )",
+                              maxLines: 1,
+                              style: TextStyle(fontWeight: FontWeight.w100)),
+                        ),
                       ],
                     ),
                   ),
@@ -337,8 +343,11 @@ class _SearchState extends State<Search>
                     padding: const EdgeInsets.only(top: 24.0),
                     child: Row(
                       children: <Widget>[
-                        Text("Material necesario",
-                            style: TextStyle(fontWeight: FontWeight.w800)),
+                        Flexible(
+                          child: AutoSizeText("Material necesario",
+                              maxLines: 1,
+                              style: TextStyle(fontWeight: FontWeight.w800)),
+                        ),
                         Text("  ( Selección múltiple )",
                             style: TextStyle(fontWeight: FontWeight.w100)),
                       ],
@@ -495,7 +504,10 @@ class _SearchState extends State<Search>
                   ),
                   child: Align(
                     alignment: Alignment.center,
-                    child: AutoSizeText("Entrenamientos", maxLines: 1,),
+                    child: AutoSizeText(
+                      "Entrenamientos",
+                      maxLines: 1,
+                    ),
                   ),
                 ),
               ),
@@ -510,7 +522,10 @@ class _SearchState extends State<Search>
                   ),
                   child: Align(
                     alignment: Alignment.center,
-                    child: AutoSizeText("Instructores",maxLines: 1,),
+                    child: AutoSizeText(
+                      "Instructores",
+                      maxLines: 1,
+                    ),
                   ),
                 ),
               ),
