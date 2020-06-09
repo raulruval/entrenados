@@ -5,13 +5,12 @@ import 'package:entrenados/widgets/griditem.dart';
 
 class Musclesinvolved extends StatefulWidget {
   final List<Item> selectedMusclesList;
-    final SearchModel searchModel;
+  final SearchModel searchModel;
 
-  Musclesinvolved(this.selectedMusclesList,this.searchModel);
+  Musclesinvolved(this.selectedMusclesList, this.searchModel);
 
   @override
   _MusclesinvolvedState createState() => _MusclesinvolvedState();
-
 }
 
 class _MusclesinvolvedState extends State<Musclesinvolved> {
@@ -21,58 +20,60 @@ class _MusclesinvolvedState extends State<Musclesinvolved> {
     super.initState();
     if (widget.selectedMusclesList.length < 1) {
       itemMusclesList = widget.searchModel.muscles;
+      for (var i = 0; i < itemMusclesList.length; i++)
+        itemMusclesList[i].isSelected = false;
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: getAppBar(),
-        body: GridView.builder(
-      itemCount: itemMusclesList.length,
-      padding: const EdgeInsets.all(30),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 1,
-        crossAxisSpacing: 1,
-        mainAxisSpacing: 20,
-      ),
-      itemBuilder: (context, index) {
-        return GridItem(
-          item: itemMusclesList[index],
-          isSelected: (isSelected) {
-            setState(() {
-              if (isSelected) {
-        
-                if (widget.selectedMusclesList.length > 1) {
-                  for (var i = 0; i < widget.selectedMusclesList.length; i++) {
-                    if (itemMusclesList[index].isSelected ==
-                        widget.selectedMusclesList[i].isSelected) {
+      appBar: getAppBar(),
+      body: GridView.builder(
+          itemCount: itemMusclesList.length,
+          padding: const EdgeInsets.all(30),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 1,
+            crossAxisSpacing: 1,
+            mainAxisSpacing: 20,
+          ),
+          itemBuilder: (context, index) {
+            return GridItem(
+              item: itemMusclesList[index],
+              isSelected: (isSelected) {
+                setState(() {
+                  if (isSelected) {
+                    if (widget.selectedMusclesList.length > 1) {
+                      for (var i = 0;
+                          i < widget.selectedMusclesList.length;
+                          i++) {
+                        if (itemMusclesList[index].isSelected ==
+                            widget.selectedMusclesList[i].isSelected) {
+                        } else {
+                          itemMusclesList[index].isSelected = true;
+                          widget.selectedMusclesList
+                              .add(itemMusclesList[index]);
+                        }
+                      }
                     } else {
                       itemMusclesList[index].isSelected = true;
                       widget.selectedMusclesList.add(itemMusclesList[index]);
                     }
+                    for (var i = 0; i < widget.selectedMusclesList.length; i++)
+                      widget.selectedMusclesList[i].isSelected = true;
+                  } else {
+                    itemMusclesList[index].isSelected = false;
+                    widget.selectedMusclesList.remove(itemMusclesList[index]);
                   }
-                } else {
-                  itemMusclesList[index].isSelected = true;
-                  widget.selectedMusclesList.add(itemMusclesList[index]);
-                }
-                for (var i = 0; i < widget.selectedMusclesList.length; i++)
-                  widget.selectedMusclesList[i].isSelected = true;
-              } else {
-                itemMusclesList[index].isSelected = false;
-                widget.selectedMusclesList.remove(itemMusclesList[index]);
-              }
-            });
-        
-          },
-          key: Key(
-            itemMusclesList[index].index.toString(),
-          ),
-        );
-      }),
-      );
+                });
+              },
+              key: Key(
+                itemMusclesList[index].index.toString(),
+              ),
+            );
+          }),
+    );
   }
 
   getAppBar() {

@@ -65,11 +65,14 @@ class _TimelineState extends State<Timeline> {
           User user = User.fromDocument(doc);
           final bool isAuthUser = currentUser.id == user.id;
           final bool isFollowingUser = followingList.contains(user.id);
+          final bool notVerified = user.id == "";
           if (isAuthUser) {
             return;
           } else if (isFollowingUser) {
             return;
-          } else {
+          }else if (notVerified){
+            return;
+          }else {
             UserResult userResult = UserResult(user);
             userResults.add(userResult);
           }

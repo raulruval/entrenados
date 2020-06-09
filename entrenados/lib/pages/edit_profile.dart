@@ -172,8 +172,10 @@ class _EditProfileState extends State<EditProfile> {
 
     googleSignIn.signOut();
 
-    Navigator.push(
-        this.context, MaterialPageRoute(builder: (context) => Home(true)));
+    Navigator.pushAndRemoveUntil(
+        this.context,
+        MaterialPageRoute(builder: (context) => Home(true)),
+        ModalRoute.withName('/'));
   }
 
   Future getImage() async {

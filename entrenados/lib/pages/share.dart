@@ -351,14 +351,14 @@ class _ShareState extends State<Share>
           selectedEquipment: selectedEquipment,
           mainResource: mainResource,
           notes: notesController.text);
-      titleController.clear();
-      notesController.clear();
-      selectedEquipment = "";
-      selectedMuscles = "";
-      selectedEquipmentList = [];
-      selectedMusclesList = [];
-      mainResource = "";
       setState(() {
+        selectedMusclesList.clear();
+        selectedEquipmentList.clear();
+        titleController.clear();
+        notesController.clear();
+        selectedEquipment = "";
+        selectedMuscles = "";
+        mainResource = "";
         documentUrl = null;
         videoFile = null;
         imgFile = null;
@@ -644,6 +644,9 @@ class _ShareState extends State<Share>
           ),
         ),
       ),
+      Padding(
+        padding: EdgeInsets.only(top: 20.0),
+      )
     ];
     return Scaffold(
       backgroundColor: Colors.grey[200],

@@ -95,7 +95,7 @@ class _SearchState extends State<Search>
           Padding(
             padding: const EdgeInsets.only(top: 75.0),
             child: AutoSizeText(
-              "Encontrar usuarios",
+              "Encontrar instructores",
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.teal,
@@ -122,7 +122,7 @@ class _SearchState extends State<Search>
           snapshot.data.documents.forEach((doc) {
             User user = User.fromDocument(doc);
             UserResult searchResult = UserResult(user);
-            searchResults.add(searchResult);
+            if (user.username != "") searchResults.add(searchResult);
           });
           return Expanded(
             child: ListView(

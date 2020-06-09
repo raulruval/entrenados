@@ -361,7 +361,7 @@ class _ProfileState extends State<Profile> {
                   : SizedBox.shrink(),
               // BuildPosts
               Flexible(
-                flex: 3,
+                flex: isProfileOwner ? 3 : 4,
                 fit: FlexFit.tight,
                 child: buildCard(),
               )

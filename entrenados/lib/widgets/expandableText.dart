@@ -31,6 +31,7 @@ class _ExpandableTextState extends State<ExpandableText>
                   : new BoxConstraints(maxHeight: 50.0),
               child: new Text(
                 widget.text,
+                textAlign: TextAlign.justify,
                 softWrap: true,
                 overflow: TextOverflow.fade,
               ))),

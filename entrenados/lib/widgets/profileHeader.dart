@@ -53,7 +53,7 @@ Widget buildHeader(
                     Expanded(
                       child: Text(
                         title,
-                        textAlign: TextAlign.right,
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ],

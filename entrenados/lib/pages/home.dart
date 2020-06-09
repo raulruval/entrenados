@@ -219,6 +219,7 @@ class _HomeState extends State<Home> {
 
   handleSignIn(bool auto, String uidAuto) async {
     FirebaseUser fUser;
+
     bool userVerify = false;
     if (!auto) {
       fUser = await signIpUser(false);
