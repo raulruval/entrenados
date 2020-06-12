@@ -220,7 +220,7 @@ class _ShareState extends State<Share>
             MaterialPageRoute(
                 builder: (context) =>
                     Equipment(selectedEquipmentList, widget.searchModel))) ??
-        selectedEquipment;
+        selectedEquipmentList;
 
     selectedEquipment = buildItemSequence(selectedEquipmentList);
   }
@@ -310,14 +310,14 @@ class _ShareState extends State<Share>
       return;
     }
 
-    if (imgFile == null) {
-      Scaffold.of(context).showSnackBar(new SnackBar(
-          content: new AutoSizeText(
-        "Debes incluir una foto para subir tu entrenamiento.",
-        maxLines: 1,
-      )));
-    }
-    if (titleController.text == "") {
+    if (titleController.text == "" || imgFile == null) {
+      if (imgFile == null) {
+        Scaffold.of(context).showSnackBar(new SnackBar(
+            content: new AutoSizeText(
+          "Debes incluir una foto para subir tu entrenamiento.",
+          maxLines: 1,
+        )));
+      }
       Scaffold.of(context).showSnackBar(new SnackBar(
           content: new AutoSizeText(
         "Debes incluir un titulo para subir tu entrenamiento.",
@@ -517,6 +517,7 @@ class _ShareState extends State<Share>
             key: _titleKey,
             child: TextFormField(
               controller: titleController,
+              maxLength: 35,
               decoration: InputDecoration(
                   hintText: "Titulo del entrenamiento *",
                   border: InputBorder.none),
@@ -524,7 +525,7 @@ class _ShareState extends State<Share>
               validator: (String title) {
                 if (title.isEmpty || title.trim().length < 3) {
                   return "Titulo demasiado corto";
-                } else if (title.trim().length > 25) {
+                } else if (title.trim().length > 35) {
                   return "Titulo demasido largo";
                 } else {
                   return null;
@@ -543,8 +544,10 @@ class _ShareState extends State<Share>
         title: Container(
           width: 250.0,
           child: InkWell(
-            child: Text("Duración"),
+
+            child: Text("> Duración"),
             onTap: () async {
+              FocusScope.of(context).unfocus();
               resultingDuration = await showDurationPicker(
                     context: context,
                     initialTime: resultingDuration ?? new Duration(minutes: 30),
@@ -600,8 +603,11 @@ class _ShareState extends State<Share>
         title: Container(
           width: 250.0,
           child: InkWell(
-              child: Text("Músculos principales involucrados"),
-              onTap: () => _getMusclesInvolved(context)),
+              child: Text("> Músculos principales involucrados"),
+              onTap: () => {
+                    FocusScope.of(context).unfocus(),
+                    _getMusclesInvolved(context)
+                  }),
         ),
       ),
       ListTile(
@@ -613,7 +619,10 @@ class _ShareState extends State<Share>
         title: Container(
           width: 250.0,
           child: InkWell(
-              child: Text("Equipamiento"), onTap: () => _getEquipment(context)),
+              child: Text("> Equipamiento "), onTap: () =>{
+                    FocusScope.of(context).unfocus(),
+                    _getEquipment(context)
+                  }),
         ),
       ),
       Padding(
@@ -645,7 +654,7 @@ class _ShareState extends State<Share>
         ),
       ),
       Padding(
-        padding: EdgeInsets.only(top: 20.0),
+        padding: EdgeInsets.only(top: 100.0),
       )
     ];
     return Scaffold(
@@ -772,10 +781,17 @@ class _ShareState extends State<Share>
 
   @override
   Widget build(BuildContext context) {
+    var _blankFocusNode = new FocusNode();
     super.build(context);
-    return OrientationLayoutBuilder(
-      portrait: (context) => buildFormularioCompartir(),
-      landscape: (context) => buildFormularioCompartir(),
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        FocusScope.of(context).requestFocus(_blankFocusNode);
+      },
+      child: OrientationLayoutBuilder(
+        portrait: (context) => buildFormularioCompartir(),
+        landscape: (context) => buildFormularioCompartir(),
+      ),
     );
   }
 }

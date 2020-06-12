@@ -55,6 +55,10 @@ class SearchModel {
     Item("assets/img/box.jpg", EquipmentList.box, 7, false),
     Item("assets/img/resistenceband.jpg", EquipmentList.resistenceband, 8,
         false),
+    Item("assets/img/kettlebell.jpg", EquipmentList.kettlebell, 9, false),
+    Item("assets/img/runmachine.jpg", EquipmentList.runningmachine, 10, false),
+    Item("assets/img/ballpilates.jpg", EquipmentList.pilatesball, 11, false),
+    Item("assets/img/barrapesas.jpg", EquipmentList.barbell, 12, false),
   ];
 
   getMuscles() {
@@ -114,4 +118,8 @@ class EquipmentList {
   static const String mat = "Estera";
   static const String resistenceband = "Bandas elásticas";
   static const String box = "Caja pliométrica";
+  static const String kettlebell = "kettlebell";
+  static const String runningmachine = "Máquina de correr";
+  static const String pilatesball = "Pelota de pilates";
+  static const String barbell = "Barra de pesas";
 }

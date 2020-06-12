@@ -123,6 +123,7 @@ class _HomeState extends State<Home> {
   onPageChanged(int pageIndex) {
     setState(() {
       this.pageIndex = pageIndex;
+      FocusScope.of(context).unfocus();
     });
   }
 
@@ -159,16 +160,32 @@ class _HomeState extends State<Home> {
     });
 
     _firebaseMessaging.configure(
-      // onLaunch: (Map<String, dynamic> message) async{}, // When the app is off.
-      // onResume: (Map<String, dynamic> message) async{}, // App Launch but in the background
+      onLaunch: (Map<String, dynamic> message) async {
+        final String recipientId = message['data']['recipient'];
+        if (recipientId == user.id) {
+          setState(() {
+            _alertCount++;
+            _newAlert = true;
+          });
+        }
+      }, // When the app is off.
+      onResume: (Map<String, dynamic> message) async {
+        final String recipientId = message['data']['recipient'];
+        if (recipientId == user.id) {
+          setState(() {
+            _alertCount++;
+            _newAlert = true;
+          });
+        }
+      }, // App Launch but in the background
       onMessage: (Map<String, dynamic> message) async {
-        setState(() {
-          _alertCount++;
-          _newAlert = true;
-        });
         final String recipientId = message['data']['recipient'];
         final String body = message['notification']['body'];
         if (recipientId == user.id) {
+          setState(() {
+            _alertCount++;
+            _newAlert = true;
+          });
           SnackBar snackBar = SnackBar(
             content: Text(
               body,

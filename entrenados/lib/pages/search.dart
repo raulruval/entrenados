@@ -121,8 +121,10 @@ class _SearchState extends State<Search>
           List<UserResult> searchResults = [];
           snapshot.data.documents.forEach((doc) {
             User user = User.fromDocument(doc);
-            UserResult searchResult = UserResult(user);
-            if (user.username != "") searchResults.add(searchResult);
+            if (user.username != null && user.username != "" && user.displayName != null && user.displayName!= "") {
+              UserResult searchResult = UserResult(user);
+              searchResults.add(searchResult);
+            }
           });
           return Expanded(
             child: ListView(
@@ -477,6 +479,7 @@ class _SearchState extends State<Search>
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           elevation: 0,
+          automaticallyImplyLeading: false,
           backgroundColor: Colors.grey[200],
           title: Text(
             "Buscar",
@@ -600,7 +603,7 @@ class UserResult extends StatelessWidget {
                 ),
               ),
               subtitle: Text(
-                "@" + user.username,
+                " @" + user.username,
                 style: TextStyle(
                   color: Colors.deepPurple,
                 ),

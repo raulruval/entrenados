@@ -72,7 +72,7 @@ class _TimelineState extends State<Timeline> {
             return;
           }else if (notVerified){
             return;
-          }else {
+          }else if (user.username != null && user.username != "" && user.displayName != null && user.displayName!= ""){
             UserResult userResult = UserResult(user);
             userResults.add(userResult);
           }

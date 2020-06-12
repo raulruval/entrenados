@@ -2,7 +2,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entrenados/models/user.dart';
 import 'package:entrenados/pages/home.dart';
-import 'package:entrenados/widgets/header.dart';
 import 'package:entrenados/widgets/post.dart';
 import 'package:entrenados/widgets/post_tile.dart';
 import 'package:entrenados/widgets/progress.dart';
@@ -83,10 +82,34 @@ class _StorePostsState extends State<StorePosts> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: header(context,
-          isAppTitle: false,
-          removeBackButton: false,
-          titleText: "Publicaciones guardadas"),
+      appBar: AppBar(
+        
+        elevation: 0.0,
+        bottomOpacity: 0.0,
+        automaticallyImplyLeading: true,
+        leading: IconButton(icon: Icon(Icons.arrow_back),
+        onPressed: () => {
+          Navigator.pop(context,false),
+        },),
+        title: Text(
+              "Publicaciones guardadas",
+              style: TextStyle(
+                color: Colors.white,
+                fontFamily: "Default",
+                fontSize: 22.0,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ) ??
+            'Defecto',
+        centerTitle: true,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.topRight,
+                  colors: <Color>[Colors.teal[600], Colors.deepPurple[400]])),
+        ),
+      ),
       body: buildStoredPosts(),
     );
   }

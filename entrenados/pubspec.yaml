@@ -124,6 +124,11 @@ flutter:
     - assets/img/username.svg
     - assets/img/noActivity.svg
     - assets/img/launchIcon.png
+    - assets/img/ballpilates.jpg
+    - assets/img/barrapesas.jpg
+    - assets/img/runmachine.jpg
+    - assets/img/kettlebell.jpg
+    
 flutter_intl:
   enabled: false
   main_locale: es_ES

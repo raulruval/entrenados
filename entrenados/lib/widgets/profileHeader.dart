@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:entrenados/models/user.dart';
@@ -42,18 +43,22 @@ Widget buildHeader(
                   children: <Widget>[
                     GestureDetector(
                       onTap: () => showProfile(context, profileId: ownerId),
-                      child: Text(
-                        user.username,
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
+                      child: Padding(
+                        padding: EdgeInsets.only(right: 15),
+                        child: Text(
+                          user.username,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
                     Expanded(
-                      child: Text(
+                      child: AutoSizeText(
                         title,
-                        textAlign: TextAlign.center,
+                        textAlign: TextAlign.left,
+                        maxLines: 1,
                       ),
                     ),
                   ],
