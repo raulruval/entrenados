@@ -59,7 +59,7 @@ exports.onDeleteFollower = functions.firestore
 
     const querySnapshot = await timelinePostsRef.get();
     querySnapshot.forEach(doc => {
-       if (doc.exists) {
+      if (doc.exists) {
         doc.ref.delete();
       }
     });
@@ -190,7 +190,7 @@ exports.onCreateActivityFeedItem = functions.firestore
         case "comment":
           body = `${activityFeedItem.username} comentó: ${
             activityFeedItem.commentData
-          }`;
+            }`;
           break;
         case "like":
           body = `A ${activityFeedItem.username} le gustó tu publicación`;
@@ -206,7 +206,10 @@ exports.onCreateActivityFeedItem = functions.firestore
       const message = {
         notification: { body },
         token: androidNotificationToken,
-        data: { recipient: userId }
+        data: {
+          recipient: userId,
+          click_action: 'FLUTTER_NOTIFICATION_CLICK'
+        }
       };
 
       // 5) Send message with admin.messaging()

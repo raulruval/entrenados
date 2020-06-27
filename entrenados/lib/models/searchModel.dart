@@ -118,7 +118,7 @@ class EquipmentList {
   static const String mat = "Estera";
   static const String resistenceband = "Bandas elásticas";
   static const String box = "Caja pliométrica";
-  static const String kettlebell = "kettlebell";
+  static const String kettlebell = "Pesa rusa";
   static const String runningmachine = "Máquina de correr";
   static const String pilatesball = "Pelota de pilates";
   static const String barbell = "Barra de pesas";

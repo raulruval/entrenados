@@ -175,7 +175,7 @@ class _ShareState extends State<Share>
                   : SizedBox.shrink(),
               SimpleDialogOption(
                 child: Text(
-                  "- Recurso desde documentos",
+                  "- Recurso desde galería",
                 ),
                 onPressed: () => handleGaleria(fileType),
               ),
@@ -545,7 +545,7 @@ class _ShareState extends State<Share>
           width: 250.0,
           child: InkWell(
 
-            child: Text("> Duración"),
+            child: Text("> Duración [" + resultingDuration.inMinutes.toString() + "']"),
             onTap: () async {
               FocusScope.of(context).unfocus();
               resultingDuration = await showDurationPicker(
@@ -553,7 +553,9 @@ class _ShareState extends State<Share>
                     initialTime: resultingDuration ?? new Duration(minutes: 30),
                   ) ??
                   resultingDuration;
-
+              setState(() {
+                
+              });
               int durationInMinutes = resultingDuration.inMinutes;
               Scaffold.of(context).showSnackBar(new SnackBar(
                   content: new Text(
@@ -603,7 +605,7 @@ class _ShareState extends State<Share>
         title: Container(
           width: 250.0,
           child: InkWell(
-              child: Text("> Músculos principales involucrados"),
+              child: Text("> Músculos principales involucrados [ " + selectedMusclesList.length.toString() + " ]" ),
               onTap: () => {
                     FocusScope.of(context).unfocus(),
                     _getMusclesInvolved(context)
@@ -619,7 +621,8 @@ class _ShareState extends State<Share>
         title: Container(
           width: 250.0,
           child: InkWell(
-              child: Text("> Equipamiento "), onTap: () =>{
+              child: Text("> Equipamiento [ " + selectedEquipmentList.length.toString() + " ]" ), 
+              onTap: () =>{
                     FocusScope.of(context).unfocus(),
                     _getEquipment(context)
                   }),

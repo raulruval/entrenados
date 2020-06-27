@@ -54,59 +54,51 @@ class _TimelineState extends State<Timeline> {
 
   buildUserToFollow() {
     return StreamBuilder(
-      stream:
-          usersRef.orderBy('timestamp', descending: true).limit(30).snapshots(),
+      stream: usersRef.orderBy('timestamp', descending: true).snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return circularProgress();
+        } else {
+          return Expanded(
+            child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: snapshot.data.documents.length,
+                itemBuilder: (context, index) {
+                  DocumentSnapshot usersRec = snapshot.data.documents[index];
+                  UserResult userResult;
+                  return Column(
+                    children: <Widget>[
+                      FutureBuilder(
+                          future: postsRef
+                              .document(usersRec.data['id'])
+                              .collection('userPosts')
+                              .getDocuments(),
+                          builder: (BuildContext context, AsyncSnapshot snaps) {
+                            if (snaps.hasData) {
+                              if (snaps.data != null) {
+                                if (snaps.data.documents.length > 0) {
+                                  User user = User.fromDocument(usersRec);
+                                  final bool isFollowingUser =
+                                      followingList.contains(user.id);
+                                  final bool notVerified = user.id == "";
+                                   if (user.username != null &&
+                                      user.username != "" &&
+                                      user.displayName != null &&
+                                      user.displayName != "" && !isFollowingUser && !notVerified && !isFollowingUser) {
+                                    userResult = UserResult(user);
+                                  }
+                                }
+                              }
+                            }
+                            return Container(
+                              child: userResult,
+                            );
+                          }),
+                    ],
+                  );
+                }),
+          );
         }
-        List<UserResult> userResults = [];
-        snapshot.data.documents.forEach((doc) {
-          User user = User.fromDocument(doc);
-          final bool isAuthUser = currentUser.id == user.id;
-          final bool isFollowingUser = followingList.contains(user.id);
-          final bool notVerified = user.id == "";
-          if (isAuthUser) {
-            return;
-          } else if (isFollowingUser) {
-            return;
-          }else if (notVerified){
-            return;
-          }else if (user.username != null && user.username != "" && user.displayName != null && user.displayName!= ""){
-            UserResult userResult = UserResult(user);
-            userResults.add(userResult);
-          }
-        });
-        return Container(
-          color: Theme.of(context).accentColor.withOpacity(0.1),
-          child: Column(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.all(12.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Icon(
-                      Icons.person_add,
-                      color: Theme.of(context).primaryColor,
-                      size: 30.0,
-                    ),
-                    SizedBox(
-                      width: 8.0,
-                    ),
-                    Text(
-                      "Recomendaciones",
-                      style: TextStyle(
-                          color: Theme.of(context).primaryColor,
-                          fontSize: 30.0),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(child: ListView(children: userResults)),
-            ],
-          ),
-        );
       },
     );
   }
@@ -115,11 +107,39 @@ class _TimelineState extends State<Timeline> {
     if (posts == null) {
       return circularProgress();
     } else if (posts.isEmpty) {
-      return buildUserToFollow();
+      return Container(
+        color: Theme.of(context).accentColor.withOpacity(0.1),
+        child: Column(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.all(12.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    Icons.person_add,
+                    color: Theme.of(context).primaryColor,
+                    size: 30.0,
+                  ),
+                  SizedBox(
+                    width: 8.0,
+                  ),
+                  Text(
+                    "Recomendaciones",
+                    style: TextStyle(
+                        color: Theme.of(context).primaryColor, fontSize: 30.0),
+                  ),
+                ],
+              ),
+            ),
+            buildUserToFollow(),
+          ],
+        ),
+      );
     } else {
       List<GridTile> gridTiles = [];
       posts.forEach((post) {
-        gridTiles.add(GridTile(child: PostTile(post,true)));
+        gridTiles.add(GridTile(child: PostTile(post, true)));
       });
       return ListView(
         children: gridTiles,
@@ -130,11 +150,11 @@ class _TimelineState extends State<Timeline> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    backgroundColor: Colors.grey[300],
-    appBar: header(context, isAppTitle: true, removeBackButton: true),
-    body: RefreshIndicator(
-      onRefresh: () => getTimeline(),
-      child: buildTimeLine(),
-    ));
+        backgroundColor: Colors.grey[300],
+        appBar: header(context, isAppTitle: true, removeBackButton: true),
+        body: RefreshIndicator(
+          onRefresh: () => getTimeline(),
+          child: buildTimeLine(),
+        ));
   }
 }
