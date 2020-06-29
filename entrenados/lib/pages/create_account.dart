@@ -84,7 +84,7 @@ class _CreateAccountState extends State<CreateAccount> {
           .then((_) {
         SnackBar snackbar = SnackBar(
           content: Text(
-              "¡Bienvenido! Por favor, verifique su cuenta de correo electrónico para poder iniciar sesión."),
+              "¡Bienvenid@! Por favor, verifique su cuenta de correo electrónico para poder iniciar sesión."),
         );
         _scaffoldKey.currentState.showSnackBar(snackbar);
         Timer(Duration(seconds: 3), () {

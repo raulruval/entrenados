@@ -317,6 +317,13 @@ class _HomeState extends State<Home> {
         "bio": "",
         "timestamp": timestamp,
       });
+      // Hacer un usuario su propio seguidor para que le aparezcan en el timeline sus publicaciones.
+      await followersRef
+          .document(user.id)
+          .collection('userFollowers')
+          .document(user.id)
+          .setData({});
+
       doc = await usersRef.document(user.id).get();
     }
     currentUser = User.fromDocument(doc);

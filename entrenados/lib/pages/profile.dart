@@ -339,7 +339,7 @@ class _ProfileState extends State<Profile> {
                           child: Padding(
                             padding: const EdgeInsets.only(left: 12.0),
                             child:
-                                buildCountColumn("seguidores", followerCount),
+                                buildCountColumn("seguidores", followerCount > 0 ? followerCount : 0),
                           )),
                       Container(
                         width: MediaQuery.of(context).size.width * 0.28,

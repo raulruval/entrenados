@@ -60,7 +60,7 @@ class _CreateGoogleAccountState extends State<CreateGoogleAccount> {
             'El usuario introducido ya existe, por favor, intentelo de nuevo con uno distinto.');
       } else {
         SnackBar snackbar = SnackBar(
-          content: Text("¡Bienvenido $username!"),
+          content: Text("¡Bienvenid@ $username!"),
         );
         _scaffoldKey.currentState.showSnackBar(snackbar);
         Timer(Duration(seconds: 2), () {
