@@ -77,12 +77,12 @@ class Difficulty {
 }
 
 class DurationWorkout {
-  static const String five = "<   5 min";
-  static const String ten = "< 10 min";
-  static const String twenty = "< 20 min";
-  static const String thirty = "< 30 min";
-  static const String fortyfive = "< 45 min";
-  static const String sixty = "< 60 min";
+  static const String five = "<=   5 min";
+  static const String ten = "<= 10 min";
+  static const String twenty = "<= 20 min";
+  static const String thirty = "<= 30 min";
+  static const String fortyfive = "<= 45 min";
+  static const String sixty = "<= 60 min";
 }
 
 class Group {

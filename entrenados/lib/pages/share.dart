@@ -175,7 +175,7 @@ class _ShareState extends State<Share>
                   : SizedBox.shrink(),
               SimpleDialogOption(
                 child: Text(
-                  "- Recurso desde galería",
+                  "- Recurso desde explorador de archivos",
                 ),
                 onPressed: () => handleGaleria(fileType),
               ),
@@ -545,7 +545,7 @@ class _ShareState extends State<Share>
           width: 250.0,
           child: InkWell(
 
-            child: Text("> Duración [" + resultingDuration.inMinutes.toString() + "']"),
+            child: AutoSizeText("> Duración [" + resultingDuration.inMinutes.toString() + "']",maxLines: 1,),
             onTap: () async {
               FocusScope.of(context).unfocus();
               resultingDuration = await showDurationPicker(
@@ -605,7 +605,7 @@ class _ShareState extends State<Share>
         title: Container(
           width: 250.0,
           child: InkWell(
-              child: Text("> Músculos principales involucrados [ " + selectedMusclesList.length.toString() + " ]" ),
+              child: AutoSizeText("> Músculos principales involucrados [ " + selectedMusclesList.length.toString() + " ]",maxLines: 1, ),
               onTap: () => {
                     FocusScope.of(context).unfocus(),
                     _getMusclesInvolved(context)
@@ -621,7 +621,7 @@ class _ShareState extends State<Share>
         title: Container(
           width: 250.0,
           child: InkWell(
-              child: Text("> Equipamiento [ " + selectedEquipmentList.length.toString() + " ]" ), 
+              child: AutoSizeText("> Equipamiento [ " + selectedEquipmentList.length.toString() + " ]", maxLines: 1,), 
               onTap: () =>{
                     FocusScope.of(context).unfocus(),
                     _getEquipment(context)
