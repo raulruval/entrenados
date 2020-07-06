@@ -1,4 +1,4 @@
-# entrenados
+# Entrenados
 Existen 2 métodos de instalación.
 
 1. Descargar el archivo Entrenados.apk del repositorio y proceder a su instalación siguiendo los pasos del Anexo B: Manual de usuario.
