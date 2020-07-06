@@ -7,10 +7,10 @@ Widget cachedNetworkImage(
     imageUrl: mediaUrl,
     fit: BoxFit.cover,
     height: !inTile
-        ? MediaQuery.of(context).size.width * 0.5
+        ? MediaQuery.of(context).size.width * 0.35
         : MediaQuery.of(context).size.width * 0.28,
     width: !inTile
-        ? MediaQuery.of(context).size.width * 0.5
+        ? MediaQuery.of(context).size.width * 0.35
         : MediaQuery.of(context).size.width * 0.3,
     placeholder: (context, url) => Padding(
       child: CircularProgressIndicator(),

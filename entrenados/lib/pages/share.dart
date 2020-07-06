@@ -115,7 +115,10 @@ class _ShareState extends State<Share>
         });
         break;
       case ResourceType.document:
-        File file = await FilePicker.getFile();
+        File file = await FilePicker.getFile(
+          type: FileType.custom,
+          allowedExtensions: ['pdf'],
+        );
         setState(() {
           this.docFile = file;
         });
@@ -142,10 +145,8 @@ class _ShareState extends State<Share>
         });
         break;
       case ResourceType.document:
-        print("documento");
         break;
       case ResourceType.link:
-        print('link');
         break;
     }
   }
@@ -158,20 +159,32 @@ class _ShareState extends State<Share>
         context: parentContext,
         builder: (context) {
           return SimpleDialog(
-            title: Text("Subir recurso"),
+            title: Text(
+              " Subir recurso",
+              textAlign: TextAlign.start,
+              style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1),
+            ),
             children: <Widget>[
               withCamera
                   ? SimpleDialogOption(
-                      child: Text("Recurso desde cámara"),
+                      child: Text(
+                        "- Recurso desde cámara",
+                      ),
                       onPressed: () => handleCamara(fileType),
                     )
                   : SizedBox.shrink(),
               SimpleDialogOption(
-                child: Text("Recurso desde documentos"),
+                child: Text(
+                  "- Recurso desde explorador de archivos",
+                ),
                 onPressed: () => handleGaleria(fileType),
               ),
               SimpleDialogOption(
-                child: Text("Cancelar"),
+                child: Text(
+                  "Cancelar",
+                  textAlign: TextAlign.end,
+                  style: TextStyle(color: Colors.red),
+                ),
                 onPressed: () => Navigator.pop(context),
               ),
             ],
@@ -207,7 +220,7 @@ class _ShareState extends State<Share>
             MaterialPageRoute(
                 builder: (context) =>
                     Equipment(selectedEquipmentList, widget.searchModel))) ??
-        selectedEquipment;
+        selectedEquipmentList;
 
     selectedEquipment = buildItemSequence(selectedEquipmentList);
   }
@@ -297,10 +310,17 @@ class _ShareState extends State<Share>
       return;
     }
 
-    if (imgFile == null) {
+    if (titleController.text == "" || imgFile == null) {
+      if (imgFile == null) {
+        Scaffold.of(context).showSnackBar(new SnackBar(
+            content: new AutoSizeText(
+          "Debes incluir una foto para subir tu entrenamiento.",
+          maxLines: 1,
+        )));
+      }
       Scaffold.of(context).showSnackBar(new SnackBar(
           content: new AutoSizeText(
-        "Debes incluir una foto para subir tu entrenamiento.",
+        "Debes incluir un titulo para subir tu entrenamiento.",
         maxLines: 1,
       )));
     } else {
@@ -331,14 +351,14 @@ class _ShareState extends State<Share>
           selectedEquipment: selectedEquipment,
           mainResource: mainResource,
           notes: notesController.text);
-      titleController.clear();
-      notesController.clear();
-      selectedEquipment = "";
-      selectedMuscles = "";
-      selectedEquipmentList = [];
-      selectedMusclesList = [];
-      mainResource = "";
       setState(() {
+        selectedMusclesList.clear();
+        selectedEquipmentList.clear();
+        titleController.clear();
+        notesController.clear();
+        selectedEquipment = "";
+        selectedMuscles = "";
+        mainResource = "";
         documentUrl = null;
         videoFile = null;
         imgFile = null;
@@ -496,8 +516,8 @@ class _ShareState extends State<Share>
           child: Form(
             key: _titleKey,
             child: TextFormField(
-            
               controller: titleController,
+              maxLength: 35,
               decoration: InputDecoration(
                   hintText: "Titulo del entrenamiento *",
                   border: InputBorder.none),
@@ -505,7 +525,7 @@ class _ShareState extends State<Share>
               validator: (String title) {
                 if (title.isEmpty || title.trim().length < 3) {
                   return "Titulo demasiado corto";
-                } else if (title.trim().length > 25) {
+                } else if (title.trim().length > 35) {
                   return "Titulo demasido largo";
                 } else {
                   return null;
@@ -515,7 +535,6 @@ class _ShareState extends State<Share>
           ),
         ),
       ),
-      Divider(),
       ListTile(
         leading: Icon(
           Icons.timer,
@@ -525,14 +544,18 @@ class _ShareState extends State<Share>
         title: Container(
           width: 250.0,
           child: InkWell(
-            child: Text("Duración"),
+
+            child: AutoSizeText("> Duración [" + resultingDuration.inMinutes.toString() + "']",maxLines: 1,),
             onTap: () async {
+              FocusScope.of(context).unfocus();
               resultingDuration = await showDurationPicker(
                     context: context,
                     initialTime: resultingDuration ?? new Duration(minutes: 30),
                   ) ??
                   resultingDuration;
-
+              setState(() {
+                
+              });
               int durationInMinutes = resultingDuration.inMinutes;
               Scaffold.of(context).showSnackBar(new SnackBar(
                   content: new Text(
@@ -541,7 +564,6 @@ class _ShareState extends State<Share>
           ),
         ),
       ),
-      Divider(),
       ListTile(
         leading: Icon(
           Icons.arrow_upward,
@@ -551,13 +573,13 @@ class _ShareState extends State<Share>
         title: Container(
           width: 250.0,
           child: DropdownButton(
+            underline: SizedBox(),
             value: _currentDifficulty,
             items: _dropDownMenuItemsDifficulty,
             onChanged: changedDropDownItemDifficulty,
           ),
         ),
       ),
-      Divider(),
       ListTile(
         leading: Icon(
           Icons.rowing,
@@ -567,13 +589,13 @@ class _ShareState extends State<Share>
         title: Container(
           width: 250.0,
           child: DropdownButton(
+            underline: SizedBox(),
             value: _currentGroup,
             items: _dropDownMenuItemsGroup,
             onChanged: changedDropDownItemGroup,
           ),
         ),
       ),
-      Divider(),
       ListTile(
         leading: Icon(
           Icons.directions_run,
@@ -583,11 +605,13 @@ class _ShareState extends State<Share>
         title: Container(
           width: 250.0,
           child: InkWell(
-              child: Text("Músculos principales involucrados"),
-              onTap: () => _getMusclesInvolved(context)),
+              child: AutoSizeText("> Músculos principales involucrados [ " + selectedMusclesList.length.toString() + " ]",maxLines: 1, ),
+              onTap: () => {
+                    FocusScope.of(context).unfocus(),
+                    _getMusclesInvolved(context)
+                  }),
         ),
       ),
-      Divider(),
       ListTile(
         leading: Icon(
           Icons.fitness_center,
@@ -597,37 +621,34 @@ class _ShareState extends State<Share>
         title: Container(
           width: 250.0,
           child: InkWell(
-              child: Text("Equipamiento"), onTap: () => _getEquipment(context)),
+              child: AutoSizeText("> Equipamiento [ " + selectedEquipmentList.length.toString() + " ]", maxLines: 1,), 
+              onTap: () =>{
+                    FocusScope.of(context).unfocus(),
+                    _getEquipment(context)
+                  }),
         ),
       ),
-      Divider(),
       Padding(
         padding: const EdgeInsets.only(top: 3, right: 15, left: 15),
         child: Container(
           height: MediaQuery.of(context).size.height * 0.2,
-          decoration: BoxDecoration(color: Colors.grey[300],
-          borderRadius: BorderRadius.circular(10)),
+          decoration: BoxDecoration(
+              color: Colors.grey[300], borderRadius: BorderRadius.circular(10)),
           child: Column(
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(top: 4.0,left: 8.0),
-                child: Form(
-                  key: _notesKey,
-                  child: TextFormField(
-            
-                    controller: notesController,
-                    onSaved: (val) => notesController.text = val.trim(),
-                    decoration: InputDecoration(
-                        hintText: "Descripción del entrenamiento *",
-                        border: InputBorder.none),
-                    maxLines: 5,
-                    validator: (String notes) {
-                      if (notes.isEmpty) {
-                        return "Debes escribir alguna descripción del ejercicio.";
-                      } else {
-                        return null;
-                      }
-                    },
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 4.0, left: 8.0),
+                  child: Form(
+                    key: _notesKey,
+                    child: TextFormField(
+                      controller: notesController,
+                      onSaved: (val) => notesController.text = val.trim(),
+                      decoration: InputDecoration(
+                          hintText: "Descripción del entrenamiento",
+                          border: InputBorder.none),
+                      maxLines: 5,
+                    ),
                   ),
                 ),
               ),
@@ -635,6 +656,9 @@ class _ShareState extends State<Share>
           ),
         ),
       ),
+      Padding(
+        padding: EdgeInsets.only(top: 100.0),
+      )
     ];
     return Scaffold(
       backgroundColor: Colors.grey[200],
@@ -683,11 +707,11 @@ class _ShareState extends State<Share>
           return AlertDialog(
             title: Text(
               'Introduce el enlace al recurso',
+              style: TextStyle(fontFamily: 'Viga'),
             ),
             content: Form(
               key: _formKey,
               child: TextFormField(
-             
                 validator: (String val) {
                   if (!RegExp(
                           r"^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$")
@@ -719,7 +743,10 @@ class _ShareState extends State<Share>
                 },
               ),
               FlatButton(
-                child: new Text('Cancelar'),
+                child: new Text(
+                  'Cancelar',
+                  style: TextStyle(color: Colors.red),
+                ),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -757,10 +784,17 @@ class _ShareState extends State<Share>
 
   @override
   Widget build(BuildContext context) {
+    var _blankFocusNode = new FocusNode();
     super.build(context);
-    return OrientationLayoutBuilder(
-      portrait: (context) => buildFormularioCompartir(),
-      landscape: (context) => buildFormularioCompartir(),
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        FocusScope.of(context).requestFocus(_blankFocusNode);
+      },
+      child: OrientationLayoutBuilder(
+        portrait: (context) => buildFormularioCompartir(),
+        landscape: (context) => buildFormularioCompartir(),
+      ),
     );
   }
 }

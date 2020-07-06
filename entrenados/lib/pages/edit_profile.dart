@@ -134,7 +134,7 @@ class _EditProfileState extends State<EditProfile> {
             .child(fileName)
             .getDownloadURL();
       } catch (err) {
-        print("Error subiendo la foto");
+        // print("Error subiendo la foto");
       }
     }
 
@@ -169,10 +169,13 @@ class _EditProfileState extends State<EditProfile> {
     await FirebaseAuth.instance
         .signOut()
         .catchError((onError) => print(onError));
+
     googleSignIn.signOut();
 
-    Navigator.push(
-        this.context, MaterialPageRoute(builder: (context) => Home()));
+    Navigator.pushAndRemoveUntil(
+        this.context,
+        MaterialPageRoute(builder: (context) => Home(true)),
+        ModalRoute.withName('/'));
   }
 
   Future getImage() async {

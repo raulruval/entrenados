@@ -31,8 +31,7 @@ class _CreateAccountState extends State<CreateAccount> {
     usersRef.document(user.id).setData({
       "id": user.id,
       "username": "",
-      "photoUrl":
-          "https://firebasestorage.googleapis.com/v0/b/entrenados-4621b.appspot.com/o/male.svg?alt=media&token=08fb96de-51d5-4e3a-b04a-aa52e6d21f9d",
+      "photoUrl":"https://firebasestorage.googleapis.com/v0/b/entrenados-4621b.appspot.com/o/Vector.png?alt=media&token=50fd133f-10da-49b8-a980-8f0aeb8198f9",
       "email": user.email,
       "displayName": user.displayName,
       "bio": "",
@@ -85,14 +84,14 @@ class _CreateAccountState extends State<CreateAccount> {
           .then((_) {
         SnackBar snackbar = SnackBar(
           content: Text(
-              "¡Bienvenido! Por favor, verifique su cuenta de correo electrónico para poder iniciar sesión."),
+              "¡Bienvenid@! Por favor, verifique su cuenta de correo electrónico para poder iniciar sesión."),
         );
         _scaffoldKey.currentState.showSnackBar(snackbar);
         Timer(Duration(seconds: 3), () {
           Navigator.pop(context, user);
         });
       }).catchError((onError) {
-        print(onError);
+        // print(onError);
         showAlertRegister(
             'El email introducido ya existe, por favor, intentelo de nuevo con uno distinto.');
       });

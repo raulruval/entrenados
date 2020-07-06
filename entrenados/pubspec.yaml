@@ -24,16 +24,14 @@ dependencies:
   firebase_storage: ^2.1.0+1
   firebase_auth: ^0.8.3
   google_sign_in: ^4.0.1+1
-  geolocator: 5.0.1
   uuid: ^2.0.0
   image: ^2.0.7
   animator: ^1.0.0+1
-  cupertino_icons: ^0.1.2
   path_provider: ^0.5.0+1
   firebase_messaging: ^4.0.0+1
   timeago: 2.0.17
   cached_network_image: 2.0.0-rc
-  flutter_svg:
+  flutter_svg: null
   flutter_duration_picker: ^1.0.4
   auto_size_text: ^2.1.0
   device_preview: ^0.4.4
@@ -49,49 +47,54 @@ dependencies:
   youtube_player_flutter: ^6.1.0+7
   http: ^0.12.0+4
   flutter_pdfview: ^1.0.1
+  flutter_launcher_icons: "^0.7.3"
+  shared_preferences: ^0.5.7+3
 
-  
+flutter_icons:
+  image_path: 'assets/img/run.png'
+  android: true
+  ios: true
+
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  flutter_localizations:
     sdk: flutter
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-
 # The following section is specific to Flutter.
 flutter:
   uses-material-design: true
   fonts:
-        - family: Open Sans
-          fonts:
-            - asset: assets/fonts/OpenSans-Bold.ttf
-              weight: 700
-            - asset: assets/fonts/OpenSans-ExtraBold.ttf
-              weight: 800
-            - asset: assets/fonts/OpenSans-Light.ttf
-              weight: 300
-            - asset: assets/fonts/OpenSans-Regular.ttf
-              weight: 400
-        - family: Manrope
-          fonts:
-            - asset: assets/fonts/Manrope-Bold.ttf
-              weight: 700
-            - asset: assets/fonts/Manrope-Light.ttf
-              weight: 300
-            - asset: assets/fonts/Manrope-Regular.ttf
-              weight: 400
-        - family: Viga
-          fonts:
-            - asset: assets/fonts/Viga-Regular.ttf
-              weight: 300
-
+    - family: Open Sans
+      fonts:
+        - asset: assets/fonts/OpenSans-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/OpenSans-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/OpenSans-Light.ttf
+          weight: 300
+        - asset: assets/fonts/OpenSans-Regular.ttf
+          weight: 400
+    - family: Manrope
+      fonts:
+        - asset: assets/fonts/Manrope-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Manrope-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Manrope-Regular.ttf
+          weight: 400
+    - family: Viga
+      fonts:
+        - asset: assets/fonts/Viga-Regular.ttf
+          weight: 300
 
   assets:
     - assets/img/Google.png
     - assets/img/GoogleIcon.png
     - assets/img/run.png
     - assets/img/compartir.svg
-    - assets/img/share.jpg
     - assets/img/abs.jpg
     - assets/img/espalda.jpg
     - assets/img/leg.jpg
@@ -102,15 +105,31 @@ flutter:
     - assets/img/quadriceps.jpg
     - assets/img/triceps.jpg
     - assets/img/chest.jpg
+    - assets/img/dorsales.jpg
+    - assets/img/gluteos.jpg
+    - assets/img/isquios.jpg
     - assets/img/ball.jpg
     - assets/img/bank.jpg
     - assets/img/dumbell.jpg
     - assets/img/rope.jpg
     - assets/img/sack.jpg
     - assets/img/yoga.jpg
+    - assets/img/box.jpg
+    - assets/img/resistenceband.jpg
     - assets/img/empty.svg
     - assets/img/addPhoto.png
     - videos/KettlebellTraining.mp4
     - assets/img/nofavPosts.svg
     - assets/img/start.svg
     - assets/img/username.svg
+    - assets/img/noActivity.svg
+    - assets/img/launchIcon.png
+    - assets/img/ballpilates.jpg
+    - assets/img/barrapesas.jpg
+    - assets/img/runmachine.jpg
+    - assets/img/kettlebell.jpg
+    
+flutter_intl:
+  enabled: false
+  main_locale: es_ES
+  class_name: S

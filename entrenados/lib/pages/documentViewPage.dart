@@ -18,6 +18,7 @@ class DocumentViewPage extends StatefulWidget {
 class _DocumentViewPageState extends State<DocumentViewPage> {
   String _documentUrl = '';
   String _file;
+final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -28,6 +29,14 @@ class _DocumentViewPageState extends State<DocumentViewPage> {
       });
     });
     super.initState();
+  }
+
+  mostrarError(){
+    SnackBar snackbar = SnackBar(
+          content: Text(
+              "Si el contenido no se visualiza correctamente contacta con el creador de la publicación.",),
+        );
+        _scaffoldKey.currentState.showSnackBar(snackbar);
   }
 
   Future<String> loadDocument() async {
@@ -41,10 +50,11 @@ class _DocumentViewPageState extends State<DocumentViewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: header(context,
           removeBackButton: false, titleText: 'Visualizador de documento'),
       body: Container(
-        child: _file != null ? PDFView(filePath: _file) : circularProgress(),
+        child: _file != null ? PDFView(filePath: _file, onError: mostrarError(),) : circularProgress(),
       ),
     );
   }

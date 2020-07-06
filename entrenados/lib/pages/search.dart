@@ -70,7 +70,6 @@ class _SearchState extends State<Search>
         ),
       ),
       child: TextFormField(
-     
         controller: searchController,
         decoration: InputDecoration(
           hintText: "Buscar un instructor...",
@@ -96,7 +95,7 @@ class _SearchState extends State<Search>
           Padding(
             padding: const EdgeInsets.only(top: 75.0),
             child: AutoSizeText(
-              "Encontrar usuarios",
+              "Encontrar instructores",
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.teal,
@@ -122,8 +121,10 @@ class _SearchState extends State<Search>
           List<UserResult> searchResults = [];
           snapshot.data.documents.forEach((doc) {
             User user = User.fromDocument(doc);
-            UserResult searchResult = UserResult(user);
-            searchResults.add(searchResult);
+            if (user.username != null && user.username != "" && user.displayName != null && user.displayName!= "") {
+              UserResult searchResult = UserResult(user);
+              searchResults.add(searchResult);
+            }
           });
           return Expanded(
             child: ListView(
@@ -300,10 +301,16 @@ class _SearchState extends State<Search>
                     padding: const EdgeInsets.only(top: 24.0),
                     child: Row(
                       children: <Widget>[
-                        Text("Músculos involucrados",
-                            style: TextStyle(fontWeight: FontWeight.w800)),
-                        Text("  ( Selección múltiple )",
-                            style: TextStyle(fontWeight: FontWeight.w100)),
+                        Flexible(
+                          child: AutoSizeText("Músculos involucrados",
+                              maxLines: 1,
+                              style: TextStyle(fontWeight: FontWeight.w800)),
+                        ),
+                        Flexible(
+                          child: AutoSizeText("  ( Selección múltiple )",
+                              maxLines: 1,
+                              style: TextStyle(fontWeight: FontWeight.w100)),
+                        ),
                       ],
                     ),
                   ),
@@ -338,8 +345,11 @@ class _SearchState extends State<Search>
                     padding: const EdgeInsets.only(top: 24.0),
                     child: Row(
                       children: <Widget>[
-                        Text("Material necesario",
-                            style: TextStyle(fontWeight: FontWeight.w800)),
+                        Flexible(
+                          child: AutoSizeText("Material necesario",
+                              maxLines: 1,
+                              style: TextStyle(fontWeight: FontWeight.w800)),
+                        ),
                         Text("  ( Selección múltiple )",
                             style: TextStyle(fontWeight: FontWeight.w100)),
                       ],
@@ -372,6 +382,8 @@ class _SearchState extends State<Search>
                       ],
                     ),
                   ),
+                  Padding(padding: EdgeInsets.only(top: 30.0)),
+                  Text(""),
                 ],
               ),
             ),
@@ -467,6 +479,7 @@ class _SearchState extends State<Search>
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           elevation: 0,
+          automaticallyImplyLeading: false,
           backgroundColor: Colors.grey[200],
           title: Text(
             "Buscar",
@@ -494,7 +507,10 @@ class _SearchState extends State<Search>
                   ),
                   child: Align(
                     alignment: Alignment.center,
-                    child: Text("Entrenamientos"),
+                    child: AutoSizeText(
+                      "Entrenamientos",
+                      maxLines: 1,
+                    ),
                   ),
                 ),
               ),
@@ -509,7 +525,10 @@ class _SearchState extends State<Search>
                   ),
                   child: Align(
                     alignment: Alignment.center,
-                    child: Text("Entrenadores"),
+                    child: AutoSizeText(
+                      "Instructores",
+                      maxLines: 1,
+                    ),
                   ),
                 ),
               ),
@@ -584,7 +603,7 @@ class UserResult extends StatelessWidget {
                 ),
               ),
               subtitle: Text(
-                "@"+ user.username,
+                " @" + user.username,
                 style: TextStyle(
                   color: Colors.deepPurple,
                 ),

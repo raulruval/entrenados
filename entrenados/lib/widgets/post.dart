@@ -16,6 +16,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gradient_text/gradient_text.dart';
 import 'package:video_player/video_player.dart';
 
+import 'expandableText.dart';
+
 class Post extends StatefulWidget {
   final String currentUserId;
   final String postId;
@@ -357,38 +359,17 @@ class PostState extends State<Post> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text("- " + item.name, style: TextStyle(fontSize: 20.0)),
+                    Text("- " + item.name, style: TextStyle(fontSize: 16.0)),
                   ],
                 ),
             ],
           )
-        : Text("Ninguno", style: TextStyle(fontSize: 20.0));
+        : Text("Ninguno", style: TextStyle(fontSize: 16.0));
   }
 
   buildPostInfo() {
     return Column(
       children: <Widget>[
-        Row(
-          children: <Widget>[
-            Icon(
-              Icons.timer,
-              size: 40.0,
-              color: Colors.teal[900],
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Text(
-                "Duración: ",
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-              ),
-            ),
-            Text(
-              "$duration minutos",
-              style: TextStyle(fontSize: 20.0),
-            ),
-          ],
-        ),
-        Divider(),
         Row(
           children: <Widget>[
             Icon(
@@ -400,12 +381,33 @@ class PostState extends State<Post> {
               padding: const EdgeInsets.only(left: 8.0),
               child: Text(
                 "Dificultad: ",
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
               ),
             ),
             Text(
               "$difficulty",
-              style: TextStyle(fontSize: 20.0),
+              style: TextStyle(fontSize: 16.0),
+            ),
+          ],
+        ),
+           Divider(),
+        Row(
+          children: <Widget>[
+            Icon(
+              Icons.timer,
+              size: 40.0,
+              color: Colors.teal[900],
+            ),
+Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(
+                "Duración: ",
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Text(
+              "$duration minutos",
+              style: TextStyle(fontSize: 16.0),
             ),
           ],
         ),
@@ -421,12 +423,12 @@ class PostState extends State<Post> {
               padding: const EdgeInsets.only(left: 8.0),
               child: Text(
                 "Grupo: ",
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
               ),
             ),
             Text(
               "$group",
-              style: TextStyle(fontSize: 20.0),
+              style: TextStyle(fontSize: 16.0),
             ),
           ],
         ),
@@ -442,7 +444,7 @@ class PostState extends State<Post> {
               padding: const EdgeInsets.only(left: 8.0),
               child: Text(
                 "Músculos involucrados: ",
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -460,7 +462,7 @@ class PostState extends State<Post> {
               padding: const EdgeInsets.only(left: 8.0),
               child: Text(
                 "Equipamiento necesario: ",
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -484,9 +486,11 @@ class PostState extends State<Post> {
 
   buildPostSocial() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        Row(children: <Widget>[
+        Row(
+          children: <Widget>[
           GestureDetector(
             onTap: handleLikePost,
             child: Icon(
@@ -524,7 +528,7 @@ class PostState extends State<Post> {
             Container(
               margin: EdgeInsets.only(left: 20),
               child: Text(
-                commentsCount != null ? "$commentsCount" : 0,
+                commentsCount != null ? "$commentsCount" : "0",
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
@@ -612,11 +616,7 @@ class PostState extends State<Post> {
                 width: MediaQuery.of(context).size.width * 0.80,
                 child: Padding(
                   padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                  child: Text(
-                    "$notes",
-                    style: TextStyle(fontSize: 15.0),
-                    textAlign: TextAlign.justify,
-                  ),
+                  child: ExpandableText("$notes"),
                 ),
               ),
             ),
@@ -627,20 +627,22 @@ class PostState extends State<Post> {
   }
 
   buildNamePost() {
-    String upperTitle = title.toUpperCase();
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(5.0),
+        padding: const EdgeInsets.only(
+            top: 5.0, left: 10.0, right: 10.0, bottom: 5.0),
         child: GradientText(
-          upperTitle,
+          title,
           textAlign: TextAlign.center,
           gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: <Color>[Colors.teal[400], Colors.deepPurple[400]]),
           style: TextStyle(
-            fontSize: 30.0,
+            wordSpacing: 2,
+            fontSize: 25.0,
             fontWeight: FontWeight.bold,
+            letterSpacing: 1,
           ),
         ),
       ),
@@ -681,6 +683,7 @@ class PostState extends State<Post> {
       children: <Widget>[
         Expanded(
           child: ListView(
+            
             children: <Widget>[
               buildHeader(
                 this.ownerId,
@@ -692,28 +695,13 @@ class PostState extends State<Post> {
               Divider(
                 height: 0.8,
               ),
-              buildNamePost(),
+              title != "" ? buildNamePost() : SizedBox.shrink(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   buildPostImage(),
                   buildPostSocial(),
                 ],
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  child: buildNotes(),
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: <Color>[
-                            Colors.teal[100],
-                            Colors.deepPurple[100]
-                          ]),
-                      borderRadius: BorderRadius.circular(10)),
-                ),
               ),
               Padding(
                 padding: EdgeInsets.all(10),
@@ -743,7 +731,22 @@ class PostState extends State<Post> {
                         buildLinkResource(),
                       ],
                     )
-                  : SizedBox.shrink()
+                  : SizedBox.shrink(),
+              notes!= "" ? Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  child: buildNotes(),
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: <Color>[
+                            Colors.teal[100],
+                            Colors.deepPurple[100]
+                          ]),
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+              ) : SizedBox.shrink(),
             ],
           ),
         ),

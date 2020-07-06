@@ -31,13 +31,17 @@ class SearchModel {
   ];
 
   List<Item> muscles = [
-    Item("assets/img/arm.jpg", Muscles.biceps, 1, false),
-    Item("assets/img/leg.jpg", Muscles.twins, 2, false),
+    Item("assets/img/chest.jpg", Muscles.chest, 9, false),
+    Item("assets/img/dorsales.jpg", Muscles.dorsal, 10, false),
+    Item("assets/img/quadriceps.jpg", Muscles.quadriceps, 7, false),
     Item("assets/img/espalda.jpg", Muscles.back, 3, false),
-    Item("assets/img/abs.jpg", Muscles.abs, 4, false),
+    Item("assets/img/arm.jpg", Muscles.biceps, 1, false),
     Item("assets/img/triceps.jpg", Muscles.triceps, 5, false),
     Item("assets/img/shoulder.jpg", Muscles.shoulders, 6, false),
-    Item("assets/img/quadriceps.jpg", Muscles.quadriceps, 7, false),
+    Item("assets/img/isquios.jpg", Muscles.ischia, 12, false),
+    Item("assets/img/gluteos.jpg", Muscles.glutes, 11, false),
+    Item("assets/img/abs.jpg", Muscles.abs, 4, false),
+    Item("assets/img/leg.jpg", Muscles.twins, 2, false),
     Item("assets/img/forearm.jpg", Muscles.forearm, 8, false),
   ];
 
@@ -48,17 +52,22 @@ class SearchModel {
     Item("assets/img/rope.jpg", EquipmentList.rope, 4, false),
     Item("assets/img/sack.jpg", EquipmentList.boxing, 5, false),
     Item("assets/img/yoga.jpg", EquipmentList.mat, 6, false),
+    Item("assets/img/box.jpg", EquipmentList.box, 7, false),
+    Item("assets/img/resistenceband.jpg", EquipmentList.resistenceband, 8,
+        false),
+    Item("assets/img/kettlebell.jpg", EquipmentList.kettlebell, 9, false),
+    Item("assets/img/runmachine.jpg", EquipmentList.runningmachine, 10, false),
+    Item("assets/img/ballpilates.jpg", EquipmentList.pilatesball, 11, false),
+    Item("assets/img/barrapesas.jpg", EquipmentList.barbell, 12, false),
   ];
 
-  getMuscles(){
-  return this.muscles;
-}
+  getMuscles() {
+    return this.muscles;
+  }
 
-
-  getEquipment(){
-  return this.equipment;
-}
-
+  getEquipment() {
+    return this.equipment;
+  }
 }
 
 class Difficulty {
@@ -68,12 +77,12 @@ class Difficulty {
 }
 
 class DurationWorkout {
-  static const String five = "≈   5 min";
-  static const String ten = "≈ 10 min";
-  static const String twenty = "≈ 20 min";
-  static const String thirty = "≈ 30 min";
-  static const String fortyfive = "≈ 45 min";
-  static const String sixty = "≈ 60 min";
+  static const String five = "<=   5 min";
+  static const String ten = "<= 10 min";
+  static const String twenty = "<= 20 min";
+  static const String thirty = "<= 30 min";
+  static const String fortyfive = "<= 45 min";
+  static const String sixty = "<= 60 min";
 }
 
 class Group {
@@ -94,6 +103,10 @@ class Muscles {
   static const String shoulders = "Hombros";
   static const String quadriceps = "Cuádriceps";
   static const String forearm = "Antebrazo";
+  static const String chest = "Pectoral";
+  static const String dorsal = "Dorsal";
+  static const String glutes = "Glúteos";
+  static const String ischia = "Isquiotibiales";
 }
 
 class EquipmentList {
@@ -103,6 +116,10 @@ class EquipmentList {
   static const String rope = "Comba";
   static const String boxing = "Saco de boxeo";
   static const String mat = "Estera";
+  static const String resistenceband = "Bandas elásticas";
+  static const String box = "Caja pliométrica";
+  static const String kettlebell = "Pesa rusa";
+  static const String runningmachine = "Máquina de correr";
+  static const String pilatesball = "Pelota de pilates";
+  static const String barbell = "Barra de pesas";
 }
-
-

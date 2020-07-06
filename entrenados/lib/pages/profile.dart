@@ -57,7 +57,7 @@ class _ProfileState extends State<Profile> {
         .collection('userFollowers')
         .getDocuments();
     setState(() {
-      followerCount = snapshot.documents.length;
+      followerCount = snapshot.documents.length - 1;
     });
   }
 
@@ -128,13 +128,14 @@ class _ProfileState extends State<Profile> {
         child: Container(
           width: 150.0,
           height: 50.0,
-          child: Text(
+          child: AutoSizeText(
             text,
             style: TextStyle(
               color:
                   !isFollowing && !isProfileOwner ? Colors.white : Colors.teal,
               fontWeight: FontWeight.bold,
             ),
+            maxLines: 1,
           ),
           alignment: Alignment.center,
           decoration: BoxDecoration(
@@ -338,7 +339,7 @@ class _ProfileState extends State<Profile> {
                           child: Padding(
                             padding: const EdgeInsets.only(left: 12.0),
                             child:
-                                buildCountColumn("seguidores", followerCount),
+                                buildCountColumn("seguidores", followerCount > 0 ? followerCount : 0),
                           )),
                       Container(
                         width: MediaQuery.of(context).size.width * 0.28,
@@ -360,7 +361,7 @@ class _ProfileState extends State<Profile> {
                   : SizedBox.shrink(),
               // BuildPosts
               Flexible(
-                flex: 3,
+                flex: isProfileOwner ? 3 : 4,
                 fit: FlexFit.tight,
                 child: buildCard(),
               )

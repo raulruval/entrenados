@@ -19,6 +19,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:entrenados/models/user.dart';
 import 'package:entrenados/models/searchModel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -38,8 +39,13 @@ User currentUser;
 String _email;
 String _pwd;
 bool _log = false;
+bool _newAlert = false;
+int _alertCount = 0;
 
 class Home extends StatefulWidget {
+  bool logout = false;
+  Home(this.logout);
+
   @override
   _HomeState createState() => _HomeState();
 }
@@ -52,15 +58,18 @@ class _HomeState extends State<Home> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _scaffoldKeyNoValidation = GlobalKey<ScaffoldState>();
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  DateTime current;
+
   @override
   void initState() {
     super.initState();
+
     pageController = PageController();
     // Detecta cuando un usuario inicia sesión.
     googleSignIn.onCurrentUserChanged.listen((cuenta) {
       handleSignInGoogle(cuenta);
     }, onError: (err) {
-      print('Error al iniciar session: $err');
+      // print('Error al iniciar session: $err');
     });
     // Reautenticar usuario cuando vuelve a reabrir la app y es de Google
 
@@ -68,14 +77,27 @@ class _HomeState extends State<Home> {
         .signInSilently(suppressErrors: false)
         .then((cuenta) {})
         .catchError((err) {
-      print('Error al iniciar session automáticamente: $err');
+      // Reautenticar usuario cuando vuelve a reabrir la app y ya está autenticado con el correo
+      if (!widget.logout) {
+        handleAutomaticSignIn();
+      } else {
+        resetSharedPreferences();
+      }
     });
+  }
 
-    // Reautenticar usuario cuando vuelve a reabrir la app y ya está autenticado con el correo
+  resetSharedPreferences() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setString("email", "");
+    pref.setString("pass", "");
+  }
 
-    _auth.onAuthStateChanged
-        .listen((fUser) => {if (fUser != null) handleSignIn(true, fUser.uid)})
-        .onError((_) => print("No se puede iniciar sesión automáticamente"));
+  handleAutomaticSignIn() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    if (pref.getString("email") != "") {
+      FirebaseUser fUser = await signIpUser(true);
+      if (fUser != null) handleSignIn(true, fUser.uid);
+    }
   }
 
   void dispose() {
@@ -101,6 +123,7 @@ class _HomeState extends State<Home> {
   onPageChanged(int pageIndex) {
     setState(() {
       this.pageIndex = pageIndex;
+      FocusScope.of(context).unfocus();
     });
   }
 
@@ -130,19 +153,39 @@ class _HomeState extends State<Home> {
     }
 
     _firebaseMessaging.getToken().then((token) {
-      print("Firebase Messaging token: $token\n");
+      // print("Firebase Messaging token: $token\n");
       usersRef
           .document(user.id)
           .updateData({"androidNotificationToken": token});
     });
 
     _firebaseMessaging.configure(
-      // onLaunch: (Map<String, dynamic> message) async{}, // When the app is off.
-      // onResume: (Map<String, dynamic> message) async{}, // App Launch but in the background
+      onLaunch: (Map<String, dynamic> message) async {
+        final String recipientId = message['data']['recipient'];
+        if (recipientId == user.id) {
+          setState(() {
+            _alertCount++;
+            _newAlert = true;
+          });
+        }
+      }, // When the app is off.
+      onResume: (Map<String, dynamic> message) async {
+        final String recipientId = message['data']['recipient'];
+        if (recipientId == user.id) {
+          setState(() {
+            _alertCount++;
+            _newAlert = true;
+          });
+        }
+      }, // App Launch but in the background
       onMessage: (Map<String, dynamic> message) async {
         final String recipientId = message['data']['recipient'];
         final String body = message['notification']['body'];
         if (recipientId == user.id) {
+          setState(() {
+            _alertCount++;
+            _newAlert = true;
+          });
           SnackBar snackBar = SnackBar(
             content: Text(
               body,
@@ -164,50 +207,69 @@ class _HomeState extends State<Home> {
     });
   }
 
-  Future signIpUser() async {
-    FirebaseUser fUser = await _auth
-        .signInWithEmailAndPassword(email: _email, password: _pwd)
-        .catchError((onError) => {
-              _scaffoldKeyNoValidation.currentState.showSnackBar(SnackBar(
-                content: AutoSizeText(
-                  "El email y contraseña introducidos no coindicen con ninguno de nuestros usuarios.",
-                  maxLines: 2,
-                ),
-              ))
-            });
-    if (!fUser.isEmailVerified) {
-      fUser.sendEmailVerification();
+  Future signIpUser(bool auto) async {
+    if (!auto) {
+      FirebaseUser fUser = await _auth
+          .signInWithEmailAndPassword(email: _email, password: _pwd)
+          .catchError((onError) => {
+                _scaffoldKeyNoValidation.currentState.showSnackBar(SnackBar(
+                  content: AutoSizeText(
+                    "El email y contraseña introducidos no coindicen con ninguno de nuestros usuarios.",
+                    maxLines: 2,
+                  ),
+                ))
+              });
+      if (!fUser.isEmailVerified) {
+        fUser.sendEmailVerification();
+      }
+      return fUser;
+    } else {
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      _email = pref.getString("email");
+      _pwd = pref.getString("pass");
+      FirebaseUser fUser = await _auth
+          .signInWithEmailAndPassword(email: _email, password: _pwd)
+          .catchError((onError) => {print("error")});
+      return fUser;
     }
-    return fUser;
   }
 
   handleSignIn(bool auto, String uidAuto) async {
     FirebaseUser fUser;
+
     bool userVerify = false;
     if (!auto) {
-      fUser = await signIpUser();
+      fUser = await signIpUser(false);
       await usersRef
           .document(fUser.uid)
           .get()
-          .then((doc) => currentUser = User.fromDocument(doc))
-          .catchError((onError) => print(onError));
+          .then((doc) => currentUser = User.fromDocument(doc));
+      // .catchError((onError) => print(onError));
     } else {
       await usersRef
           .document(uidAuto)
           .get()
-          .then((doc) => currentUser = User.fromDocument(doc))
-          .catchError((onError) => print(onError));
+          .then((doc) => currentUser = User.fromDocument(doc));
+      // .catchError((onError) => print(onError));
     }
     try {
       userVerify = fUser.isEmailVerified;
     } catch (ex) {
-      print(ex);
+      // print(ex);
     }
+    if (auto) userVerify = true;
     if (currentUser != null && userVerify) {
       if (currentUser.username == "") {
         final username = await Navigator.push(context,
             MaterialPageRoute(builder: (context) => CreateGoogleAccount()));
         usersRef.document(currentUser.id).updateData({'username': username});
+      }
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      if (!auto) {
+        setState(() {
+          pref.setString("email", _email);
+          pref.setString("pass", _pwd);
+        });
       }
       setState(() {
         isAuth = true;
@@ -255,6 +317,13 @@ class _HomeState extends State<Home> {
         "bio": "",
         "timestamp": timestamp,
       });
+      // Hacer un usuario su propio seguidor para que le aparezcan en el timeline sus publicaciones.
+      await followersRef
+          .document(user.id)
+          .collection('userFollowers')
+          .document(user.id)
+          .setData({});
+
       doc = await usersRef.document(user.id).get();
     }
     currentUser = User.fromDocument(doc);
@@ -274,10 +343,15 @@ class _HomeState extends State<Home> {
  */
     pageController.animateToPage(pageIndex,
         duration: Duration(milliseconds: 10), curve: Curves.easeIn);
+    if (pageIndex == 3) {
+      _newAlert = false;
+      _alertCount = 0;
+    }
   }
 
-  Widget buildValidationScreen() {
+  Scaffold buildValidationScreen() {
     return Scaffold(
+      key: _scaffoldKey,
       body: PageView(
         children: <Widget>[
           Timeline(currentUser: currentUser),
@@ -307,7 +381,31 @@ class _HomeState extends State<Home> {
           BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.search)),
           BottomNavigationBarItem(
               icon: FaIcon(FontAwesomeIcons.plus, size: 30)),
-          BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.solidBell)),
+          BottomNavigationBarItem(
+            icon: Stack(
+              children: <Widget>[
+                _newAlert
+                    ? Icon(
+                        Icons.notifications,
+                        size: 30,
+                      )
+                    : Icon(
+                        Icons.notifications_none,
+                        size: 30,
+                      ),
+                _newAlert
+                    ? Positioned(
+                        top: -3.0,
+                        right: -1.0,
+                        child: new Text(
+                          "$_alertCount",
+                          style: new TextStyle(
+                              fontSize: 9.0, fontWeight: FontWeight.bold),
+                        ))
+                    : SizedBox.shrink(),
+              ],
+            ),
+          ),
           BottomNavigationBarItem(icon: FaIcon(FontAwesomeIcons.userAlt))
         ],
       ),
@@ -476,10 +574,11 @@ class _HomeState extends State<Home> {
       alignment: Alignment.center,
       child: FlatButton(
         onPressed: () => createUserInFirestore(),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text('¿No tienes una cuenta? '),
+          Padding(
+            padding: EdgeInsets.all(8),
+          ),
           Text(
             ' ¡Regístrate!',
             style: kLabelStyle,
@@ -502,24 +601,24 @@ class _HomeState extends State<Home> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Container(
-            width: MediaQuery.of(context).size.width * 0.1,
             child: new Image.asset(
               'assets/img/GoogleIcon.png',
               height: 35.0,
             ),
           ),
-          Container(
-            width: MediaQuery.of(context).size.width * 0.5,
-            child: Padding(
-              padding: EdgeInsets.only(left: 3.0),
-              child: AutoSizeText(
-                'Acceder con Google',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 23.0,
-                  fontFamily: 'OpenSans',
+          Flexible(
+            child: Container(
+              child: Padding(
+                padding: EdgeInsets.only(left: 3.0),
+                child: AutoSizeText(
+                  'Acceder con Google',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 23.0,
+                    fontFamily: 'OpenSans',
+                  ),
+                  maxLines: 1,
                 ),
-                maxLines: 1,
               ),
             ),
           ),
@@ -556,7 +655,7 @@ class _HomeState extends State<Home> {
                   physics: AlwaysScrollableScrollPhysics(),
                   padding: EdgeInsets.symmetric(
                     horizontal: 40.0,
-                    vertical: 120.0,
+                    vertical: 80.0,
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -564,10 +663,10 @@ class _HomeState extends State<Home> {
                       SizedBox(
                           child: new Image.asset(
                         'assets/img/run.png',
-                        height: 125.0,
-                        width: 125.0,
+                        height: 200.0,
+                        width: 200.0,
                       )),
-                      Text(
+                      AutoSizeText(
                         'Entrenados',
                         style: TextStyle(
                           color: Colors.black87,
@@ -575,6 +674,7 @@ class _HomeState extends State<Home> {
                           fontSize: 40.0,
                           fontWeight: FontWeight.bold,
                         ),
+                        maxLines: 1,
                       ),
                       Padding(
                         padding: EdgeInsets.only(bottom: 20),
@@ -608,8 +708,25 @@ class _HomeState extends State<Home> {
     );
   }
 
+  Future<bool> exitWarning() {
+    DateTime now = DateTime.now();
+    if (current == null || now.difference(current) > Duration(seconds: 2)) {
+      current = now;
+      SnackBar snackbar = SnackBar(
+        content: Text("Si deseas salir de la aplicación pulsa de nuevo atrás"),
+      );
+      _scaffoldKey.currentState.showSnackBar(snackbar);
+      return Future.value(false);
+    } else {
+      return Future.value(true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return isAuth ? buildValidationScreen() : buildNoValidationScreen();
+    return isAuth
+        ? WillPopScope(
+            child: buildValidationScreen(), onWillPop: () => exitWarning())
+        : buildNoValidationScreen();
   }
 }

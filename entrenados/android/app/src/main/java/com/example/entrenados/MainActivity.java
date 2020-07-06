@@ -1,4 +1,4 @@
-package com.example.entrenados;
+package com.raulruval.entrenados;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

@@ -73,7 +73,7 @@ class PostTile extends StatelessWidget {
                           width: MediaQuery.of(context).size.width * 0.3,
                           height: MediaQuery.of(context).size.height * 0.15,
                           child: Stack(
-                            alignment: Alignment.center,
+                            alignment: Alignment.bottomRight,
                             children: <Widget>[
                               ClipRRect(
                                 child: cachedNetworkImage(
@@ -83,7 +83,21 @@ class PostTile extends StatelessWidget {
                                 ),
                                 borderRadius: BorderRadius.circular(20.0),
                               ),
-                              Text(" "+post.duration.toString() + "'", style: TextStyle(fontSize: 30,color: Colors.teal[600],fontWeight: FontWeight.bold),),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.black54,
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: Text(
+                                    " " + post.duration.toString() + "'",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              )
                             ],
                           ),
                         ),

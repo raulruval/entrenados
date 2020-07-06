@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1083851342974-a7f8j6s48uluiur6r9j9qrd6h7dmtmg9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.raulruval.entrenados",
+            "certificate_hash": "7c191296ee9aae832470bf99d63f316fffd86848"
+          }
+        },
+        {
           "client_id": "1083851342974-e84nc2gqkk4o7bmrsql83nr0e5g4ctin.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 AppBar header(context,
@@ -7,7 +8,7 @@ AppBar header(context,
     elevation: 0.0,
     bottomOpacity: 0.0,
     automaticallyImplyLeading: removeBackButton ? false : true,
-    title: Text(
+    title: AutoSizeText(
           isAppTitle ? 'Entrenados' : titleText,
           style: TextStyle(
             color: Colors.white,
@@ -15,6 +16,7 @@ AppBar header(context,
             fontSize: isAppTitle ? 50.0 : 22.0,
           ),
           overflow: TextOverflow.ellipsis,
+          maxLines: 1,
         ) ??
         'Defecto',
     centerTitle: true,
